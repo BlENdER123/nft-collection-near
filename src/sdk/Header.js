@@ -13,6 +13,19 @@ import {
 import ConnectWalletPage from "./ConnectWalletPage";
 import {useDispatch, useSelector} from "react-redux";
 
+import "regenerator-runtime/runtime";
+import * as nearAPI from "near-api-js";
+
+const CONTRACT_NAME = "dev-1586706630629";
+
+const nearConfig = {
+	networkId: "testnet",
+	nodeUrl: "https://rpc.testnet.near.org",
+	contractName: CONTRACT_NAME,
+	walletUrl: "https://wallet.testnet.near.org",
+	helperUrl: "https://helper.testnet.near.org",
+};
+
 function Header({activeCat}) {
 	let history = useHistory();
 
@@ -34,6 +47,53 @@ function Header({activeCat}) {
 	function open() {
 		dispatch({type: "openConnect"});
 		console.log(connectWallet);
+	}
+
+	async function connectNear() {
+		console.log(1);
+
+		window.near = await nearAPI.connect({
+			deps: {
+				keyStore: new nearAPI.keyStores.BrowserLocalStorageKeyStore(),
+			},
+			...nearConfig,
+		});
+
+		// Needed to access wallet login
+		window.walletConnection = new nearAPI.WalletConnection(window.near);
+
+		// Initializing our contract APIs by contract name and configuration.
+		window.contract1 = await new nearAPI.Contract(
+			window.walletConnection.account(),
+			nearConfig.contractName,
+			{
+				// View methods are read-only – they don't modify the state, but usually return some value
+				viewMethods: ["get_num"],
+				// Change methods can modify the state, but you don't receive the returned value when called
+				changeMethods: ["increment", "decrement", "reset"],
+				// Sender is the account ID to initialize transactions.
+				// getAccountId() will return empty string if user is still unauthorized
+				sender: window.walletConnection.getAccountId(),
+			},
+		);
+	}
+
+	function connectWal() {
+		walletConnection.requestSignIn(CONTRACT_NAME, "Rust Counter Example");
+	}
+
+	window.nearInitPromise = connectNear().then(() => {
+		console.log("test");
+	});
+
+	function contractF() {
+		contract1.get_num().then((count) => {
+			console.log(count);
+		});
+	}
+
+	function contractP() {
+		contract1.increment();
 	}
 
 	return (
@@ -72,9 +132,12 @@ function Header({activeCat}) {
 								</div>
 							) : (
 								<div class="wallet">
-									<div class="button-1-square" onClick={open}>
+									<div class="button-1-square" onClick={connectWal}>
 										Connect
 									</div>
+									{/* <button onClick={connectWal}>test</button>
+									<button onClick={contractF}>contract</button>
+									<button onClick={contractP}>plus</button> */}
 								</div>
 							)}
 						</div>

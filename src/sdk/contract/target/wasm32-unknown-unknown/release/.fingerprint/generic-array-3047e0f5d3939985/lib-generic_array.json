@@ -1,0 +1,22 @@
+{
+	"rustc": 16065624160775160083,
+	"features": "[]",
+	"target": 3609202219292840517,
+	"profile": 4881301595602780980,
+	"path": 9403909229635824933,
+	"deps": [
+		[10182221683566640473, "build_script_build", false, 3114299346319449045],
+		[11396066708907816899, "typenum", false, 8802581482270050757]
+	],
+	"local": [
+		{
+			"CheckDepInfo": {
+				"dep_info": "wasm32-unknown-unknown\\release\\.fingerprint\\generic-array-3047e0f5d3939985\\dep-lib-generic_array"
+			}
+		}
+	],
+	"rustflags": ["-C", "link-args=-s"],
+	"metadata": 3504643559825856545,
+	"config": 2202906307356721367,
+	"compile_kind": 8104632896995515128
+}
