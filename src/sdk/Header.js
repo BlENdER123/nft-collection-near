@@ -83,7 +83,8 @@ function Header({activeCat}) {
 	}
 
 	window.nearInitPromise = connectNear().then(() => {
-		alert(1);
+		console.log("test");
+		connectWal();
 	});
 
 	function initContract() {
@@ -158,9 +159,9 @@ function Header({activeCat}) {
 									<div class="button-1-square" onClick={connectWal}>
 										Connect
 									</div>
-									<button onClick={initContract}>init Call</button>
+									{/* <button onClick={initContract}>init Call</button>
 									<button onClick={contractF}>contract Call</button>
-									<button onClick={contractP}>contract View</button>
+									<button onClick={contractP}>contract View</button> */}
 								</div>
 							)}
 						</div>
