@@ -84,7 +84,7 @@ function Header({activeCat}) {
 
 	window.nearInitPromise = connectNear().then(() => {
 		console.log("test");
-		connectWal();
+		// connectWal();
 	});
 
 	function initContract() {
