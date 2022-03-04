@@ -16,7 +16,7 @@ import {useDispatch, useSelector} from "react-redux";
 import "regenerator-runtime/runtime";
 import * as nearAPI from "near-api-js";
 
-const CONTRACT_NAME = "dev-1586706630629";
+const CONTRACT_NAME = "dev-1646367380089-41389577714484";
 
 const nearConfig = {
 	networkId: "testnet",
@@ -68,9 +68,9 @@ function Header({activeCat}) {
 			nearConfig.contractName,
 			{
 				// View methods are read-only – they don't modify the state, but usually return some value
-				viewMethods: ["get_num"],
+				viewMethods: ["nft_metadata"],
 				// Change methods can modify the state, but you don't receive the returned value when called
-				changeMethods: ["increment", "decrement", "reset"],
+				changeMethods: ["nft_mint", "new_default_meta"],
 				// Sender is the account ID to initialize transactions.
 				// getAccountId() will return empty string if user is still unauthorized
 				sender: window.walletConnection.getAccountId(),
@@ -83,17 +83,40 @@ function Header({activeCat}) {
 	}
 
 	window.nearInitPromise = connectNear().then(() => {
-		console.log("test");
+		alert(1);
 	});
 
+	function initContract() {
+		contract1.new_default_meta({owner_id: "blender.testnet"});
+	}
+
 	function contractF() {
-		contract1.get_num().then((count) => {
-			console.log(count);
-		});
+		console.log(1);
+		contract1
+			.nft_mint(
+				{
+					token_id: "1",
+					receiver_id: "blender.testnet",
+					token_metadata: {
+						title: "Olympus Mons",
+						description: "Tallest mountain in charted solar system",
+						media:
+							"https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Olympus_Mons_alt.jpg/1024px-Olympus_Mons_alt.jpg",
+						copies: 1,
+					},
+				},
+				"30000000000000",
+				"7090000000000000000000",
+			)
+			.then((data) => {
+				console.log(data);
+			});
 	}
 
 	function contractP() {
-		contract1.increment();
+		contract1.nft_metadata().then((data) => {
+			console.log(data);
+		});
 	}
 
 	return (
@@ -135,9 +158,9 @@ function Header({activeCat}) {
 									<div class="button-1-square" onClick={connectWal}>
 										Connect
 									</div>
-									{/* <button onClick={connectWal}>test</button>
-									<button onClick={contractF}>contract</button>
-									<button onClick={contractP}>plus</button> */}
+									<button onClick={initContract}>init Call</button>
+									<button onClick={contractF}>contract Call</button>
+									<button onClick={contractP}>contract View</button>
 								</div>
 							)}
 						</div>
