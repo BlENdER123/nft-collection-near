@@ -33,6 +33,9 @@ import NftDetails from "./sdk/NftDetails";
 import NftMarket from "./sdk/NftMarket";
 import NftMarketPack from "./sdk/NftMarketPack";
 
+import {Buffer} from "buffer";
+global.Buffer = Buffer;
+
 function App() {
 	return (
 		<>

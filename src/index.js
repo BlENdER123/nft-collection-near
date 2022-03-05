@@ -17,6 +17,9 @@ const defaultState = {
 	connectWallet: false,
 };
 
+import {Buffer} from "buffer";
+global.Buffer = Buffer;
+
 const reducer = (state = defaultState, action) => {
 	switch (action.type) {
 		case "openConnect":

@@ -26,6 +26,19 @@ const nearConfig = {
 	helperUrl: "https://helper.testnet.near.org",
 };
 
+const {connect, keyStores, WalletConnection} = nearAPI;
+
+const keyStore = new keyStores.BrowserLocalStorageKeyStore();
+
+const config = {
+	networkId: "testnet",
+	keyStore, // optional if not signing transactions
+	nodeUrl: "https://rpc.testnet.near.org",
+	walletUrl: "https://wallet.testnet.near.org",
+	helperUrl: "https://helper.testnet.near.org",
+	explorerUrl: "https://explorer.testnet.near.org",
+};
+
 function Header({activeCat}) {
 	let history = useHistory();
 
@@ -44,48 +57,54 @@ function Header({activeCat}) {
 		location.reload();
 	}
 
-	function open() {
-		dispatch({type: "openConnect"});
-		console.log(connectWallet);
+	async function signIn() {
+		const near = await connect(config);
+
+		const wallet = new WalletConnection(near);
+
+		wallet.requestSignIn("example-contract.testnet");
 	}
 
-	async function connectNear() {
-		console.log(1);
+	// async function connectNear() {
+	// 	console.log(1);
 
-		window.near = await nearAPI.connect({
-			deps: {
-				keyStore: new nearAPI.keyStores.BrowserLocalStorageKeyStore(),
-			},
-			...nearConfig,
-		});
+	// 	window.near = await nearAPI.connect({
+	// 		deps: {
+	// 			keyStore: new nearAPI.keyStores.BrowserLocalStorageKeyStore(),
+	// 		},
+	// 		...nearConfig,
+	// 	});
 
-		// Needed to access wallet login
-		window.walletConnection = new nearAPI.WalletConnection(window.near);
+	// 	// Needed to access wallet login
+	// 	window.walletConnection = new nearAPI.WalletConnection(window.near);
 
-		// Initializing our contract APIs by contract name and configuration.
-		window.contract1 = await new nearAPI.Contract(
-			window.walletConnection.account(),
-			nearConfig.contractName,
-			{
-				// View methods are read-only – they don't modify the state, but usually return some value
-				viewMethods: ["nft_metadata"],
-				// Change methods can modify the state, but you don't receive the returned value when called
-				changeMethods: ["nft_mint", "new_default_meta"],
-				// Sender is the account ID to initialize transactions.
-				// getAccountId() will return empty string if user is still unauthorized
-				sender: window.walletConnection.getAccountId(),
-			},
-		);
-	}
+	// 	// Initializing our contract APIs by contract name and configuration.
+	// 	window.contract1 = await new nearAPI.Contract(
+	// 		window.walletConnection.account(),
+	// 		nearConfig.contractName,
+	// 		{
+	// 			// View methods are read-only – they don't modify the state, but usually return some value
+	// 			viewMethods: ["nft_metadata"],
+	// 			// Change methods can modify the state, but you don't receive the returned value when called
+	// 			changeMethods: ["nft_mint", "new_default_meta"],
+	// 			// Sender is the account ID to initialize transactions.
+	// 			// getAccountId() will return empty string if user is still unauthorized
+	// 			sender: window.walletConnection.getAccountId(),
+	// 		},
+	// 	);
+	// }
 
-	function connectWal() {
-		walletConnection.requestSignIn(CONTRACT_NAME, "Rust Counter Example");
-	}
+	// function connectWal() {
+	// 	console.log(walletConnection.getAccountId());
+	// 	walletConnection.requestSignIn("test.testnet","1");
+	// 	// walletConnection.requestSignIn(CONTRACT_NAME, "Rust Counter Example");
+	// 	// console.log(1);
+	// }
 
-	window.nearInitPromise = connectNear().then(() => {
-		console.log("test");
-		// connectWal();
-	});
+	// window.nearInitPromise = connectNear().then(() => {
+	// 	console.log("test");
+	// 	// connectWal();
+	// });
 
 	function initContract() {
 		contract1.new_default_meta({owner_id: "blender.testnet"});
@@ -156,7 +175,7 @@ function Header({activeCat}) {
 								</div>
 							) : (
 								<div class="wallet">
-									<div class="button-1-square" onClick={connectWal}>
+									<div class="button-1-square" onClick={signIn}>
 										Connect
 									</div>
 									{/* <button onClick={initContract}>init Call</button>
