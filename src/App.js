@@ -32,6 +32,7 @@ import CollectionMarketPack from "./sdk/CollectionMarketPack";
 import NftDetails from "./sdk/NftDetails";
 import NftMarket from "./sdk/NftMarket";
 import NftMarketPack from "./sdk/NftMarketPack";
+import NftMarketAuction from "./sdk/NftMarketAuction";
 
 import {Buffer} from "buffer";
 global.Buffer = Buffer;
@@ -89,6 +90,11 @@ function App() {
 							exact
 							path="/nft-market-pack/:address"
 							component={NftMarketPack}
+						></Route>
+						<Route
+							exact
+							path="/nft-market-auction"
+							component={NftMarketAuction}
 						></Route>
 						<Route exact path="/nft-details" component={NftDetails}></Route>
 						<Route exact path="/how" component={HowPage}></Route>

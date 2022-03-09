@@ -1079,11 +1079,60 @@ button,
 	transform: translate(-50%, -50%);
 }
 .modal-connect-sale {
-	width: auto;
+	font-size: 16px;
+	width: 460px;
 	height: auto;
-	max-width: 620px;
-	max-height: 840px;
+	color: #fff;
+	// max-width: 620px;
+	// max-height: 840px;
 }
+.modal-connect-sale > .menu-sale {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-bottom: 40px;
+}
+.modal-connect-sale > .menu-sale > .menu-item {
+	margin: 10px;
+	padding: 10px;
+	border-bottom: 3px solid #6333ff;
+	cursor: pointer;
+}
+.modal-connect-sale > .content {
+	padding: 0px 80px;
+}
+.modal-connect-sale > .content > .title {
+	font-size: 27px;
+	margin-bottom: 10px;
+}
+.modal-connect-sale > .content > .subtitle {
+	color: #bcbcbc;
+	margin-bottom: 40px;
+}
+.modal-connect-sale > .content > .input-sale {
+	margin-bottom: 20px;
+}
+.modal-connect-sale > .content > .input-sale > .title {
+	font-size: 14px;
+	margin-bottom: 6px;
+}
+.modal-connect-sale > .content > .input-sale > input {
+	width: 100%;
+	padding: 14px;
+	border: 1px solid #444444;
+	border-radius: 4px;
+	background: #282a2d;
+	color: #fff;
+}
+.modal-connect-sale > .content > .sale {
+	margin-top: 10px;
+	width: 100%;
+	padding: 20px;
+	text-align: center;
+	background: #6333ff;
+	border-radius: 4px;
+}
+
 .modal-connect > .page > .title {
 	font-size: 27px;
 	margin-bottom: 10px;
@@ -2446,6 +2495,131 @@ input[type="text"]:focus {
 	width: 100%;
 	display: flex;
 	justify-content: space-between;
+}
+
+.auction-sale {
+	display: flex;
+	justify-content: space-between;
+	color: #fff;
+	font-size: 16px;
+}
+.auction-sale .title {
+	color: #fff;
+	margin-bottom: 10px;
+	font-size: 16px;
+}
+.auction-sale > .img {
+	width: 45%;
+}
+.auction-sale > .img > .img {
+	width: 100%;
+	height: 400px;
+	margin-bottom: 40px;
+	background: grey;
+}
+.auction-sale > .img > .text {
+	color: #b6b6b6;
+	margin-bottom: 40px;
+}
+.auction-sale > .content {
+	width: 45%;
+}
+.auction-sale > .content > .title-col {
+	color: #b6b6b6;
+	margin-bottom: 5px;
+}
+.auction-sale > .content > .title-nft {
+	font-size: 42px;
+	margin-bottom: 40px;
+}
+.auction-sale > .content > .desc {
+	color: #b6b6b6;
+	margin-bottom: 40px;
+}
+.auction-sale > .content > .price {
+	margin-bottom: 40px;
+}
+.auction-sale > .content > .price > .price {
+	font-size: 28px;
+	margin-bottom: 30px;
+}
+.auction-sale > .content > .price > .buttons {
+	display: flex;
+	justify-content: space-between;
+}
+.auction-sale > .content > .price > .buttons > .button {
+	width: 45%;
+	padding: 21px 0px;
+	text-align: center;
+	border: 1px solid #444444;
+	border-radius: 4px;
+	background: #212121;
+}
+.auction-sale > .content > .time {
+	margin-bottom: 80px;
+}
+.auction-sale > .content > .time > .timer {
+	display: flex;
+}
+.auction-sale > .content > .time > .timer > .timer-item:nth-child(1) {
+	margin-left: 0px;
+}
+.auction-sale > .content > .time > .timer > .timer-item {
+	margin: 0px 15px;
+}
+.auction-sale > .content > .time > .timer > .timer-item > .num {
+	border: 1px solid #444444;
+	background: #212121;
+	padding: 34px 20px;
+	font-size: 28px;
+	margin-bottom: 8px;
+	border-radius: 4px;
+}
+.auction-sale > .content > .time > .timer > .timer-item > .text {
+	color: #b6b6b6;
+	text-align: center;
+}
+.auction-sale > .content > .history > .menu-history {
+	display: flex;
+	margin-bottom: 15px;
+}
+.auction-sale > .content > .history > .menu-history > .menu-item:nth-child(1) {
+	margin-left: 0px;
+}
+.auction-sale > .content > .history > .menu-history > .menu-item {
+	margin: 0px 20px;
+	padding-bottom: 10px;
+	border-bottom: 3px solid #6333ff;
+}
+.auction-sale > .content > .history > .content > .item {
+	margin-bottom: 8px;
+	padding: 12px;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	background: #161616;
+}
+.auction-sale > .content > .history > .content > .item > .name {
+	font-size: 18px;
+	width: 80%;
+	margin-bottom: 5px;
+}
+.auction-sale > .content > .history > .content > .item > .name > span {
+	color: #b6b6b6;
+}
+.auction-sale > .content > .history > .content > .item > .price {
+	font-size: 18px;
+	width: 20%;
+}
+.auction-sale > .content > .history > .content > .item > .date {
+	width: 80%;
+	color: #b6b6b6;
+	font-size: 14px;
+}
+.auction-sale > .content > .history > .content > .item > .price-rub {
+	width: 20%;
+	font-size: 14px;
+	color: #b6b6b6;
 }
 
 // mobile

@@ -483,23 +483,43 @@ function ProfilePage() {
 						<span></span>
 						<span></span>
 					</button>
-					<div class="title">{saleModal.name}</div>
-					<div class="image">
-						<img src={"https://gateway.pinata.cloud/ipfs/" + saleModal.image} />
-					</div>
-					<div class="mint owner">
-						NFT address: <span>{saleModal.addrNft}</span>
-					</div>
-					<div class="mint price">
-						Set Price
-						<input
-							type="number"
-							onChange={(e) => setSalePrice(e.target.value)}
-						/>
+
+					<div class="menu-sale">
+						<div class="menu-item auction">Auction Sale</div>
+						<div class="menu-item regular">Regular Sale</div>
 					</div>
 
-					<div class="button-1-square" onClick={saleNft}>
-						Sale
+					<div class="content auction hide">
+						<div class="title">Auction Sale</div>
+						<div class="subtitle">
+							Enter the starting price, bid amount and duration of the auction
+						</div>
+						<div class="input-sale">
+							<div class="title">Starting price (ETH)</div>
+							<input type="number" />
+						</div>
+						<div class="input-sale">
+							<div class="title">Minimum bet (ETH)</div>
+							<input type="number" />
+						</div>
+						<div class="input-sale">
+							<div class="title">Auction time</div>
+							<input type="date" />
+						</div>
+						<div class="sale">Put up for auction</div>
+					</div>
+
+					<div class="content regular">
+						<div class="title">Regular Sale</div>
+						<div class="subtitle">
+							Enter your desired sale price, and use Sale to list the NFT for
+							sale on the marketplace
+						</div>
+						<div class="input-sale">
+							<div class="title">Price (ETH)</div>
+							<input type="number" />
+						</div>
+						<div class="sale">Sale</div>
 					</div>
 				</div>
 
@@ -551,6 +571,30 @@ function ProfilePage() {
 							<div
 								className={activeCat == 0 ? "nft-category collect-nft" : "hide"}
 							>
+								<div class="nft">
+									<div class="nft-image">
+										<img src={"https://gateway.pinata.cloud/ipfs/"} />
+									</div>
+									<div class="nft-content">
+										<div class="name">Test</div>
+										<div class="name-nft">Test2</div>
+										<a href="#/nft-details">View Details</a>
+										<button
+											class="btn-main"
+											onClick={() =>
+												setSaleModal({
+													hidden: false,
+													addrNft: "test",
+													image: "test",
+													name: "test",
+												})
+											}
+										>
+											Sale
+										</button>
+									</div>
+								</div>
+
 								{nftSale[0].image == "Null" ? (
 									<div class="null-nft">No NFT`s</div>
 								) : (

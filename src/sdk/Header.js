@@ -51,63 +51,66 @@ function Header({activeCat}) {
 	const connectWallet = useSelector((state) => state.connectWallet);
 
 	function logOut(e) {
-		e.preventDefault();
+		walletConnection.signOut();
+	}
+
+	async function connectNear() {
 		console.log(1);
-		sessionStorage.clear();
-		location.reload();
+
+		window.near = await nearAPI.connect({
+			deps: {
+				keyStore: new nearAPI.keyStores.BrowserLocalStorageKeyStore(),
+			},
+			...nearConfig,
+		});
+
+		// Needed to access wallet login
+		window.walletConnection = new nearAPI.WalletConnection(window.near);
+
+		// Initializing our contract APIs by contract name and configuration.
+		window.contract1 = await new nearAPI.Contract(
+			window.walletConnection.account(),
+			nearConfig.contractName,
+			{
+				// View methods are read-only – they don't modify the state, but usually return some value
+				viewMethods: ["nft_metadata", "nft_supply_for_owner", "nft_tokens"],
+				// Change methods can modify the state, but you don't receive the returned value when called
+				changeMethods: ["nft_mint", "new_default_meta"],
+				// Sender is the account ID to initialize transactions.
+				// getAccountId() will return empty string if user is still unauthorized
+				sender: window.walletConnection.getAccountId(),
+			},
+		);
 	}
 
-	async function signIn() {
-		const near = await connect(config);
-
-		const wallet = new WalletConnection(near);
-
-		wallet.requestSignIn("example-contract.testnet");
+	function connectWal() {
+		walletConnection.requestSignIn(CONTRACT_NAME, "Rust Counter Example");
 	}
 
-	// async function connectNear() {
-	// 	console.log(1);
+	const [walletAddress, setWalletAddress] = useState();
 
-	// 	window.near = await nearAPI.connect({
-	// 		deps: {
-	// 			keyStore: new nearAPI.keyStores.BrowserLocalStorageKeyStore(),
-	// 		},
-	// 		...nearConfig,
-	// 	});
-
-	// 	// Needed to access wallet login
-	// 	window.walletConnection = new nearAPI.WalletConnection(window.near);
-
-	// 	// Initializing our contract APIs by contract name and configuration.
-	// 	window.contract1 = await new nearAPI.Contract(
-	// 		window.walletConnection.account(),
-	// 		nearConfig.contractName,
-	// 		{
-	// 			// View methods are read-only – they don't modify the state, but usually return some value
-	// 			viewMethods: ["nft_metadata"],
-	// 			// Change methods can modify the state, but you don't receive the returned value when called
-	// 			changeMethods: ["nft_mint", "new_default_meta"],
-	// 			// Sender is the account ID to initialize transactions.
-	// 			// getAccountId() will return empty string if user is still unauthorized
-	// 			sender: window.walletConnection.getAccountId(),
-	// 		},
-	// 	);
-	// }
-
-	// function connectWal() {
-	// 	console.log(walletConnection.getAccountId());
-	// 	walletConnection.requestSignIn("test.testnet","1");
-	// 	// walletConnection.requestSignIn(CONTRACT_NAME, "Rust Counter Example");
-	// 	// console.log(1);
-	// }
-
-	// window.nearInitPromise = connectNear().then(() => {
-	// 	console.log("test");
-	// 	// connectWal();
-	// });
+	window.nearInitPromise = connectNear().then(() => {
+		try {
+			setWalletAddress(walletConnection.getAccountId());
+		} catch {
+			setWalletAddress(undefined);
+		}
+		console.log(walletAddress);
+	});
 
 	function initContract() {
 		contract1.new_default_meta({owner_id: "blender.testnet"});
+	}
+
+	function test123() {
+		contract1
+			.nft_supply_for_owner({account_id: "blender.testnet"})
+			.then((data) => {
+				console.log(data);
+			});
+		contract1.nft_tokens({from_index: "0", limit: 50}).then((data) => {
+			console.log(data);
+		});
 	}
 
 	function contractF() {
@@ -139,6 +142,10 @@ function Header({activeCat}) {
 		});
 	}
 
+	function test321() {
+		console.log(walletConnection.getAccountId());
+	}
+
 	return (
 		<Router>
 			<div className="header header2">
@@ -148,10 +155,10 @@ function Header({activeCat}) {
 							<a href="#/">
 								<div class="name">NFTour</div>
 							</a>
-							{sessionStorage.address ? (
+							{localStorage.undefined_wallet_auth_key ? (
 								<div class="wallet">
 									<div className="acc-status">Connected:</div>
-									<div className="acc-wallet">{sessionStorage.address}</div>
+									<div className="acc-wallet">{walletAddress}</div>
 									<div
 										className={
 											openMenu ? "btn-menu btn-menu-active" : "btn-menu"
@@ -163,9 +170,7 @@ function Header({activeCat}) {
 										<a
 											onClick={(ev) => {
 												ev.preventDefault();
-												history.push(
-													"/profile/" + sessionStorage.getItem("address"),
-												);
+												history.push("/profile/" + walletAddress);
 											}}
 										>
 											Your Profile
@@ -175,12 +180,14 @@ function Header({activeCat}) {
 								</div>
 							) : (
 								<div class="wallet">
-									<div class="button-1-square" onClick={signIn}>
+									<div class="button-1-square" onClick={connectWal}>
 										Connect
 									</div>
+									{/* <button onClick={test321}>test</button> */}
 									{/* <button onClick={initContract}>init Call</button>
 									<button onClick={contractF}>contract Call</button>
-									<button onClick={contractP}>contract View</button> */}
+									<button onClick={contractP}>contract View</button>
+									<button onClick={test123}>view1</button> */}
 								</div>
 							)}
 						</div>
