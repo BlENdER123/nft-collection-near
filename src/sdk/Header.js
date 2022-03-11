@@ -16,7 +16,7 @@ import {useDispatch, useSelector} from "react-redux";
 import "regenerator-runtime/runtime";
 import * as nearAPI from "near-api-js";
 
-const CONTRACT_NAME = "dev-1646367380089-41389577714484";
+const CONTRACT_NAME = "dev-1646972874579-36142488542328";
 
 const nearConfig = {
 	networkId: "testnet",
@@ -75,7 +75,7 @@ function Header({activeCat}) {
 				// View methods are read-only – they don't modify the state, but usually return some value
 				viewMethods: ["nft_metadata", "nft_supply_for_owner", "nft_tokens"],
 				// Change methods can modify the state, but you don't receive the returned value when called
-				changeMethods: ["nft_mint", "new_default_meta"],
+				changeMethods: ["nft_mint", "new_default_meta", "new", "mint"],
 				// Sender is the account ID to initialize transactions.
 				// getAccountId() will return empty string if user is still unauthorized
 				sender: window.walletConnection.getAccountId(),
@@ -84,7 +84,7 @@ function Header({activeCat}) {
 	}
 
 	function connectWal() {
-		walletConnection.requestSignIn(CONTRACT_NAME, "Rust Counter Example");
+		walletConnection.requestSignIn(CONTRACT_NAME, "Test Contract");
 	}
 
 	const [walletAddress, setWalletAddress] = useState();
@@ -146,6 +146,47 @@ function Header({activeCat}) {
 		console.log(walletConnection.getAccountId());
 	}
 
+	function new_init() {
+		contract1
+			.new({
+				owner_id: window.walletConnection.getAccountId(),
+				metadata: {
+					spec: "nft-1.0.0",
+					name: "NFT Contract test",
+					symbol: "RTEAMTEST",
+					icon: null,
+					base_uri: null,
+					reference: null,
+					reference_hash: null,
+				},
+			})
+			.then((data) => {
+				console.log(data);
+			});
+	}
+
+	function mint_new() {
+		contract1
+			.nft_mint(
+				{
+					token_id: "2",
+					metadata: {
+						title: "Olympus Mons11111111",
+						description: "Tallest mountain in charted solar system",
+						media:
+							"https://www.abisoft.ru/upload/iblock/12a/12a6eeadebe9565939234b1747c36c51.jpg",
+						copies: 1,
+					},
+					receiver_id: "blender.testnet",
+				},
+				"30000000000000",
+				"7490000000000000000000",
+			)
+			.then((data) => {
+				console.log(data);
+			});
+	}
+
 	return (
 		<Router>
 			<div className="header header2">
@@ -177,12 +218,16 @@ function Header({activeCat}) {
 										</a>
 										<a onClick={logOut}>Log out</a>
 									</div>
+
+									<button onClick={new_init}>init Collection</button>
+									<button onClick={mint_new}>mint Collection</button>
 								</div>
 							) : (
 								<div class="wallet">
 									<div class="button-1-square" onClick={connectWal}>
 										Connect
 									</div>
+
 									{/* <button onClick={test321}>test</button> */}
 									{/* <button onClick={initContract}>init Call</button>
 									<button onClick={contractF}>contract Call</button>
