@@ -219,8 +219,8 @@ function Header({activeCat}) {
 										<a onClick={logOut}>Log out</a>
 									</div>
 
-									<button onClick={new_init}>init Collection</button>
-									<button onClick={mint_new}>mint Collection</button>
+									{/* <button onClick={new_init}>init Collection</button>
+									<button onClick={mint_new}>mint Collection</button> */}
 								</div>
 							) : (
 								<div class="wallet">
