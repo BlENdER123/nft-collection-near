@@ -17,6 +17,7 @@ const portHTTP = 5000;
 //     key: fs.readFileSync("radiance.key"),
 //     cert: fs.readFileSync("radiance.crt")
 // };
+// console.log(optionsHTTP);
 const server = http.createServer(app);
 // const httpsserver = https.createServer(optionsHTTP, app);
 

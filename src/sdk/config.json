@@ -1,5 +1,13 @@
 {
 	"dexroot": "0:b199c648ae3f6d2b1a774d51f35b5af98a346672c91f1da9c1f1ba3a0a3d69d0",
 	"marketroot": "0:2cb14c27bcf07c486b9da438575fda0f47fc3457f7d24cf0ad62695569a6e095",
-	"DappServer": "net.ton.dev"
+	"DappServer": "net.ton.dev",
+	"contractNft": "dev-1646972874579-36142488542328",
+	"nearConfig": {
+		"networkId": "testnet",
+		"nodeUrl": "https://rpc.testnet.near.org",
+		"contractName": "",
+		"walletUrl": "https://wallet.testnet.near.org",
+		"helperUrl": "https://helper.testnet.near.org"
+	}
 }

@@ -20,7 +20,7 @@ function Footer() {
 					<div class="footer-1">
 						<div class="name">RADIANCETEAM</div>
 						<div class="copyright">
-							© 2021, radianceteam.com
+							© 2022, radianceteam.com
 							<br />
 							Terms of Service
 							<br />
@@ -29,9 +29,9 @@ function Footer() {
 					</div>
 					<div class="footer-2">
 						<div class="pages">
-							<a href="https://t.me/DefiSpacecom">
+							{/* <a href="https://t.me/DefiSpacecom">
 								<div class="page-element">Telegram</div>
-							</a>
+							</a> */}
 						</div>
 						<div class="email">
 							<span>For corporation</span>

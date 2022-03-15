@@ -194,7 +194,7 @@ function Header({activeCat}) {
 					<div className="acc-info">
 						<div className={mobMenu ? "hide" : "acc-info1"}>
 							<a href="#/">
-								<div class="name">NFTour</div>
+								<div class="name">NFT Art Generator</div>
 							</a>
 							{localStorage.undefined_wallet_auth_key ? (
 								<div class="wallet">

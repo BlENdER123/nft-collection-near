@@ -1,5 +1,6 @@
 node_modules
 build
+nearWasm
 .idea
 .vscode
 yarn-error.log

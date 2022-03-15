@@ -6,6 +6,28 @@ import {libWeb} from "@tonclient/lib-web";
 
 import {signerKeys, TonClient, signerNone} from "@tonclient/core";
 
+// import fs from 'fs'
+
+// import wasmFile from "./nearWasm/main.wasm";
+
+// const wasmFile = require("./nearWasm/main.wasm");
+
+// import * as wasmFile from "nft_simple";
+// const wasmFile = require("wasm-package-near");
+
+// const fs = require("fs");
+
+// console.log(fs.readFileSync(wasmFile));
+
+// console.log(wasmFile);
+// console.log(1);
+
+// wasmFile.then((data)=>{
+// 	console.log(data);
+// 	console.log(1);
+
+// });
+
 //contracts
 // import {DeployerColectionContract} from "./collection contracts/nftour/src/build/DeployerColectionContract.js";
 // import {NftRootContract} from "./collection contracts/nftour/src/build/NftRootContract.js";
@@ -25,39 +47,32 @@ import Footer from "./Footer";
 
 import {useDispatch, useSelector} from "react-redux";
 
-TonClient.useBinaryLibrary(libWeb);
+import "regenerator-runtime/runtime";
+import * as nearAPI from "near-api-js";
+
+const {contractNft, nearConfig} = require("./config.json");
+
+const {connect, keyStores, WalletConnection} = nearAPI;
+
+const keyStore = new keyStores.BrowserLocalStorageKeyStore();
+
+// console.log(config);
 
 const axios = require("axios");
-
-const config = require("./config.json");
-
-const client = new TonClient({network: {endpoints: [config.DappServer]}});
 
 const pidCrypt = require("pidcrypt");
 require("pidcrypt/aes_cbc");
 const aes = new pidCrypt.AES.CBC();
 
-async function getClientKeys(phrase) {
-	//todo change with only pubkey returns
-	let test = await client.crypto.mnemonic_derive_sign_keys({
-		phrase,
-		path: "m/44'/396'/0'/0/0",
-		dictionary: 1,
-		word_count: 12,
-	});
-	console.log(test);
-	return test;
-}
-
-function base64ToHex(str) {
-	const raw = atob(str);
-	let result = "";
-	for (let i = 0; i < raw.length; i++) {
-		const hex = raw.charCodeAt(i).toString(16);
-		result += hex.length === 2 ? hex : "0" + hex;
-	}
-	return result.toUpperCase();
-}
+// function base64ToHex(str) {
+// 	const raw = atob(str);
+// 	let result = "";
+// 	for (let i = 0; i < raw.length; i++) {
+// 		const hex = raw.charCodeAt(i).toString(16);
+// 		result += hex.length === 2 ? hex : "0" + hex;
+// 	}
+// 	return result.toUpperCase();
+// }
 
 function NftCollection() {
 	const dispatch = useDispatch();
@@ -76,203 +91,242 @@ function NftCollection() {
 
 	const [avatar, setAvatar] = useState();
 
-	let marketrootAddr = config.marketroot;
+	// let marketrootAddr = config.marketroot;
 
-	const zeroAddress =
-		"0:0000000000000000000000000000000000000000000000000000000000000000";
+	async function connectNear() {
+		console.log(1);
+
+		window.near = await nearAPI.connect({
+			deps: {
+				keyStore: new nearAPI.keyStores.BrowserLocalStorageKeyStore(),
+			},
+			...nearConfig,
+		});
+
+		// Needed to access wallet login
+		window.walletConnection = new nearAPI.WalletConnection(window.near);
+
+		// Initializing our contract APIs by contract name and configuration.
+		// window.contract = await new nearAPI.Contract(
+		// 	window.walletConnection.account(),
+		// 	nearConfig.contractName,
+		// 	{
+		// 		// View methods are read-only – they don't modify the state, but usually return some value
+		// 		viewMethods: ["nft_metadata", "nft_supply_for_owner", "nft_tokens"],
+		// 		// Change methods can modify the state, but you don't receive the returned value when called
+		// 		changeMethods: ["nft_mint", "new_default_meta", "new", "mint"],
+		// 		// Sender is the account ID to initialize transactions.
+		// 		// getAccountId() will return empty string if user is still unauthorized
+		// 		sender: window.walletConnection.getAccountId(),
+		// 	},
+		// );
+
+		// console.log(contract);
+	}
+
+	window.nearInitPromise = connectNear();
 
 	async function deployCollection() {
-		console.log(1);
 		const pinataKey = "0a2ed9f679a6c395f311";
 		const pinataSecretKey =
 			"7b53c4d13eeaf7063ac5513d4c97c4f530ce7e660f0c147ab5d6aee6da9a08b9";
-		let decrypted = aes.decryptText(sessionStorage.getItem("seedHash"), "5555");
-
-		const acc = new Account(NFTMarketContract, {
-			address: marketrootAddr,
-			signer: signerNone(),
-			client,
-		});
-
-		const clientAcc = new Account(DEXClientContract, {
-			address: sessionStorage.getItem("address"),
-			signer: signerKeys(await getClientKeys(decrypted)),
-			client,
-		});
 
 		let deployData = JSON.parse(sessionStorage.getItem("details"));
 		console.log(deployData);
 
+		const account = await near.account(walletConnection.getAccountId());
+
+		console.log(fs);
+
+		const response = await account.deployContract(
+			fs.readFileSync("./nearWasm/main.wasm"),
+		);
+
+		console.log(response);
+		// contract
+		// 	.new({
+		// 		owner_id: window.walletConnection.getAccountId(),
+		// 		metadata: {
+		// 			spec: "nft-1.0.0",
+		// 			name: deployData.projectName,
+		// 			symbol: "RTEAMTEST",
+		// 			icon: null,
+		// 			base_uri: null,
+		// 			reference: null,
+		// 			reference_hash: null,
+		// 		},
+		// 	})
+		// 	.then(async (data) => {
+		// 		console.log(data);
+
+		// 		for (let i = 0; i < collection.length; i++) {
+		// 			const url = collection[i];
+		// 			await fetch(url)
+		// 				.then((res) => res.blob())
+		// 				.then((blob) => {
+		// 					const file = new File([blob], "File name", {type: "image/png"});
+
+		// 					const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
+
+		// 					let data = new FormData();
+
+		// 					data.append("file", file);
+
+		// 					return axios
+		// 						.post(url, data, {
+		// 							maxBodyLength: "Infinity",
+		// 							headers: {
+		// 								"Content-Type": `multipart/form-data; boundary=${data._boundary}`,
+		// 								pinata_api_key: pinataKey,
+		// 								pinata_secret_api_key: pinataSecretKey,
+		// 							},
+		// 						})
+		// 						.then(async function (response) {
+		// 							console.log(response.data.IpfsHash);
+
+		// 							contract
+		// 								.nft_mint(
+		// 									{
+		// 										token_id: i.toString(),
+		// 										metadata: {
+		// 											title: collectionName[i],
+		// 											description: deployData.projectDescription,
+		// 											media:
+		// 												"https://gateway.pinata.cloud/ipfs/" + response.data.IpfsHash,
+		// 											copies: 1,
+		// 										},
+		// 										receiver_id: walletConnection.getAccountId(),
+		// 									},
+		// 									"30000000000000",
+		// 									"7490000000000000000000",
+		// 								)
+		// 								.then((data) => {
+		// 									console.log(data);
+		// 								});
+
+		// 						})
+		// 						.catch(function (error) {
+		// 							console.error(error);
+		// 						});
+		// 				});
+		// 		}
+
+		// 	});
+
+		// let decrypted = aes.decryptText(sessionStorage.getItem("seedHash"), "5555");
+
+		// const acc = new Account(NFTMarketContract, {
+		// 	address: marketrootAddr,
+		// 	signer: signerNone(),
+		// 	client,
+		// });
+
+		// const clientAcc = new Account(DEXClientContract, {
+		// 	address: sessionStorage.getItem("address"),
+		// 	signer: signerKeys(await getClientKeys(decrypted)),
+		// 	client,
+		// });
+
 		// save avatar to IPFS
 
-		if (avatar == undefined || avatar == "") {
-			console.log("Enter avatar");
-			return;
-		}
+		// if (avatar == undefined || avatar == "") {
+		// 	console.log("Enter avatar");
+		// 	return;
+		// }
 
-		await fetch(avatar)
-			.then((res) => res.blob())
-			.then((blob) => {
-				const file = new File([blob], "File name", {type: "image/png"});
+		// await fetch(avatar)
+		// 	.then((res) => res.blob())
+		// 	.then((blob) => {
+		// 		const file = new File([blob], "File name", {type: "image/png"});
 
-				const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
+		// 		const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
 
-				let data = new FormData();
+		// 		let data = new FormData();
 
-				data.append("file", file);
+		// 		data.append("file", file);
 
-				return axios
-					.post(url, data, {
-						maxBodyLength: "Infinity",
-						headers: {
-							"Content-Type": `multipart/form-data; boundary=${data._boundary}`,
-							pinata_api_key: pinataKey,
-							pinata_secret_api_key: pinataSecretKey,
-						},
-					})
-					.then(async function (response) {
-						console.log(response.data.IpfsHash);
-						//deploy Collection
-						try {
-							const {body} = await client.abi.encode_message_body({
-								abi: {type: "Contract", value: NFTMarketContract.abi},
-								signer: {type: "None"},
-								is_internal: true,
-								call_set: {
-									function_name: "deployColection",
-									input: {
-										name: deployData.projectName,
-										description: deployData.projectDescription,
-										icon: response.data.IpfsHash,
-									},
-								},
-							});
+		// 		return axios
+		// 			.post(url, data, {
+		// 				maxBodyLength: "Infinity",
+		// 				headers: {
+		// 					"Content-Type": `multipart/form-data; boundary=${data._boundary}`,
+		// 					pinata_api_key: pinataKey,
+		// 					pinata_secret_api_key: pinataSecretKey,
+		// 				},
+		// 			})
+		// 			.then(async function (response) {
+		// 				console.log(response.data.IpfsHash);
+		// 				//deploy Collection
+		// 				try {
+		// 					const {body} = await client.abi.encode_message_body({
+		// 						abi: {type: "Contract", value: NFTMarketContract.abi},
+		// 						signer: {type: "None"},
+		// 						is_internal: true,
+		// 						call_set: {
+		// 							function_name: "deployColection",
+		// 							input: {
+		// 								name: deployData.projectName,
+		// 								description: deployData.projectDescription,
+		// 								icon: response.data.IpfsHash,
+		// 							},
+		// 						},
+		// 					});
 
-							const res = await clientAcc.run("sendTransaction", {
-								dest: marketrootAddr,
-								value: 1200000000,
-								bounce: true,
-								flags: 3,
-								payload: body,
-							});
-							console.log(res);
-						} catch (e) {
-							console.log(e);
-						}
-					})
-					.catch(function (error) {
-						console.error(error);
-					});
-			});
+		// 					const res = await clientAcc.run("sendTransaction", {
+		// 						dest: marketrootAddr,
+		// 						value: 1200000000,
+		// 						bounce: true,
+		// 						flags: 3,
+		// 						payload: body,
+		// 					});
+		// 					console.log(res);
+		// 				} catch (e) {
+		// 					console.log(e);
+		// 				}
+		// 			})
+		// 			.catch(function (error) {
+		// 				console.error(error);
+		// 			});
+		// 	});
 
-		console.log(1);
+		// console.log(1);
 
-		let idLastCol;
+		// let idLastCol;
 
-		try {
-			const response = await acc.runLocal("getInfo", {});
-			let value0 = response;
-			idLastCol = response.decoded.output.countColections - 1;
-			console.log("value0", value0);
-		} catch (e) {
-			console.log("catch E", e);
-		}
+		// try {
+		// 	const response = await acc.runLocal("getInfo", {});
+		// 	let value0 = response;
+		// 	idLastCol = response.decoded.output.countColections - 1;
+		// 	console.log("value0", value0);
+		// } catch (e) {
+		// 	console.log("catch E", e);
+		// }
 
-		console.log(idLastCol);
+		// console.log(idLastCol);
 
-		let nftRoot;
+		// let nftRoot;
 
-		try {
-			const response = await acc.runLocal("resolveNftRoot", {
-				addrOwner: sessionStorage.getItem("address"),
-				id: idLastCol,
-			});
-			let value0 = response;
-			nftRoot = response.decoded.output.addrNftRoot;
-			console.log("value0", value0);
-		} catch (e) {
-			console.log("catch E", e);
-		}
+		// try {
+		// 	const response = await acc.runLocal("resolveNftRoot", {
+		// 		addrOwner: sessionStorage.getItem("address"),
+		// 		id: idLastCol,
+		// 	});
+		// 	let value0 = response;
+		// 	nftRoot = response.decoded.output.addrNftRoot;
+		// 	console.log("value0", value0);
+		// } catch (e) {
+		// 	console.log("catch E", e);
+		// }
 
-		console.log(nftRoot);
+		// console.log(nftRoot);
 
-		const acc1 = new Account(NftRootColectionContract, {
-			address: nftRoot,
-			signer: signerNone(),
-			client,
-		});
+		// const acc1 = new Account(NftRootColectionContract, {
+		// 	address: nftRoot,
+		// 	signer: signerNone(),
+		// 	client,
+		// });
 
 		// save imgs to IPFS
-
-		for (let i = 0; i < collection.length; i++) {
-			const url = collection[i];
-			await fetch(url)
-				.then((res) => res.blob())
-				.then((blob) => {
-					const file = new File([blob], "File name", {type: "image/png"});
-
-					const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
-
-					let data = new FormData();
-
-					data.append("file", file);
-
-					return axios
-						.post(url, data, {
-							maxBodyLength: "Infinity",
-							headers: {
-								"Content-Type": `multipart/form-data; boundary=${data._boundary}`,
-								pinata_api_key: pinataKey,
-								pinata_secret_api_key: pinataSecretKey,
-							},
-						})
-						.then(async function (response) {
-							console.log(response.data.IpfsHash);
-
-							try {
-								const {body} = await client.abi.encode_message_body({
-									abi: {type: "Contract", value: NftRootColectionContract.abi},
-									signer: {type: "None"},
-									is_internal: true,
-									call_set: {
-										function_name: "deployMetadata",
-										input: {
-											wid: i,
-											name: collectionName[i],
-											description: deployData.projectDescription,
-											contentHash: 1,
-											mimeType: "test",
-											chunks: 1,
-											chunkSize: 1,
-											size: 1,
-											meta: {
-												height: 1,
-												width: 1,
-												duration: 1,
-												extra: "test",
-												json: response.data.IpfsHash,
-											},
-										},
-									},
-								});
-
-								const res = await clientAcc.run("sendTransaction", {
-									dest: nftRoot,
-									value: 1400000000,
-									bounce: true,
-									flags: 3,
-									payload: body,
-								});
-								console.log(res);
-							} catch (e) {
-								console.log(e);
-							}
-						})
-						.catch(function (error) {
-							console.error(error);
-						});
-				});
-		}
 	}
 
 	function closeError() {
