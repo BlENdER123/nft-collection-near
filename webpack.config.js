@@ -25,11 +25,6 @@ module.exports = {
 	module: {
 		rules: [
 			{
-				test: /\.wasm$/,
-				exclude: /node_modules/,
-				use: "wasm-loader",
-			},
-			{
 				test: /\.(js|jsx)$/,
 				exclude: /node_modules/,
 				resolve: {
@@ -59,10 +54,7 @@ module.exports = {
 	},
 	plugins: [
 		new CopyWebpackPlugin({
-			patterns: [
-				{from: "./node_modules/@tonclient/lib-web/tonclient.wasm"},
-				{from: "./src/sdk/nearWasm/main.wasm"},
-			],
+			patterns: [{from: "./node_modules/@tonclient/lib-web/tonclient.wasm"}],
 		}),
 		new MiniCssExtractPlugin({
 			filename: "style.css",
@@ -84,6 +76,9 @@ module.exports = {
 		}),
 		new Dotenv({
 			defaults: true,
+		}),
+		new webpack.ProvidePlugin({
+			Buffer: ["buffer", "Buffer"],
 		}),
 		// new webpack.LoaderOptionsPlugin({
 		// 	// test: /\.xxx$/, // may apply this only for some modules
@@ -115,7 +110,7 @@ module.exports = {
 	resolve: {
 		fallback: {
 			fs: false,
-			path: false,
+			buffer: require.resolve("buffer"),
 		},
 	},
 	// experiments: {
