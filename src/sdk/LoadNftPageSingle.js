@@ -135,6 +135,9 @@ function LoadNftPageSingle() {
 					let temp = classArr1[i];
 					if (classArr1[curentLayer].name == classArr1[i].name) {
 						if (temp.imgs[0] == undefined) {
+							setWidth(width);
+							setHeight(height);
+
 							temp.imgs = [];
 							temp.imgs.push(response.data.IpfsHash);
 							temp.width = width;
@@ -732,7 +735,7 @@ function LoadNftPageSingle() {
 								</div>
 								<div class="setting">
 									<div class="title-settings">Project Description</div>
-									<input
+									<textarea
 										type="text"
 										placeholder="Project Description"
 										class="input-settings"

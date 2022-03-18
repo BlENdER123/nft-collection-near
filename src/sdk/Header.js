@@ -51,47 +51,44 @@ function Header({activeCat}) {
 	const connectWallet = useSelector((state) => state.connectWallet);
 
 	function logOut(e) {
-		walletConnection.signOut();
+		walletAccount.signOut();
+		localStorage.clear();
+		location.reload();
 	}
 
 	async function connectNear() {
-		console.log(1);
+		window.nearConfig = {
+			networkId: "default",
+			nodeUrl: "https://rpc.testnet.near.org",
+			walletUrl: "https://wallet.testnet.near.org",
+		};
 
-		window.near = await nearAPI.connect({
-			deps: {
-				keyStore: new nearAPI.keyStores.BrowserLocalStorageKeyStore(),
-			},
-			...nearConfig,
-		});
+		// Initializing connection to the NEAR DevNet.
+		window.near = await nearAPI.connect(
+			Object.assign(
+				{deps: {keyStore: new nearAPI.keyStores.BrowserLocalStorageKeyStore()}},
+				window.nearConfig,
+			),
+		);
 
 		// Needed to access wallet login
-		window.walletConnection = new nearAPI.WalletConnection(window.near);
+		window.walletAccount = new nearAPI.WalletAccount(window.near);
 
-		// Initializing our contract APIs by contract name and configuration.
-		window.contract1 = await new nearAPI.Contract(
-			window.walletConnection.account(),
-			nearConfig.contractName,
-			{
-				// View methods are read-only – they don't modify the state, but usually return some value
-				viewMethods: ["nft_metadata", "nft_supply_for_owner", "nft_tokens"],
-				// Change methods can modify the state, but you don't receive the returned value when called
-				changeMethods: ["nft_mint", "new_default_meta", "new", "mint"],
-				// Sender is the account ID to initialize transactions.
-				// getAccountId() will return empty string if user is still unauthorized
-				sender: window.walletConnection.getAccountId(),
-			},
-		);
+		// Getting the Account ID. If unauthorized yet, it's just empty string.
+		window.accountId = window.walletAccount.getAccountId();
 	}
 
 	function connectWal() {
-		walletConnection.requestSignIn(CONTRACT_NAME, "Test Contract");
+		walletAccount.requestSignIn("", "Title");
+		console.log(nearAPI);
+		console.log(walletAccount);
 	}
 
 	const [walletAddress, setWalletAddress] = useState();
 
 	window.nearInitPromise = connectNear().then(() => {
 		try {
-			setWalletAddress(walletConnection.getAccountId());
+			setWalletAddress(walletAccount.getAccountId());
 		} catch {
 			setWalletAddress(undefined);
 		}

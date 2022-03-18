@@ -417,8 +417,9 @@ a:hover {
 	height: 100vh;
 	padding: 160px 0px;
 	position: relative;
-	background: url(/src/sdk/img/screenbg1.png) no-repeat;
-	background-position: 100% -150px;
+	background: url(/src/sdk/img/screenbg1_1.png) no-repeat;
+	// background-position: 100% -150px;
+	background-position: 95% 100px;
 }
 .main-screen::before {
 	content: "";
@@ -1968,6 +1969,15 @@ input[type="text"]:focus {
 	transition: 0.1s linear;
 	outline: none;
 }
+.modal-constructor-settings > .project-settings > .setting > textarea {
+	padding: 12px;
+	border: 1px solid #444;
+	border-radius: 4px;
+	background: #212121;
+	color: #bcc4ca80;
+	transition: 0.1s linear;
+	outline: none;
+}
 .modal-constructor-settings > .project-settings > .setting > input:focus {
 	border-color: #6333ff;
 }
@@ -2632,6 +2642,7 @@ input[type="text"]:focus {
 	.main-screen {
 		background-size: initial;
 		padding: 50px 0px;
+		background-position: 95% 0px;
 	}
 	.quality-screen {
 		padding: 50px 0px;
@@ -2639,6 +2650,18 @@ input[type="text"]:focus {
 	.video-screen {
 		padding: 100px 0px;
 		background-size: contain;
+	}
+}
+
+@media (max-width: 1200px) {
+	.main-screen > .container > .content {
+		margin-top: calc(100%);
+	}
+
+	.main-screen {
+		background-position: center top;
+		height: auto;
+		background-size: 90%;
 	}
 }
 
@@ -2665,7 +2688,7 @@ input[type="text"]:focus {
 
 @media (max-width: 768px) {
 	.main-screen {
-		background-size: cover;
+		// background-size: cover;
 	}
 }
 
@@ -3331,7 +3354,7 @@ pre code {
 
 	.main-screen {
 		background-repeat: no-repeat;
-		background-position: calc(100% + 300px) -150px;
+		// background-position: calc(100% + 300px) -150px;
 	}
 	/* .container-header {
         max-width: 540px
@@ -3347,7 +3370,8 @@ pre code {
 		max-width: calc(100% - 50px);
 	}
 	.main-screen {
-		background-position: 100% -130px;
+		// background-position: 100% -130px;
+		// background-position: 95% 0px;
 	}
 	/* .container-header {
         max-width: 720px
@@ -13791,7 +13815,8 @@ html[data-theme="dark"] .wallet-key {
 
 	.main-screen {
 		background-repeat: no-repeat;
-		background-position: right top;
+		// background-position: right top;
+		background-position: center top;
 	}
 
 	.main-screen > .container > .content {

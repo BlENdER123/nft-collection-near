@@ -116,6 +116,11 @@ function LoadNftPage() {
 					let temp = classArr1[i];
 					if (classArr1[curentLayer].name == classArr1[i].name) {
 						if (temp.imgs[0] == undefined) {
+							console.log("empty");
+
+							setWidth(width);
+							setHeight(height);
+
 							temp.imgs = [];
 							temp.imgs.push(response.data.IpfsHash);
 							temp.width = width;
@@ -292,6 +297,9 @@ function LoadNftPage() {
 			// //console.log(dataURL.replace(/^data:image\/(png|jpg);base64,/, ""));
 
 			// let src = dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+
+			console.log(image.width, image.height);
+
 			let name = file.name.substring(0, file.name.indexOf("."));
 
 			pinFileToIPFS(
@@ -648,7 +656,7 @@ function LoadNftPage() {
 								</div>
 								<div class="setting">
 									<div class="title-settings">Project Description</div>
-									<input
+									<textarea
 										type="text"
 										placeholder="Project Description"
 										class="input-settings"

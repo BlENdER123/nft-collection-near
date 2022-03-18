@@ -25,6 +25,11 @@ module.exports = {
 	module: {
 		rules: [
 			{
+				test: /\.wasm$/,
+				exclude: /node_modules/,
+				use: "wasm-loader",
+			},
+			{
 				test: /\.(js|jsx)$/,
 				exclude: /node_modules/,
 				resolve: {
@@ -41,6 +46,7 @@ module.exports = {
 				test: /\.s[ac]ss$/,
 				use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"],
 			},
+
 			{
 				test: /\.(png|jpg|gif|svg)$/,
 				use: "file-loader",
@@ -53,7 +59,10 @@ module.exports = {
 	},
 	plugins: [
 		new CopyWebpackPlugin({
-			patterns: [{from: "./node_modules/@tonclient/lib-web/tonclient.wasm"}],
+			patterns: [
+				{from: "./node_modules/@tonclient/lib-web/tonclient.wasm"},
+				{from: "./src/sdk/nearWasm/main.wasm"},
+			],
 		}),
 		new MiniCssExtractPlugin({
 			filename: "style.css",
@@ -76,39 +85,32 @@ module.exports = {
 		new Dotenv({
 			defaults: true,
 		}),
-		new webpack.LoaderOptionsPlugin({
-			// test: /\.xxx$/, // may apply this only for some modules
-			options: {
-				webpack: {
-					configure: (webpackConfig) => {
-						const wasmExtensionRegExp = /\.wasm$/;
-						webpackConfig.resolve.extensions.push(".wasm");
+		// new webpack.LoaderOptionsPlugin({
+		// 	// test: /\.xxx$/, // may apply this only for some modules
+		// 	options: {
+		// 		webpack: {
+		// 			configure: (webpackConfig) => {
+		// 				const wasmExtensionRegExp = /\.wasm$/;
+		// 				webpackConfig.resolve.extensions.push(".wasm");
 
-						webpackConfig.module.rules.forEach((rule) => {
-							(rule.oneOf || []).forEach((oneOf) => {
-								if (oneOf.loader && oneOf.loader.indexOf("file-loader") >= 0) {
-									oneOf.exclude.push(wasmExtensionRegExp);
-								}
-							});
-						});
+		// 				webpackConfig.module.rules.forEach((rule) => {
+		// 					(rule.oneOf || []).forEach((oneOf) => {
+		// 						if (oneOf.loader && oneOf.loader.indexOf("file-loader") >= 0) {
+		// 							oneOf.exclude.push(wasmExtensionRegExp);
+		// 						}
+		// 					});
+		// 				});
 
-						const wasmLoader = {
-							test: /\.wasm$/,
-							exclude: /node_modules/,
-							loaders: ["wasm-loader"],
-						};
+		// 				addBeforeLoader(
+		// 					webpackConfig,
+		// 					loaderByName("file-loader"),
+		// 				);
 
-						addBeforeLoader(
-							webpackConfig,
-							loaderByName("file-loader"),
-							wasmLoader,
-						);
-
-						return webpackConfig;
-					},
-				},
-			},
-		}),
+		// 				return webpackConfig;
+		// 			},
+		// 		},
+		// 	},
+		// }),
 	],
 	resolve: {
 		fallback: {
@@ -116,10 +118,10 @@ module.exports = {
 			path: false,
 		},
 	},
-	experiments: {
-		asyncWebAssembly: true,
-		// importAsync: true
-	},
+	// experiments: {
+	// 	asyncWebAssembly: true,
+	// 	// importAsync: true
+	// },
 
 	// webpack: {
 	// 	configure: (webpackConfig) => {
