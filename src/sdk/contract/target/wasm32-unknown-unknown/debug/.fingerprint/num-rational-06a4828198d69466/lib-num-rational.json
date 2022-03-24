@@ -1,0 +1,25 @@
+{
+	"rustc": 16065624160775160083,
+	"features": "[\"default\", \"num-bigint\", \"num-bigint-std\", \"serde\", \"std\"]",
+	"target": 14411180192080014124,
+	"profile": 12637318739757120569,
+	"path": 2517580295181354711,
+	"deps": [
+		[5262205180847191334, "num_traits", false, 3607917125361114359],
+		[7005326755200385312, "num_bigint", false, 13899245674721644499],
+		[9206902667115925935, "num_integer", false, 10082161019043260754],
+		[10122989572841364382, "serde", false, 6143565560585965347],
+		[11928408529930203077, "build_script_build", false, 4210240880155035308]
+	],
+	"local": [
+		{
+			"CheckDepInfo": {
+				"dep_info": "wasm32-unknown-unknown\\debug\\.fingerprint\\num-rational-06a4828198d69466\\dep-lib-num-rational"
+			}
+		}
+	],
+	"rustflags": ["-C", "link-args=-s"],
+	"metadata": 18311408697950330488,
+	"config": 2202906307356721367,
+	"compile_kind": 8104632896995515128
+}

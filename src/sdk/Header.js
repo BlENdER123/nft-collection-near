@@ -50,6 +50,8 @@ function Header({activeCat}) {
 
 	const connectWallet = useSelector((state) => state.connectWallet);
 
+	const [nearInit, setNearInit] = useState(false);
+
 	function logOut(e) {
 		walletAccount.signOut();
 		localStorage.clear();
@@ -86,14 +88,17 @@ function Header({activeCat}) {
 
 	const [walletAddress, setWalletAddress] = useState();
 
-	window.nearInitPromise = connectNear().then(() => {
-		try {
-			setWalletAddress(walletAccount.getAccountId());
-		} catch {
-			setWalletAddress(undefined);
-		}
-		console.log(walletAddress);
-	});
+	if (!nearInit) {
+		window.nearInitPromise = connectNear().then(() => {
+			try {
+				setWalletAddress(walletAccount.getAccountId());
+			} catch {
+				setWalletAddress(undefined);
+			}
+			console.log(walletAddress);
+			setNearInit(true);
+		});
+	}
 
 	function initContract() {
 		contract1.new_default_meta({owner_id: "blender.testnet"});

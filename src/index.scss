@@ -291,6 +291,18 @@ a:hover {
 	cursor: pointer;
 	text-align: center;
 }
+.button-1-square-disabled {
+	color: #fff;
+	background: grey;
+	border: none;
+	font-size: 14px;
+	border-radius: 4px;
+	cursor: auto;
+	text-align: center;
+}
+.button-1-square-disabled:hover {
+	background-color: grey !important;
+}
 .button-2-square {
 	color: #6a3ccd;
 	background: #fff;
