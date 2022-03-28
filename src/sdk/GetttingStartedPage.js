@@ -15,6 +15,8 @@ function GettingStarted() {
 	const dispatch = useDispatch();
 	const connectWallet = useSelector((state) => state.connectWallet);
 
+	const [videoPlay, setVideoPlay] = useState(false);
+
 	function next() {
 		if (curentMode == 0) {
 			history.push("/load-nft");
@@ -43,6 +45,24 @@ function GettingStarted() {
 			<div className={connectWallet ? "error-bg" : "hide"}>
 				<span onClick={close}></span>
 			</div>
+
+			<div className={videoPlay ? "video-player" : "hide"}>
+				<button className="close" onClick={() => setVideoPlay(false)}>
+					<span></span>
+					<span></span>
+				</button>
+
+				<div class="video">
+					<iframe
+						src="https://www.youtube.com/embed/YHatcktJM8I"
+						title="YouTube video player"
+						frameborder="0"
+						allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+						allowfullscreen
+					></iframe>
+				</div>
+			</div>
+
 			<div className={connectWallet ? "App-error" : "App"}>
 				<Header activeCat={0}></Header>
 
@@ -124,6 +144,12 @@ function GettingStarted() {
 								<a href="#/how">
 									<button class="button-1-square">How to use?</button>
 								</a>
+								<button
+									class="button-2-square"
+									onClick={() => setVideoPlay(true)}
+								>
+									Video Instructions
+								</button>
 							</div>
 						</div>
 					</div>

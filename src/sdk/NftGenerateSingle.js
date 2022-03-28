@@ -563,7 +563,7 @@ function NftCustomizationSingle() {
 					errorModal.hidden === true || connectWallet ? "error-bg" : "hide"
 				}
 			>
-				<span onClick={close}></span>
+				<span className={connectWallet ? "" : "hide"} onClick={close}></span>
 			</div>
 			<div
 				className={
@@ -582,6 +582,9 @@ function NftCustomizationSingle() {
 								<span></span>
 							</button>
 							<div className="message">{errorModal.message}</div>
+							<button className="button-3-square" onClick={closeError}>
+								OK
+							</button>
 						</div>
 
 						<div class="modal-constructor modal-constructor-layers ">
@@ -683,10 +686,8 @@ function NftCustomizationSingle() {
 
 							<div class="title">How to use?</div>
 							<div class="text text-nonline">
-								Phasellus condimentum suscipit metus vel mattis. Ut vulputate
-								tincidunt odio. Nam odio augue, molestie id rutrum et, cursus id
-								libero. Quisque nulla dolor, condimentum quis posuere et, mattis
-								quis sapien. Donec mollis.{" "}
+								To create a collection you need to save your NFT, set price and
+								royalty.{" "}
 							</div>
 
 							<div style={{margin: "20px 0px 0px 0px"}} class="title">

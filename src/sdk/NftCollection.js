@@ -84,6 +84,8 @@ const {connect, keyStores, WalletConnection} = nearAPI;
 
 const keyStore = new keyStores.BrowserLocalStorageKeyStore();
 
+const sha256 = require("js-sha256");
+
 // console.log(config);
 
 const axios = require("axios");
@@ -474,6 +476,159 @@ function NftCollection() {
 		// save imgs to IPFS
 	}
 
+	async function testTrans() {
+		console.log(1);
+
+		let addr = sessionStorage.getItem("addrCol");
+
+		window.contractCollection = await new nearAPI.Contract(
+			window.walletConnection.account(),
+			addr,
+			{
+				// View methods are read-only – tfey don't modify the state, but usually return some value
+				// viewMethods: ['get_num'],
+				// Change methods can modify the state, but you don't receive the returned value when called
+				changeMethods: ["new", "nft_mint"],
+				// Sender is the account ID to initialize transactions.
+				// getAccountId() will return empty string if user is still unauthorized
+				sender: window.walletConnection.getAccountId(),
+			},
+		);
+
+		const acc = await near.account(addr);
+
+		let pubKey = JSON.parse(keyStore.localStorage.undefined_wallet_auth_key)
+			.allKeys[0];
+
+		console.log(near);
+
+		let status = await near.connection.provider.status();
+		console.log(status);
+
+		const accessKey = await near.connection.provider.query(
+			`access_key/${window.walletConnection.getAccountId()}/${pubKey.toString()}`,
+			"",
+		);
+
+		const nonce = ++accessKey.nonce;
+
+		console.log(nonce, accessKey);
+
+		const recentBlockHash = nearAPI.utils.serialize.base_decode(
+			accessKey.block_hash,
+		);
+
+		console.log(recentBlockHash);
+
+		// const blockHash1 = status.sync_info.latest_state_root;
+
+		// console.log(blockHash1);
+
+		console.log(nearAPI.utils.key_pair.PublicKey.fromString(pubKey));
+
+		const transaction = nearAPI.transactions.createTransaction(
+			walletConnection.getAccountId(),
+			nearAPI.utils.key_pair.PublicKey.fromString(pubKey),
+			"pusnw74qiokdeb82l0ao.dev-1647760185497-61809335965956",
+			nonce,
+			[
+				nearAPI.transactions.functionCall(
+					"new",
+					{
+						owner_id: window.walletConnection.getAccountId(),
+						metadata: {
+							spec: "nft-1.0.0",
+							name: "deployData.projectName",
+							symbol: "RTEAM",
+							icon: null,
+							base_uri: null,
+							reference: null,
+							reference_hash: null,
+						},
+					},
+					0,
+					"0",
+				),
+			],
+			recentBlockHash,
+		);
+
+		console.log(transaction);
+		// console.log(nearAPI.sha256("123"));
+
+		// const serTx = nearAPI.utils.serialize.serialize(
+		// 	nearAPI.transactions.SCHEMA,
+		// 	transaction
+		// )
+
+		// const serializedTxHash = new Uint8Array(sha256.sha256.array(serTx));
+
+		// const signature = keyPair.sign(serializedTxHash);
+
+		// const bytes = transaction.encode();
+		// console.log(bytes);
+
+		// const msg = new Uint8Array(sha256.sha256.array(bytes));
+		// console.log(msg);
+
+		// const signature = await signer.signMessage(msg,window.walletConnection.getAccountId(), "default");
+
+		// const signedTx = new SignedTransaction({
+		// 	transaction,
+		// 	signature: new Signature(signature.signature),
+		// })
+
+		// console.log(signedTx);
+
+		// console.log(nearAPI.transactions.createTransaction);
+
+		const result = await walletConnection.requestSignTransactions([
+			transaction,
+		]);
+
+		console.log(result);
+
+		// const result = await walletConnection.signAndSendTransaction({
+		// 	receiverId: addr,
+		// 	actions: [
+		// 		nearAPI.transactions.functionCall(
+		// 			"new",
+		// 			{
+		// 				owner_id: window.walletConnection.getAccountId(),
+		// 				metadata: {
+		// 					spec: "nft-1.0.0",
+		// 					name: "deployData.projectName",
+		// 					symbol: "RTEAM",
+		// 					icon: null,
+		// 					base_uri: null,
+		// 					reference: null,
+		// 					reference_hash: null,
+		// 				},
+		// 			},
+		// 			0,
+		// 			"0"
+		// 		),
+		// 		nearAPI.transactions.functionCall(
+		// 			"nft_mint",
+		// 			{
+		// 				token_id: "0",
+		// 				metadata: {
+		// 					title: collectionName[0],
+		// 					description: "deployData.projectDescription",
+		// 					media: "response.data.IpfsHash",
+		// 					copies: 1,
+		// 				},
+		// 				receiver_id: walletConnection.getAccountId(),
+		// 			},
+		// 			0,
+		// 			"0"
+		// 		),
+		// 	],
+		// });
+
+		// console.log(result);
+	}
+
 	async function deployColectionNear() {
 		console.log(1);
 
@@ -489,9 +644,9 @@ function NftCollection() {
 		sessionStorage.setItem("addrCol", result + "." + contractRootNft);
 
 		sessionStorage.setItem("curentAction", "deploy");
-		contractRoot.deploy_contract_code({
-			account_id: result + "." + contractRootNft,
-		});
+		// contractRoot.deploy_contract_code({
+		// 	account_id: result + "." + contractRootNft,
+		// });
 
 		// let functionCallResult = await walletConnection.account().functionCall({
 		// 	contractId: contractRootNft,
@@ -665,7 +820,7 @@ function NftCollection() {
 					errorModal.hidden === true || connectWallet ? "error-bg" : "hide"
 				}
 			>
-				<span onClick={close}></span>
+				<span className={connectWallet ? "" : "hide"} onClick={close}></span>
 			</div>
 			<div
 				className={
@@ -678,6 +833,7 @@ function NftCollection() {
 					<div
 						className={errorModal.hidden === true ? "error-modal-img" : "hide"}
 					>
+						{/* <span onClick={closeError}></span> */}
 						<button className="close" onClick={closeError}>
 							<span></span>
 							<span></span>
@@ -690,6 +846,8 @@ function NftCollection() {
 					<div class="text">
 						NFT art creator’s main goal is to invent, and using NFTour artists
 					</div>
+
+					{/* <button onClick={testTrans}>Test</button> */}
 
 					<div
 						class={

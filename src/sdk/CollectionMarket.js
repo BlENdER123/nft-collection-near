@@ -156,7 +156,7 @@ function CollectionMarket() {
 					!mintNftData.hidden || connectWallet ? "App-error" : "App App2"
 				}
 			>
-				<Header active={2}></Header>
+				<Header activeCat={2}></Header>
 
 				<div
 					className={

@@ -466,16 +466,16 @@ function NftCustomization() {
 			console.log("Save at least one NFT");
 			setErrorModal({
 				hidden: true,
-				message: "Save at least one NFT",
+				message: "Please, Save at least one NFT!",
 			});
 			return;
 		}
 
 		if (colPrice === "" || colPrice === undefined || colPrice < 1) {
-			console.log("Set collection price");
+			console.log("Please, set NFT Price!");
 			setErrorModal({
 				hidden: true,
-				message: "Set collection price",
+				message: "Please, set collection Price!",
 			});
 			return;
 		}
@@ -484,7 +484,7 @@ function NftCustomization() {
 			console.log("Set collection royalty");
 			setErrorModal({
 				hidden: true,
-				message: "Set collection royalty",
+				message: "Please, set collection Royalty!",
 			});
 			return;
 		}
@@ -527,7 +527,7 @@ function NftCustomization() {
 					errorModal.hidden === true || connectWallet ? "error-bg" : "hide"
 				}
 			>
-				<span onClick={close}></span>
+				<span className={connectWallet ? "" : "hide"} onClick={close}></span>
 			</div>
 			<div
 				className={
@@ -546,6 +546,9 @@ function NftCustomization() {
 								<span></span>
 							</button>
 							<div className="message">{errorModal.message}</div>
+							<button className="button-3-square" onClick={closeError}>
+								OK
+							</button>
 						</div>
 
 						<div class="modal-constructor modal-constructor-layers ">
@@ -622,6 +625,27 @@ function NftCustomization() {
 									Create Collection
 								</div>
 							</div>
+
+							<div class="collection-preview">
+								<div class="title">Preview Collection</div>
+								{collection.length == 0 ? (
+									<div>Null</div>
+								) : (
+									collection.map((item, index) => {
+										return (
+											<div class="preview-item">
+												<img src={item} />
+												<div className="title">Name:</div>
+												<input
+													onChange={(ev) =>
+														changeNameCol(index, ev.target.value)
+													}
+												/>
+											</div>
+										);
+									})
+								)}
+							</div>
 						</div>
 
 						<div class="modal-constructor modal-constructor-elements">
@@ -647,10 +671,8 @@ function NftCustomization() {
 
 							<div class="title">How to use?</div>
 							<div class="text text-nonline">
-								Phasellus condimentum suscipit metus vel mattis. Ut vulputate
-								tincidunt odio. Nam odio augue, molestie id rutrum et, cursus id
-								libero. Quisque nulla dolor, condimentum quis posuere et, mattis
-								quis sapien. Donec mollis.{" "}
+								To create a collection you need to save your NFT, create a name
+								of your collection, set price and royalty.{" "}
 							</div>
 
 							<div style={{margin: "20px 0px 0px 0px"}} class="title">
@@ -684,7 +706,7 @@ function NftCustomization() {
 					{redirect ? <Redirect to="/nft-collection" /> : ""}
 				</div>
 
-				<div class="collection-preview">
+				{/* <div class="collection-preview">
 					<div class="title">Preview Collection</div>
 					{collection.length == 0 ? (
 						<div>Null</div>
@@ -701,7 +723,7 @@ function NftCustomization() {
 							);
 						})
 					)}
-				</div>
+				</div> */}
 
 				<Footer></Footer>
 			</div>

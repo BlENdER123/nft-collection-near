@@ -267,7 +267,15 @@ function Header({activeCat}) {
 									NFT Collection Market
 								</div>
 							</a>
-							<div class="page-element">FAQ</div>
+							<a href="#/how">
+								<div
+									className={
+										activeCat == 3 ? "page-element active" : "page-element"
+									}
+								>
+									FAQ
+								</div>
+							</a>
 						</div>
 
 						<div className={mobMenu ? "pages-m pages-m-active" : "pages-m"}>
@@ -298,8 +306,14 @@ function Header({activeCat}) {
 									NFT Collection Market
 								</div>
 							</a>
-							<a>
-								<div class="page-element">FAQ</div>
+							<a href="#/how">
+								<div
+									className={
+										activeCat == 3 ? "page-element active" : "page-element"
+									}
+								>
+									FAQ
+								</div>
 							</a>
 
 							<span

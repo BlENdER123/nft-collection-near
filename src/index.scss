@@ -148,6 +148,7 @@ a:hover {
 	transform: translate(-50%, -50%);
 }
 .error-modal-img {
+	padding: 25px;
 	position: absolute;
 	background: #212121;
 	border: 1px solid #444;
@@ -321,6 +322,51 @@ a:hover {
 	cursor: pointer;
 	text-align: center;
 }
+.video-player {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 10;
+	background: rgba(0, 0, 0, 0.5);
+}
+.video-player > .video {
+	height: 70%;
+	width: 70%;
+}
+.video-player > .video > iframe {
+	width: 100%;
+	height: 100%;
+}
+.video-player > .close {
+	background-color: transparent;
+	border: 0;
+}
+.video-player > .close > span {
+	display: block;
+	width: 4px;
+	height: 40px;
+	background-color: #fff;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+.video-player > .close {
+	width: 40px;
+	height: 40px;
+	position: absolute;
+	top: 10%;
+	right: 10%;
+}
+.video-player > .close > span:nth-child(1) {
+	transform: rotate(45deg);
+}
+.video-player > .close > span:nth-child(2) {
+	transform: rotate(-45deg);
+}
+
 .acc-info {
 	display: flex;
 	justify-content: space-between;
@@ -647,8 +693,10 @@ button,
 }
 .start-screen > .container-header {
 	display: flex;
-	justify-content: space-between;
-	padding: 100px 15px;
+	// justify-content: space-between;
+	justify-content: space-around;
+	// padding: 100px 15px;
+	padding: 0px 15px;
 }
 .start-screen > .container-header > .content-1 {
 	max-width: 40%;
@@ -730,6 +778,13 @@ button,
 	> .container-header
 	> .content-1
 	> .modes
+	> .mode-generator:hover {
+	border-color: #09a061;
+}
+.start-screen
+	> .container-header
+	> .content-1
+	> .modes
 	> .mode-constructor:hover {
 	border-color: #09a061;
 }
@@ -769,6 +824,11 @@ button,
 .start-screen > .container-header > .content-2 > .text > a > button {
 	margin-top: 20px;
 	padding: 17px 100px;
+	margin-right: 20px;
+}
+.start-screen > .container-header > .content-2 > .text > button {
+	margin-top: 20px;
+	padding: 17px 50px;
 }
 .modal-constructor-elements > .elements {
 	display: flex;
@@ -1041,6 +1101,7 @@ button,
 }
 
 .collection-preview {
+	margin-top: 50px;
 	display: flex;
 	flex-wrap: wrap;
 	padding: 0px 50px;
@@ -1049,6 +1110,7 @@ button,
 .collection-preview > .title {
 	width: 100%;
 	text-align: center;
+	font-size: 30px;
 }
 .collection-preview > .preview-item {
 	display: flex;
@@ -1920,6 +1982,9 @@ input[type="text"]:focus {
 .setting {
 	margin-bottom: 18px;
 }
+.setting > span {
+	color: #fff;
+}
 .setting > .title-settings {
 	font-size: 14px;
 	color: #fff;
@@ -2158,6 +2223,14 @@ input[type="text"]:focus {
 	transform: translate(-50%, -50%);
 	font-size: 20px;
 }
+.error-modal > .button-3-square {
+	padding: 2px 8px;
+	text-align: center;
+	top: 85%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	font-size: 15px;
+}
 .error-modal > .close {
 	background-color: transparent;
 	border: 0;
@@ -2166,7 +2239,7 @@ input[type="text"]:focus {
 	display: block;
 	width: 2px;
 	height: 20px;
-	background-color: #000;
+	background-color: #fff;
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -2194,7 +2267,7 @@ input[type="text"]:focus {
 	display: block;
 	width: 2px;
 	height: 20px;
-	background-color: #000;
+	background-color: #fff;
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -2214,6 +2287,9 @@ input[type="text"]:focus {
 	transform: rotate(-45deg);
 }
 
+.how-text > span {
+	font-weight: 600;
+}
 .img-element > .close {
 	background-color: transparent;
 	border: 0;

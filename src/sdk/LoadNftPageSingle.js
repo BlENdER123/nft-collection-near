@@ -604,7 +604,7 @@ function LoadNftPageSingle() {
 						: "hide"
 				}
 			>
-				<span onClick={close}></span>
+				<span className={connectWallet ? "" : "hide"} onClick={close}></span>
 			</div>
 			<div
 				className={
@@ -625,6 +625,9 @@ function LoadNftPageSingle() {
 								<span></span>
 							</button>
 							<div className="message">{errorModal.message}</div>
+							<button className="button-3-square" onClick={closeError}>
+								OK
+							</button>
 						</div>
 
 						<div className="modal-constructor modal-constructor-layers">
@@ -749,17 +752,18 @@ function LoadNftPageSingle() {
 
 									<input
 										type="text"
-										placeholder="1920"
+										placeholder="700"
 										class="input-settings inputL inputL1"
 										onChange={(event) => setWidth(event.target.value)}
 									/>
 
 									<input
 										type="text"
-										placeholder="1080"
+										placeholder="800"
 										class="input-settings inputL"
 										onChange={(event) => setHeight(event.target.value)}
 									/>
+									<span>Max size: 1MB</span>
 								</div>
 
 								<div class="title">Layer Settings</div>
