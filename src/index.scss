@@ -2020,6 +2020,9 @@ input[type="text"]:focus {
 	border-radius: 4px;
 	background: #212121;
 	position: relative;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 .modal-constructor-position > .nft-img > .img > img {
 	position: absolute;
@@ -11481,10 +11484,10 @@ a.text-dark:hover {
 	position: absolute;
 	width: 58px;
 	height: 58px;
-	border: 8px solid var(--loader-color);
+	border: 8px solid #fff;
 	border-radius: 50%;
 	animation: loader 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-	border-color: var(--loader-color) transparent transparent transparent;
+	border-color: #fff transparent transparent transparent;
 }
 .loader div:nth-child(1) {
 	animation-delay: -0.45s;

@@ -372,6 +372,13 @@ function NftCustomizationSingle() {
 												);
 										  })
 										: copySrc()}
+									<div
+										className={classArr[0].src?.length > 0 ? "hide" : "loader"}
+									>
+										<div></div>
+										<div></div>
+										<div></div>
+									</div>
 								</div>
 								<div class="break"></div>
 								<div

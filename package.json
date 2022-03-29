@@ -41,6 +41,7 @@
 		"hex2ascii": "0.0.3",
 		"idempotent-babel-polyfill": "^7.4.4",
 		"js-sha256": "^0.9.0",
+		"jszip": "^3.7.1",
 		"notistack": "^1.0.6-next.3",
 		"pidcrypt": "^0.0.32",
 		"qrcode.react": "^1.0.1",

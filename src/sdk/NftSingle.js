@@ -23,6 +23,8 @@ import {NftRootColectionContract} from "./collection contracts/NftRootColectionC
 import Header from "./Header";
 import Footer from "./Footer";
 
+import * as JSZIP from "jszip";
+
 import {useDispatch, useSelector} from "react-redux";
 
 TonClient.useBinaryLibrary(libWeb);
@@ -391,6 +393,49 @@ function NftSingle() {
 		}
 	}
 
+	async function saveZip() {
+		var zip = new JSZIP();
+
+		for (let i = 0; i < collection.length; i++) {
+			const url = collection[i];
+			await fetch(url)
+				.then((res) => res.blob())
+				.then((blob) => {
+					const file = new File([blob], "File name", {type: "image/png"});
+
+					console.log(file);
+
+					zip.file("nft.png", file, {base64: true});
+
+					// let data = new FormData();
+
+					// data.append("file", file);
+
+					// console.log(data);
+				});
+		}
+
+		zip.generateAsync({type: "blob"}).then(function (content) {
+			// see FileSaver.js
+			console.log(URL.createObjectURL(content));
+
+			var link = document.createElement("a");
+
+			// link.setAttribute('href', URL.createObjectURL(content));
+
+			// link.setAttribute('download', 'collection.zip');
+
+			link.href = URL.createObjectURL(content);
+			link.download = "single.zip";
+
+			console.log(link.click());
+
+			link.click();
+			return false;
+			// saveAs(content, "example.zip");
+		});
+	}
+
 	function savePinata() {
 		const pinataKey = "0a2ed9f679a6c395f311";
 		const pinataSecretKey =
@@ -510,7 +555,7 @@ function NftSingle() {
 						Deploy NFT
 					</div>
 
-					<div class="button-3-square" onClick={savePinata}>
+					<div class="button-3-square" onClick={saveZip}>
 						Save As
 					</div>
 

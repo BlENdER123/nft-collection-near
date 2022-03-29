@@ -19,6 +19,8 @@ import {IndexContract} from "./collection contracts/IndexContract.js";
 import Header from "./Header";
 import Footer from "./Footer";
 
+import * as nearAPI from "near-api-js";
+
 import {useDispatch, useSelector} from "react-redux";
 
 const config = require("./config.json");
@@ -45,6 +47,8 @@ async function getClientKeys(phrase) {
 
 function ProfilePage() {
 	const params = useParams();
+
+	//https://helper.testnet.near.org/account/blender1.testnet/likelyNFTs
 
 	const dispatch = useDispatch();
 	const connectWallet = useSelector((state) => state.connectWallet);
@@ -86,224 +90,312 @@ function ProfilePage() {
 	let marketrootAddr = config.marketroot;
 
 	async function getHash() {
-		const acc = new Account(NFTMarketContract, {
-			address: marketrootAddr,
-			signer: signerNone(),
-			client,
-		});
+		// const acc = new Account(NFTMarketContract, {
+		// 	address: marketrootAddr,
+		// 	signer: signerNone(),
+		// 	client,
+		// });
 
-		// sale nft`s
+		// // sale nft`s
 
-		let offerCode;
+		// let offerCode;
 
-		try {
-			const response = await acc.runLocal("resolveCodeHashIndexOffer", {
-				addrMarket: marketrootAddr,
-				addrOwner: addrUser,
-			});
-			let value0 = response;
-			// offerCode = response.decoded.output.codeHashIndexOffer.split("0x")[1];
-			console.log("value0", value0);
-		} catch (e) {
-			console.log("catch E", e);
-		}
+		// try {
+		// 	const response = await acc.runLocal("resolveCodeHashIndexOffer", {
+		// 		addrMarket: marketrootAddr,
+		// 		addrOwner: addrUser,
+		// 	});
+		// 	let value0 = response;
+		// 	// offerCode = response.decoded.output.codeHashIndexOffer.split("0x")[1];
+		// 	console.log("value0", value0);
+		// } catch (e) {
+		// 	console.log("catch E", e);
+		// }
 
-		await fetch("https://net.ton.dev/graphql", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				query: `
-					{accounts(
-					filter:{
-						  code_hash:{
-						  eq:"${offerCode}"
-						}
-					}){
-					  id
-					}}
-				`,
-			}),
-		})
-			.then((r) => r.json())
-			.then(async (data) => {
-				let tempData = data.data.accounts;
+		// await fetch("https://net.ton.dev/graphql", {
+		// 	method: "POST",
+		// 	headers: {
+		// 		"Content-Type": "application/json",
+		// 	},
+		// 	body: JSON.stringify({
+		// 		query: `
+		// 			{accounts(
+		// 			filter:{
+		// 				  code_hash:{
+		// 				  eq:"${offerCode}"
+		// 				}
+		// 			}){
+		// 			  id
+		// 			}}
+		// 		`,
+		// 	}),
+		// })
+		// 	.then((r) => r.json())
+		// 	.then(async (data) => {
+		// 		let tempData = data.data.accounts;
 
-				console.log(tempData);
-			});
+		// 		console.log(tempData);
+		// 	});
 
 		// collectible nft`s
+		const {contractNft, nearConfig, contractRootNft} = require("./config.json");
 
-		let rootCode;
+		const keyStore = new nearAPI.keyStores.BrowserLocalStorageKeyStore();
 
-		try {
-			const response = await acc.runLocal("resolveCodeHashNftRoot", {});
-			let value0 = response;
-			rootCode = response.decoded.output.codeHashData.split("0x")[1];
-			console.log("value0", value0);
-		} catch (e) {
-			console.log("catch E", e);
-		}
-
-		await fetch("https://net.ton.dev/graphql", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
+		window.near = await nearAPI.connect({
+			deps: {
+				keyStore: new nearAPI.keyStores.BrowserLocalStorageKeyStore(),
 			},
-			body: JSON.stringify({
-				query: `
-					{accounts(
-					filter:{
-						  code_hash:{
-						  eq:"${rootCode}"
-						}
-					}){
-					  id
-					}}
-				`,
-			}),
-		})
-			.then((r) => r.json())
+			...nearConfig,
+		});
+
+		// Needed to access wallet login
+		window.walletConnection = new nearAPI.WalletConnection(window.near);
+
+		// Getting the Account ID. If unauthorized yet, it's just empty string.
+		window.accountId = window.walletConnection.getAccountId();
+
+		fetch(
+			"https://helper.testnet.near.org/account/blender1.testnet/likelyNFTs",
+			{
+				method: "get",
+				headers: {
+					"Content-Type": "application/json; charset=utf-8",
+					Connection: "keep-alive",
+				},
+			},
+		)
+			.then((data) => {
+				return data.json();
+			})
 			.then(async (data) => {
-				let tempData = data.data.accounts;
+				console.log(data);
 
-				console.log(tempData);
+				let tempCol = [];
 
-				let tempAddr = tempData[0].id;
+				for (let i = 0; i < data.length; i++) {
+					let tempAddr = data[i];
 
-				const tempAcc = new Account(NftRootColectionContract, {
-					address: tempAddr,
-					signer: signerNone(),
-					client,
-				});
+					window.tempContract = await new nearAPI.Contract(
+						window.walletConnection.account(),
+						tempAddr,
+						{
+							// View methods are read-only – they don't modify the state, but usually return some value
+							viewMethods: [
+								"nft_tokens",
+								"nft_supply_for_owner",
+								"nft_tokens_for_owner",
+							],
+							// Change methods can modify the state, but you don't receive the returned value when called
+							// changeMethods: ["new"],
+							// Sender is the account ID to initialize transactions.
+							// getAccountId() will return empty string if user is still unauthorized
+							sender: window.walletConnection.getAccountId(),
+						},
+					);
 
-				let hashNFT;
-
-				try {
-					const response = await tempAcc.runLocal("resolveCodeHashIndex", {
-						addrRoot:
-							"0:0000000000000000000000000000000000000000000000000000000000000000",
-						addrOwner: addrUser,
-					});
-					let value0 = response;
-					hashNFT = response.decoded.output.codeHashIndex.split("0x")[1];
-					console.log("value0", value0);
-				} catch (e) {
-					console.log("catch E", e);
-				}
-
-				console.log(hashNFT);
-
-				await fetch("https://net.ton.dev/graphql", {
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({
-						query: `
-						{accounts(
-						filter:{
-							code_hash:{
-							eq:"${hashNFT}"
-							}
-						}){
-						id
-						}}
-					`,
-					}),
-				})
-					.then((r) => r.json())
-					.then(async (data) => {
-						console.log(data);
-
-						// set nft length
-						let tempItems = items;
-						tempItems[1] = data.data.accounts.length;
-						setItems(tempItems);
-
-						if (data.data.accounts.length == 0) {
-							return;
-						}
-
-						let tempCol = [];
-
-						for (let j = 0; j < data.data.accounts.length; j++) {
-							let addrNFT = data.data.accounts[j].id;
-
-							console.log(addrNFT);
-
-							const tempAccIndNFT = new Account(IndexContract, {
-								address: addrNFT,
-								signer: signerNone(),
-								client,
-							});
-
-							let addrDataNFT;
-
-							try {
-								const response = await tempAccIndNFT.runLocal("getInfo", {});
-								let value0 = response;
-								addrDataNFT = response.decoded.output.addrData;
-								console.log("value0", value0);
-							} catch (e) {
-								console.log("catch E", e);
-							}
-
-							const tempAccDataNFT = new Account(DataContract, {
-								address: addrDataNFT,
-								signer: signerNone(),
-								client,
-							});
-
-							try {
-								const response = await tempAccDataNFT.runLocal("getInfo", {});
-								let value0 = response.decoded.output;
+					await tempContract
+						.nft_tokens_for_owner({
+							account_id: window.walletConnection.getAccountId(),
+							from_index: "0",
+							limit: 50,
+						})
+						.then(async (data) => {
+							console.log(data);
+							for (let j = 0; j < data.length; j++) {
+								let info = data[j].metadata;
 								tempCol.push({
-									addrNft: addrNFT,
-									name: value0.name,
-									desc: value0.description,
-									image: value0.meta.json,
+									addrNft: "addrNFT",
+									name: info.title,
+									desc: info.description,
+									image: info.media, //"https://cloudflare-ipfs.com/ipfs/"+
 								});
-								console.log("value0", value0);
-							} catch (e) {
-								console.log("catch E", e);
 							}
-						}
+						});
 
-						setNftCol(tempCol);
-					});
+					// const tokens = await tempContract.viewFunction(tempAddr, "")
 
-				let test1;
-
-				try {
-					const response = await tempAcc.runLocal("resolveData", {
-						addrRoot: tempData[4].id,
-						id: 1,
-					});
-					let value0 = response;
-					test1 = response.decoded.output.addrData;
-					console.log("value0", value0);
-				} catch (e) {
-					console.log("catch E", e);
+					// tempContract.nft_tokens({
+					// 	from_index: 0,
+					// 	limit: 100
+					// }).then((data)=>{
+					// 	console.log(data);
+					// });
 				}
 
-				console.log(test1);
-
-				const tempAccData = new Account(DataContract, {
-					address: test1,
-					signer: signerNone(),
-					client,
-				});
-
-				try {
-					const response = await tempAccData.runLocal("getInfo", {});
-					let value0 = response;
-					console.log("value0", value0);
-				} catch (e) {
-					console.log("catch E", e);
-				}
+				console.log(tempCol);
+				setNftCol(tempCol);
 			});
+
+		// let rootCode;
+
+		// try {
+		// 	const response = await acc.runLocal("resolveCodeHashNftRoot", {});
+		// 	let value0 = response;
+		// 	rootCode = response.decoded.output.codeHashData.split("0x")[1];
+		// 	console.log("value0", value0);
+		// } catch (e) {
+		// 	console.log("catch E", e);
+		// }
+
+		// await fetch("https://net.ton.dev/graphql", {
+		// 	method: "POST",
+		// 	headers: {
+		// 		"Content-Type": "application/json",
+		// 	},
+		// 	body: JSON.stringify({
+		// 		query: `
+		// 			{accounts(
+		// 			filter:{
+		// 				  code_hash:{
+		// 				  eq:"${rootCode}"
+		// 				}
+		// 			}){
+		// 			  id
+		// 			}}
+		// 		`,
+		// 	}),
+		// })
+		// 	.then((r) => r.json())
+		// 	.then(async (data) => {
+		// 		let tempData = data.data.accounts;
+
+		// 		console.log(tempData);
+
+		// 		let tempAddr = tempData[0].id;
+
+		// 		const tempAcc = new Account(NftRootColectionContract, {
+		// 			address: tempAddr,
+		// 			signer: signerNone(),
+		// 			client,
+		// 		});
+
+		// 		let hashNFT;
+
+		// 		try {
+		// 			const response = await tempAcc.runLocal("resolveCodeHashIndex", {
+		// 				addrRoot:
+		// 					"0:0000000000000000000000000000000000000000000000000000000000000000",
+		// 				addrOwner: addrUser,
+		// 			});
+		// 			let value0 = response;
+		// 			hashNFT = response.decoded.output.codeHashIndex.split("0x")[1];
+		// 			console.log("value0", value0);
+		// 		} catch (e) {
+		// 			console.log("catch E", e);
+		// 		}
+
+		// 		console.log(hashNFT);
+
+		// 		await fetch("https://net.ton.dev/graphql", {
+		// 			method: "POST",
+		// 			headers: {
+		// 				"Content-Type": "application/json",
+		// 			},
+		// 			body: JSON.stringify({
+		// 				query: `
+		// 				{accounts(
+		// 				filter:{
+		// 					code_hash:{
+		// 					eq:"${hashNFT}"
+		// 					}
+		// 				}){
+		// 				id
+		// 				}}
+		// 			`,
+		// 			}),
+		// 		})
+		// 			.then((r) => r.json())
+		// 			.then(async (data) => {
+		// 				console.log(data);
+
+		// 				// set nft length
+		// 				let tempItems = items;
+		// 				tempItems[1] = data.data.accounts.length;
+		// 				setItems(tempItems);
+
+		// 				if (data.data.accounts.length == 0) {
+		// 					return;
+		// 				}
+
+		// 				let tempCol = [];
+
+		// 				for (let j = 0; j < data.data.accounts.length; j++) {
+		// 					let addrNFT = data.data.accounts[j].id;
+
+		// 					console.log(addrNFT);
+
+		// 					const tempAccIndNFT = new Account(IndexContract, {
+		// 						address: addrNFT,
+		// 						signer: signerNone(),
+		// 						client,
+		// 					});
+
+		// 					let addrDataNFT;
+
+		// 					try {
+		// 						const response = await tempAccIndNFT.runLocal("getInfo", {});
+		// 						let value0 = response;
+		// 						addrDataNFT = response.decoded.output.addrData;
+		// 						console.log("value0", value0);
+		// 					} catch (e) {
+		// 						console.log("catch E", e);
+		// 					}
+
+		// 					const tempAccDataNFT = new Account(DataContract, {
+		// 						address: addrDataNFT,
+		// 						signer: signerNone(),
+		// 						client,
+		// 					});
+
+		// 					try {
+		// 						const response = await tempAccDataNFT.runLocal("getInfo", {});
+		// 						let value0 = response.decoded.output;
+		// 						tempCol.push({
+		// 							addrNft: addrNFT,
+		// 							name: value0.name,
+		// 							desc: value0.description,
+		// 							image: value0.meta.json,
+		// 						});
+		// 						console.log("value0", value0);
+		// 					} catch (e) {
+		// 						console.log("catch E", e);
+		// 					}
+		// 				}
+
+		// 				setNftCol(tempCol);
+		// 			});
+
+		// 		let test1;
+
+		// 		try {
+		// 			const response = await tempAcc.runLocal("resolveData", {
+		// 				addrRoot: tempData[4].id,
+		// 				id: 1,
+		// 			});
+		// 			let value0 = response;
+		// 			test1 = response.decoded.output.addrData;
+		// 			console.log("value0", value0);
+		// 		} catch (e) {
+		// 			console.log("catch E", e);
+		// 		}
+
+		// 		console.log(test1);
+
+		// 		const tempAccData = new Account(DataContract, {
+		// 			address: test1,
+		// 			signer: signerNone(),
+		// 			client,
+		// 		});
+
+		// 		try {
+		// 			const response = await tempAccData.runLocal("getInfo", {});
+		// 			let value0 = response;
+		// 			console.log("value0", value0);
+		// 		} catch (e) {
+		// 			console.log("catch E", e);
+		// 		}
+		// 	});
 	}
 
 	useEffect(() => {
@@ -640,7 +732,7 @@ function ProfilePage() {
 											<div class="nft">
 												<div class="nft-image">
 													<img
-														src={"https://gateway.pinata.cloud/ipfs/" + i.image}
+														src={"https://cloudflare-ipfs.com/ipfs/" + i.image} // "https://gateway.pinata.cloud/ipfs/"
 													/>
 												</div>
 												<div class="nft-content">

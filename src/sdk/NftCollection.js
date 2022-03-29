@@ -70,6 +70,8 @@ import {DataContract} from "./collection contracts/DataContract.js";
 import {NFTMarketContract} from "./collection contracts/NftMarketContract.js";
 import {NftRootColectionContract} from "./collection contracts/NftRootColectionContract.js";
 
+import * as JSZIP from "jszip";
+
 import Header from "./Header";
 import Footer from "./Footer";
 
@@ -119,7 +121,7 @@ function NftCollection() {
 		message: "",
 	});
 
-	const [activeButtons, setActiveButtons] = useState([true, false, false]);
+	const [activeButtons, setActiveButtons] = useState([false, false, false]);
 
 	const [nearInit, setNearInit] = useState(false);
 
@@ -245,6 +247,9 @@ function NftCollection() {
 			hashLog();
 		} else {
 			console.log("No trans");
+			setActiveButtons([true, false, false]);
+			console.log("dep");
+			return;
 		}
 	}, []);
 
@@ -476,24 +481,24 @@ function NftCollection() {
 		// save imgs to IPFS
 	}
 
-	async function testTrans() {
+	async function multTrans() {
 		console.log(1);
 
 		let addr = sessionStorage.getItem("addrCol");
 
-		window.contractCollection = await new nearAPI.Contract(
-			window.walletConnection.account(),
-			addr,
-			{
-				// View methods are read-only – tfey don't modify the state, but usually return some value
-				// viewMethods: ['get_num'],
-				// Change methods can modify the state, but you don't receive the returned value when called
-				changeMethods: ["new", "nft_mint"],
-				// Sender is the account ID to initialize transactions.
-				// getAccountId() will return empty string if user is still unauthorized
-				sender: window.walletConnection.getAccountId(),
-			},
-		);
+		// window.contractCollection = await new nearAPI.Contract(
+		// 	window.walletConnection.account(),
+		// 	addr,
+		// 	{
+		// 		// View methods are read-only – tfey don't modify the state, but usually return some value
+		// 		// viewMethods: ['get_num'],
+		// 		// Change methods can modify the state, but you don't receive the returned value when called
+		// 		changeMethods: ["new", "nft_mint"],
+		// 		// Sender is the account ID to initialize transactions.
+		// 		// getAccountId() will return empty string if user is still unauthorized
+		// 		sender: window.walletConnection.getAccountId(),
+		// 	},
+		// );
 
 		const acc = await near.account(addr);
 
@@ -520,36 +525,112 @@ function NftCollection() {
 
 		console.log(recentBlockHash);
 
-		// const blockHash1 = status.sync_info.latest_state_root;
-
-		// console.log(blockHash1);
-
 		console.log(nearAPI.utils.key_pair.PublicKey.fromString(pubKey));
+
+		let deployData = JSON.parse(sessionStorage.getItem("details"));
+
+		let actionsTrans = [];
+
+		actionsTrans.push(
+			nearAPI.transactions.functionCall(
+				"new",
+				{
+					owner_id: window.walletConnection.getAccountId(),
+					metadata: {
+						spec: "nft-1.0.0",
+						name: deployData.projectName,
+						symbol: "RTEAM",
+						icon: null,
+						base_uri: null,
+						reference: null,
+						reference_hash: null,
+					},
+				},
+				"30000000000000",
+				"0",
+			),
+		);
+
+		const pinataKey = "0a2ed9f679a6c395f311";
+		const pinataSecretKey =
+			"7b53c4d13eeaf7063ac5513d4c97c4f530ce7e660f0c147ab5d6aee6da9a08b9";
+
+		for (let i = 0; i < collection.length; i++) {
+			const url = collection[i];
+			await fetch(url)
+				.then((res) => res.blob())
+				.then((blob) => {
+					const file = new File([blob], "File name", {type: "image/png"});
+
+					const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
+
+					let data = new FormData();
+
+					data.append("file", file);
+
+					return axios
+						.post(url, data, {
+							maxBodyLength: "Infinity",
+							headers: {
+								"Content-Type": `multipart/form-data; boundary=${data._boundary}`,
+								pinata_api_key: pinataKey,
+								pinata_secret_api_key: pinataSecretKey,
+							},
+						})
+						.then(async function (response) {
+							console.log(response.data.IpfsHash);
+
+							actionsTrans.push(
+								nearAPI.transactions.functionCall(
+									"nft_mint",
+									{
+										token_id: i.toString(),
+										metadata: {
+											title: collectionName[i],
+											description: deployData.projectDescription,
+											media: response.data.IpfsHash,
+											copies: 1,
+										},
+										receiver_id: walletConnection.getAccountId(),
+									},
+									"30000000000000",
+									"7490000000000000000000",
+								),
+							);
+
+							// contractCollection
+							// 	.nft_mint(
+							// 		{
+							// 			token_id: nft[1].toString(),
+							// 			metadata: {
+							// 				title: collectionName[nft[1]],
+							// 				description: deployData.projectDescription,
+							// 				media: response.data.IpfsHash,
+							// 				copies: 1,
+							// 			},
+							// 			receiver_id: walletConnection.getAccountId(),
+							// 		},
+							// 		"30000000000000",
+							// 		"7490000000000000000000",
+							// 	)
+							// 	.then((data) => {
+							// 		console.log(data);
+							// 	});
+						})
+						.catch(function (error) {
+							console.error(error);
+						});
+				});
+		}
+
+		console.log(actionsTrans);
 
 		const transaction = nearAPI.transactions.createTransaction(
 			walletConnection.getAccountId(),
 			nearAPI.utils.key_pair.PublicKey.fromString(pubKey),
-			"pusnw74qiokdeb82l0ao.dev-1647760185497-61809335965956",
+			addr,
 			nonce,
-			[
-				nearAPI.transactions.functionCall(
-					"new",
-					{
-						owner_id: window.walletConnection.getAccountId(),
-						metadata: {
-							spec: "nft-1.0.0",
-							name: "deployData.projectName",
-							symbol: "RTEAM",
-							icon: null,
-							base_uri: null,
-							reference: null,
-							reference_hash: null,
-						},
-					},
-					0,
-					"0",
-				),
-			],
+			actionsTrans,
 			recentBlockHash,
 		);
 
@@ -582,11 +663,11 @@ function NftCollection() {
 
 		// console.log(nearAPI.transactions.createTransaction);
 
-		const result = await walletConnection.requestSignTransactions([
-			transaction,
-		]);
+		// const result = await walletConnection.requestSignTransactions([
+		// 	transaction,
+		// ]);
 
-		console.log(result);
+		// console.log(result);
 
 		// const result = await walletConnection.signAndSendTransaction({
 		// 	receiverId: addr,
@@ -644,9 +725,13 @@ function NftCollection() {
 		sessionStorage.setItem("addrCol", result + "." + contractRootNft);
 
 		sessionStorage.setItem("curentAction", "deploy");
-		// contractRoot.deploy_contract_code({
-		// 	account_id: result + "." + contractRootNft,
-		// });
+		contractRoot.deploy_contract_code(
+			{
+				account_id: result + "." + contractRootNft,
+			},
+			"30000000000000",
+			"17490000000000000000000000",
+		);
 
 		// let functionCallResult = await walletConnection.account().functionCall({
 		// 	contractId: contractRootNft,
@@ -790,6 +875,52 @@ function NftCollection() {
 		});
 	}
 
+	async function saveZip() {
+		var zip = new JSZIP();
+		// zip.file("Hello.txt", "Hello World\n");
+		// var img = zip.folder("images");
+
+		for (let i = 0; i < collection.length; i++) {
+			console.log(collectionName[i]);
+			const url = collection[i];
+			await fetch(url)
+				.then((res) => res.blob())
+				.then((blob) => {
+					const file = new File([blob], "File name", {type: "image/png"});
+
+					console.log(file);
+
+					zip.file(collectionName[i] + ".png", file, {base64: true});
+
+					// let data = new FormData();
+
+					// data.append("file", file);
+
+					// console.log(data);
+				});
+		}
+
+		zip.generateAsync({type: "blob"}).then(function (content) {
+			// see FileSaver.js
+			console.log(URL.createObjectURL(content));
+
+			var link = document.createElement("a");
+
+			// link.setAttribute('href', URL.createObjectURL(content));
+
+			// link.setAttribute('download', 'collection.zip');
+
+			link.href = URL.createObjectURL(content);
+			link.download = "collection.zip";
+
+			console.log(link.click());
+
+			link.click();
+			return false;
+			// saveAs(content, "example.zip");
+		});
+	}
+
 	function test(event) {
 		let file = event.target.files[0];
 
@@ -860,7 +991,7 @@ function NftCollection() {
 						Deploy Collection
 					</div>
 
-					<div
+					{/* <div
 						class={
 							activeButtons[1]
 								? "button-1-square"
@@ -869,9 +1000,20 @@ function NftCollection() {
 						onClick={activeButtons[1] ? initCollection : null}
 					>
 						Init Collection
+					</div> */}
+
+					<div
+						className={
+							activeButtons[1]
+								? "button-1-square"
+								: "button-1-square button-1-square-disabled"
+						}
+						onClick={activeButtons[1] ? multTrans : null}
+					>
+						Deploy NFT`s
 					</div>
 
-					{collection.map((item, i) => {
+					{/* {collection.map((item, i) => {
 						return (
 							<div
 								class={
@@ -884,13 +1026,15 @@ function NftCollection() {
 								Deploy NFT {i + 1}
 							</div>
 						);
-					})}
+					})} */}
 
 					{/* <div class="button-1-square" onClick={()=>deployNft(13)}>
 						Deploy NFT 2
 					</div> */}
 
-					{/* <div class="button-3-square" onClick={savePinata}>Save As</div> */}
+					<div class="button-3-square" onClick={saveZip}>
+						Save As
+					</div>
 
 					<div class="nft-avatar">
 						<input

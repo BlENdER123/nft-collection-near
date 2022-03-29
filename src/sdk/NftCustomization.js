@@ -358,6 +358,7 @@ function NftCustomization() {
 										height: localStorage.getItem("height") + "px",
 									}}
 								>
+									{/* classArr[0].src?.length > 0 */}
 									{classArr[0].src?.length > 0
 										? classArr.map((item, index) => {
 												return (
@@ -372,6 +373,13 @@ function NftCustomization() {
 												);
 										  })
 										: copySrc()}
+									<div
+										className={classArr[0].src?.length > 0 ? "hide" : "loader"}
+									>
+										<div></div>
+										<div></div>
+										<div></div>
+									</div>
 								</div>
 								<div class="break"></div>
 								<div
