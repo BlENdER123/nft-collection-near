@@ -89,30 +89,36 @@ function NftMarket() {
 
 		let sales = [];
 
-		await fetch("http://145.239.27.218/endpoint/receiver", {
+		await fetch("https://gq.cryptan.site/graphql", {
 			method: "post",
 			headers: {
 				"Content-Type": "application/json; charset=utf-8",
 				Connection: "keep-alive",
 			},
-			body: `
-		{
-			"receiver": {
-				"receipt_receiver_account_id":"dev-1648581158866-16348149344133"  
-			}
-		}
-		`,
+			body: JSON.stringify({
+				query: `
+						{
+							getRecipes(receipt_receiver_account_id: "dev-1648581158866-16348149344133"){
+							  receipt_predecessor_account_id,
+							  receipt_id,
+							  args
+							}
+						  }
+						`,
+			}),
 		})
 			.then((data) => {
 				return data.json();
 			})
 			.then(async (data) => {
-				console.log(data);
+				console.log(data.data.getRecipes);
 
 				let nonUniqArr = [];
 
-				for (let i = 0; i < data.length; i++) {
-					nonUniqArr.push(data[i].receipt_predecessor_account_id);
+				for (let i = 0; i < data.data.getRecipes.length; i++) {
+					nonUniqArr.push(
+						data.data.getRecipes[i].receipt_predecessor_account_id,
+					);
 				}
 
 				let uniqArr = [...new Set(nonUniqArr)];
@@ -159,6 +165,77 @@ function NftMarket() {
 						});
 				}
 			});
+
+		// await fetch("http://145.239.27.218/endpoint/receiver", {
+		// 	method: "post",
+		// 	headers: {
+		// 		"Content-Type": "application/json; charset=utf-8",
+		// 		Connection: "keep-alive",
+		// 	},
+		// 	body: `
+		// {
+		// 	"receiver": {
+		// 		"receipt_receiver_account_id":"dev-1648581158866-16348149344133"
+		// 	}
+		// }
+		// `,
+		// })
+		// 	.then((data) => {
+		// 		return data.json();
+		// 	})
+		// 	.then(async (data) => {
+		// 		console.log(data);
+
+		// 		let nonUniqArr = [];
+
+		// 		for (let i = 0; i < data.length; i++) {
+		// 			nonUniqArr.push(data[i].receipt_predecessor_account_id);
+		// 		}
+
+		// 		let uniqArr = [...new Set(nonUniqArr)];
+
+		// 		console.log(uniqArr);
+
+		// 		for (let i = 0; i < uniqArr.length; i++) {
+		// 			let tempAddr = uniqArr[i];
+
+		// 			const salesUrl =
+		// 				"https://helper.nearapi.org/v1/batch/" +
+		// 				JSON.stringify([
+		// 					{
+		// 						contract: marketNft,
+		// 						method: "get_sales_by_nft_contract_id",
+		// 						args: {
+		// 							nft_contract_id: tempAddr,
+		// 						},
+		// 						batch: {
+		// 							from_index: "0", // must be name of contract arg (above)
+		// 							limit: "500", // must be name of contract arg (above)
+		// 							step: 50, // divides contract arg 'limit'
+		// 							flatten: [], // how to combine results
+		// 						},
+		// 						sort: {
+		// 							path: "metadata.issued_at",
+		// 						},
+		// 					},
+		// 				]);
+
+		// 			const headers = new Headers({
+		// 				"max-age": "1",
+		// 			});
+
+		// 			await fetch(salesUrl, {headers})
+		// 				.then((res) => {
+		// 					return res.json();
+		// 				})
+		// 				.then((data) => {
+		// 					console.log(data);
+		// 					for (let k = 0; k < data[0].length; k++) {
+		// 						sales.push(data[0][k]);
+		// 					}
+		// 				});
+		// 		}
+		// 	});
 
 		console.log(sales);
 
