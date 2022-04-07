@@ -129,6 +129,8 @@ function NftCollection() {
 
 	const [avatar, setAvatar] = useState();
 
+	const [loaderMult, setLoaderMult] = useState(false);
+
 	// let marketrootAddr = config.marketroot;
 
 	async function connectNear() {
@@ -175,7 +177,7 @@ function NftCollection() {
 			"https://archival-rpc.testnet.near.org",
 		);
 
-		let hashTrans = document.location.search.split("=")[1];
+		let hashTrans = document.location.search.split("?transactionHashes=")[1];
 		// let hashTrans = "H1Wh3Kf96NWE56HwGLnajVtQGB55rsXAgTTopHdWX72N";
 		if (hashTrans != undefined) {
 			console.log(hashTrans);
@@ -223,6 +225,11 @@ function NftCollection() {
 					if (event == "new") {
 						setActiveButtons([false, false, true]);
 						console.log(1);
+						setErrorModal({
+							hidden: true,
+							message: "Collection successfully created, go to profile to view",
+							img: "",
+						});
 						return;
 					}
 					if (event == "nft_mint" && token_id + 1 != collection.length) {
@@ -482,6 +489,10 @@ function NftCollection() {
 	}
 
 	async function multTrans() {
+		setActiveButtons([false, false, false]);
+
+		setLoaderMult(true);
+
 		console.log(1);
 
 		let addr = sessionStorage.getItem("addrCol");
@@ -663,51 +674,11 @@ function NftCollection() {
 
 		// console.log(nearAPI.transactions.createTransaction);
 
-		// const result = await walletConnection.requestSignTransactions([
-		// 	transaction,
-		// ]);
+		const result = await walletConnection.requestSignTransactions([
+			transaction,
+		]);
 
-		// console.log(result);
-
-		// const result = await walletConnection.signAndSendTransaction({
-		// 	receiverId: addr,
-		// 	actions: [
-		// 		nearAPI.transactions.functionCall(
-		// 			"new",
-		// 			{
-		// 				owner_id: window.walletConnection.getAccountId(),
-		// 				metadata: {
-		// 					spec: "nft-1.0.0",
-		// 					name: "deployData.projectName",
-		// 					symbol: "RTEAM",
-		// 					icon: null,
-		// 					base_uri: null,
-		// 					reference: null,
-		// 					reference_hash: null,
-		// 				},
-		// 			},
-		// 			0,
-		// 			"0"
-		// 		),
-		// 		nearAPI.transactions.functionCall(
-		// 			"nft_mint",
-		// 			{
-		// 				token_id: "0",
-		// 				metadata: {
-		// 					title: collectionName[0],
-		// 					description: "deployData.projectDescription",
-		// 					media: "response.data.IpfsHash",
-		// 					copies: 1,
-		// 				},
-		// 				receiver_id: walletConnection.getAccountId(),
-		// 			},
-		// 			0,
-		// 			"0"
-		// 		),
-		// 	],
-		// });
-
-		// console.log(result);
+		console.log(result);
 	}
 
 	async function deployColectionNear() {
@@ -969,8 +940,9 @@ function NftCollection() {
 							<span></span>
 							<span></span>
 						</button>
-						<img src={errorModal.message}></img>
-						{/* <div className="message">{errorModal.message}</div> */}
+						{errorModal.img ? <img src={errorModal.img}></img> : null}
+
+						<div className="message">{errorModal.message}</div>
 					</div>
 
 					<div class="title">Your Collection</div>
@@ -1010,7 +982,15 @@ function NftCollection() {
 						}
 						onClick={activeButtons[1] ? multTrans : null}
 					>
-						Deploy NFT`s
+						{loaderMult ? (
+							<div className="loader">
+								<div></div>
+								<div></div>
+								<div></div>
+							</div>
+						) : (
+							<span>Deploy NFT`s</span>
+						)}
 					</div>
 
 					{/* {collection.map((item, i) => {
@@ -1062,7 +1042,8 @@ function NftCollection() {
 									onClick={() =>
 										setErrorModal({
 											hidden: true,
-											message: item,
+											message: "",
+											img: item,
 										})
 									}
 								>

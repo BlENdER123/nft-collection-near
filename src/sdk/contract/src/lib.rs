@@ -37,6 +37,7 @@ impl Default for ContractThatDeploysContracts {
 #[near_bindgen]
 impl ContractThatDeploysContracts {
 
+    #[payable]
     pub fn deploy_contract_code(account_id: AccountId) {
         Promise::new(account_id)
             .create_account()

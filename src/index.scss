@@ -159,6 +159,12 @@ a:hover {
 	top: 40%;
 	transform: translate(-50%, -50%);
 }
+.error-modal-img > .message {
+	position: relative;
+	top: 0;
+	left: 0;
+	transform: none;
+}
 .error-modal-img > img {
 	z-index: 3;
 }
@@ -472,7 +478,7 @@ a:hover {
 	color: #bcc4ca80;
 }
 .main-screen {
-	height: 100vh;
+	height: 80vh;
 	padding: 160px 0px;
 	position: relative;
 	background: url(/src/sdk/img/screenbg1_1.png) no-repeat;
@@ -1000,6 +1006,14 @@ button,
 .collection > .button-1-square:hover {
 	background-color: #4421b6;
 }
+.collection > .button-1-square > .loader {
+	width: 10px;
+	height: 10px;
+}
+.collection > .button-1-square > .loader > div {
+	width: 10px;
+	height: 10px;
+}
 .collection > .button-3-square {
 	width: 100%;
 	padding: 17px;
@@ -1129,6 +1143,12 @@ button,
 }
 .collection-preview > .preview-item > input {
 	width: 100%;
+	padding: 5px;
+	background: #212121;
+	border: 1px solid #444;
+	border-radius: 4px;
+	color: #bcc4ca80;
+	outline: none;
 }
 
 .btn-signout {
@@ -2337,6 +2357,7 @@ input[type="text"]:focus {
 	margin: 0;
 	border-radius: 4px;
 	margin-bottom: 20px;
+	background: #212121;
 }
 // .collections > .collection > .img {
 // 	width: 100%;
@@ -2364,11 +2385,12 @@ input[type="text"]:focus {
 	padding: 12px;
 }
 .collections > .collection > .img {
-	width: 200px;
+	background: #0d0d0d;
+	width: 100%;
 	height: 200px;
 }
 .collections > .collection > .img > img {
-	max-width: 100%;
+	width: 100%;
 	max-height: 100%;
 }
 
@@ -2452,17 +2474,26 @@ input[type="text"]:focus {
 }
 
 .profile > .container > .nfts > .nft-category {
+	position: relative;
 	margin-top: 40px;
 	width: 100%;
 	display: flex;
 	flex-wrap: wrap;
-	justify-content: space-between;
+	justify-content: space-around;
 }
 .profile > .container > .nfts > .nft-category > .null-nft {
 	width: 100%;
 	text-align: center;
 	color: #fff;
 	font-size: 20px;
+}
+.profile > .container > .nfts > .nft-category > .deposit {
+	width: 100%;
+	color: #fff;
+	top: 0px;
+	left: 0px;
+	padding-bottom: 20px;
+	text-align: center;
 }
 .profile > .container > .nfts > .nft-category > .nft {
 	width: 23%;
@@ -2488,6 +2519,11 @@ input[type="text"]:focus {
 .profile > .container > .nfts > .nft-category > .nft > .nft-content > button {
 	display: block;
 	margin: 10px;
+}
+.profile > .container > .nfts > .nft-category > .nft > .nft-content > .onSale {
+	color: #fff;
+	padding: 10px;
+	font-size: 18px;
 }
 .profile > .container > .nfts > .nft-category > .nft > .nft-content > .name {
 	color: #909090;

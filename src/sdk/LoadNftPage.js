@@ -1,4 +1,4 @@
-import React, {useContext, useState} from "react";
+import React, {useContext, useState, useEffect} from "react";
 import {HashRouter as Router, Redirect, useHistory} from "react-router-dom";
 import Context from "./Context";
 import Header from "./Header";
@@ -48,6 +48,13 @@ class MyClass {
 }
 
 function LoadNftPage() {
+	useEffect(() => {
+		if (document.location.href.split("?transactionHashes=")[1]) {
+			let href = document.location.origin + document.location.hash;
+			document.location.href = href;
+		}
+	}, []);
+
 	//const {status} = useContext(Context);
 	let history = useHistory();
 
@@ -425,7 +432,7 @@ function LoadNftPage() {
 	}
 
 	function getSrc(src) {
-		return "https://gateway.pinata.cloud/ipfs/" + src;
+		return "https://cloudflare-ipfs.com/ipfs/" + src;
 	}
 
 	function logData() {

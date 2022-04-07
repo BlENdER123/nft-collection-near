@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import {HashRouter as Router, Redirect, useHistory} from "react-router-dom";
 import mergeImages from "merge-images";
 
@@ -18,6 +18,13 @@ const pinataSecretKey =
 let nftArr = [];
 
 function NftCustomization() {
+	useEffect(() => {
+		if (document.location.href.split("?transactionHashes=")[1]) {
+			let href = document.location.origin + document.location.hash;
+			document.location.href = href;
+		}
+	}, []);
+
 	let history = useHistory();
 
 	const dispatch = useDispatch();
@@ -258,7 +265,7 @@ function NftCustomization() {
 	}
 
 	function getSrc(src) {
-		return "https://gateway.pinata.cloud/ipfs/" + src;
+		return "https://cloudflare-ipfs.com/ipfs/" + src;
 	}
 
 	function random() {

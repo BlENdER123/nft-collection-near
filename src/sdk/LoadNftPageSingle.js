@@ -1,4 +1,4 @@
-import React, {useContext, useState} from "react";
+import React, {useContext, useState, useEffect} from "react";
 import {HashRouter as Router, Redirect, useHistory} from "react-router-dom";
 import Context from "./Context";
 //import 'idempotent-babel-polyfill';
@@ -68,6 +68,13 @@ class MyClass {
 }
 
 function LoadNftPageSingle() {
+	useEffect(() => {
+		if (document.location.href.split("?transactionHashes=")[1]) {
+			let href = document.location.origin + document.location.hash;
+			document.location.href = href;
+		}
+	}, []);
+
 	let history = useHistory();
 	//const {status} = useContext(Context);
 	const dispatch = useDispatch();

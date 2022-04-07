@@ -50,6 +50,8 @@ function CollectionMarket() {
 
 	const [redirect, setRedirect] = useState(false);
 
+	const [loader, setLoader] = useState(true);
+
 	let marketrootAddr = config.marketroot;
 
 	const zeroAddress =
@@ -60,72 +62,73 @@ function CollectionMarket() {
 	async function getCollections() {
 		let rootCode;
 
-		const acc = new Account(NFTMarketContract, {
-			address: marketrootAddr,
-			signer: signerNone(),
-			client,
-		});
+		// const acc = new Account(NFTMarketContract, {
+		// 	address: marketrootAddr,
+		// 	signer: signerNone(),
+		// 	client,
+		// });
 
-		try {
-			const response = await acc.runLocal("resolveCodeHashNftRoot", {});
-			let value0 = response;
-			rootCode = response.decoded.output.codeHashData.split("0x")[1];
-			console.log("value0", value0);
-		} catch (e) {
-			console.log("catch E", e);
-		}
+		// try {
+		// 	const response = await acc.runLocal("resolveCodeHashNftRoot", {});
+		// 	let value0 = response;
+		// 	rootCode = response.decoded.output.codeHashData.split("0x")[1];
+		// 	console.log("value0", value0);
+		// } catch (e) {
+		// 	console.log("catch E", e);
+		// }
 
 		let tempCols = [];
 
-		await fetch("https://net.ton.dev/graphql", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				query: `
-					{accounts(
-					filter:{
-						  code_hash:{
-						  eq:"${rootCode}"
-						}
-					}){
-					  id
-					}}
-				`,
-			}),
-		})
-			.then((r) => r.json())
-			.then(async (data) => {
-				let tempData = data.data.accounts;
+		// await fetch("https://net.ton.dev/graphql", {
+		// 	method: "POST",
+		// 	headers: {
+		// 		"Content-Type": "application/json",
+		// 	},
+		// 	body: JSON.stringify({
+		// 		query: `
+		// 			{accounts(
+		// 			filter:{
+		// 				  code_hash:{
+		// 				  eq:"${rootCode}"
+		// 				}
+		// 			}){
+		// 			  id
+		// 			}}
+		// 		`,
+		// 	}),
+		// })
+		// 	.then((r) => r.json())
+		// 	.then(async (data) => {
+		// 		let tempData = data.data.accounts;
 
-				for (let i = 0; i < tempData.length; i++) {
-					let tempAddr = tempData[i].id;
+		// 		for (let i = 0; i < tempData.length; i++) {
+		// 			let tempAddr = tempData[i].id;
 
-					const tempAcc = new Account(NftRootColectionContract, {
-						address: tempAddr,
-						signer: signerNone(),
-						client,
-					});
+		// 			const tempAcc = new Account(NftRootColectionContract, {
+		// 				address: tempAddr,
+		// 				signer: signerNone(),
+		// 				client,
+		// 			});
 
-					try {
-						const response = await tempAcc.runLocal("getInfo", {});
-						let value0 = response;
-						let data = response.decoded.output;
-						tempCols.push({
-							name: data.name,
-							desc: data.description,
-							icon: data.icon,
-							addrCol: tempAddr,
-						});
-						console.log("value0", value0);
-					} catch (e) {
-						console.log("catch E", e);
-					}
-				}
-			});
+		// 			try {
+		// 				const response = await tempAcc.runLocal("getInfo", {});
+		// 				let value0 = response;
+		// 				let data = response.decoded.output;
+		// 				tempCols.push({
+		// 					name: data.name,
+		// 					desc: data.description,
+		// 					icon: data.icon,
+		// 					addrCol: tempAddr,
+		// 				});
+		// 				console.log("value0", value0);
+		// 			} catch (e) {
+		// 				console.log("catch E", e);
+		// 			}
+		// 		}
+		// 	});
 
 		console.log(tempCols);
+		setLoader(false);
 		setCollections(tempCols);
 	}
 
@@ -203,22 +206,22 @@ function CollectionMarket() {
 					</div> */}
 
 					{/* <button onClick={getCollections}>Test</button> */}
-					{collections.length > 0
-						? collections.map((item, index) => {
-								return (
-									<div class="collection">
-										<div class="img">
-											<img
-												src={"https://gateway.pinata.cloud/ipfs/" + item.icon}
-											/>
+					{collections.length > 0 ? (
+						collections.map((item, index) => {
+							return (
+								<div class="collection">
+									<div class="img">
+										<img
+											src={"https://gateway.pinata.cloud/ipfs/" + item.icon}
+										/>
+									</div>
+									<div class="content">
+										<div class="name">{item.name}</div>
+										<div class="description">
+											<span>Description:</span>
+											{item.desc}
 										</div>
-										<div class="content">
-											<div class="name">{item.name}</div>
-											<div class="description">
-												<span>Description:</span>
-												{item.desc}
-											</div>
-											{/* <div class="rank">
+										{/* <div class="rank">
 											<span>Rank:</span>100
 										</div>
 										<div class="price">
@@ -227,21 +230,31 @@ function CollectionMarket() {
 										<div class="price-quality">
 											<span>Price quality:</span>50%
 										</div> */}
-											<div
-												class="button-1-square"
-												// onClick={() => setMintNftData({hidden: false})}
-												onClick={() => openCollection(item.addrCol)}
-											>
-												Buy & Open pack
-											</div>
+										<div
+											class="button-1-square"
+											// onClick={() => setMintNftData({hidden: false})}
+											onClick={() => openCollection(item.addrCol)}
+										>
+											Buy & Open pack
 										</div>
 									</div>
-								);
-						  })
-						: // <button className="button-1-square" onClick={getCollections}>
-						  // 	Load Collections
-						  // </button>
-						  null}
+								</div>
+							);
+						})
+					) : (
+						// <button className="button-1-square" onClick={getCollections}>
+						// 	Load Collections
+						// </button>
+						<div className={loader ? "hide" : ""}>No NFT`s</div>
+					)}
+
+					{loader ? (
+						<div className="loader">
+							<div></div>
+							<div></div>
+							<div></div>
+						</div>
+					) : null}
 
 					{redirect ? <Redirect to="/collection-market-pack" /> : ""}
 				</div>

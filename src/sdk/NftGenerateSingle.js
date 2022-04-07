@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import {HashRouter as Router, Redirect, useHistory} from "react-router-dom";
 import mergeImages from "merge-images";
 
@@ -18,6 +18,12 @@ const pinataSecretKey =
 let nftArr = [];
 
 function NftCustomizationSingle() {
+	useEffect(() => {
+		if (document.location.href.split("?transactionHashes=")[1]) {
+			let href = document.location.origin + document.location.hash;
+			document.location.href = href;
+		}
+	}, []);
 	let history = useHistory();
 
 	const dispatch = useDispatch();
