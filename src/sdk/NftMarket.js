@@ -66,6 +66,8 @@ function NftMarket() {
 
 	const [loader, setLoader] = useState(true);
 
+	const [accordionHidden, setAccordioHidden] = useState([false, false, false]);
+
 	let marketrootAddr = config.marketroot;
 
 	const zeroAddress =
@@ -346,14 +348,31 @@ function NftMarket() {
 		// console.log(nft.price);
 		// console.log(parseNearAmount(nft.price.toString()));
 
-		contractMarket.offer(
-			{
-				nft_contract_id: nft.addrNftCol,
-				token_id: nft.token_id,
-			},
-			"300000000000000",
-			parseNearAmount(nft.price.toString()),
-		);
+		contractMarket
+			.offer(
+				{
+					nft_contract_id: nft.addrNftCol,
+					token_id: nft.token_id,
+				},
+				"300000000000000",
+				parseNearAmount(nft.price.toString()),
+			)
+			.catch(() => {
+				alert("Connect Wallet");
+			});
+	}
+
+	function accordionChange(index) {
+		let tempValue = [];
+		for (let i = 0; i < accordionHidden.length; i++) {
+			if (i == index) {
+				tempValue.push(!accordionHidden[i]);
+			} else {
+				tempValue.push(accordionHidden[i]);
+			}
+			console.log(accordionHidden[i]);
+		}
+		setAccordioHidden(tempValue);
 	}
 
 	return (
@@ -382,68 +401,294 @@ function NftMarket() {
 						<span></span>
 						<span></span>
 					</button>
-					<div class="title">Robots Collection</div>
-					<div class="mint owner">
+					<div className="title">Robots Collection</div>
+					<div className="mint owner">
 						Owner: <span>0:65eb...fe7b</span>{" "}
 					</div>
-					<div class="mint price">
+					<div className="mint price">
 						Price: <span>149</span>{" "}
 					</div>
-					<div class="mint royalty">
+					<div className="mint royalty">
 						Royalty for Author <span>15%</span>{" "}
 					</div>
-					<div class="button-1-square">Buy & Open Pack</div>
+					<div className="button-1-square">Buy & Open Pack</div>
 				</div>
 
-				<div class="collections">
-					{/* <div class="collection">
-						<div class="img">
+				<div class="constructor-market">
+					<div class="container-header">
+						<div class="modal-constructor modal-constructor-filter">
+							<div className="title-1">Marketplace</div>
+
+							<div className="title">
+								Search{" "}
+								<span
+									className={accordionHidden[0] ? "hidden" : ""}
+									onClick={() => {
+										accordionChange(0);
+									}}
+								></span>
+							</div>
+							<div className="text"></div>
+							<div className={accordionHidden[0] ? "hide" : "search"}>
+								<input className="input" placeholder="Enter ID for search" />
+							</div>
+
+							<div className="title">
+								Sort Filter{" "}
+								<span
+									className={accordionHidden[1] ? "hidden" : ""}
+									onClick={() => {
+										accordionChange(1);
+									}}
+								></span>
+							</div>
+							<div className="text"></div>
+							<div className={accordionHidden[1] ? "hide" : "filter"}>
+								<div>
+									<button
+										onClick={(ev) => {
+											console.log(ev.target.classList.toggle("active"));
+										}}
+										className="checkbox"
+									></button>{" "}
+									Sort by ID
+								</div>
+								<div>
+									<button
+										onClick={(ev) => {
+											console.log(ev.target.classList.toggle("active"));
+										}}
+										className="checkbox"
+									></button>{" "}
+									Sort by rank
+								</div>
+								<div>
+									<button
+										onClick={(ev) => {
+											console.log(ev.target.classList.toggle("active"));
+										}}
+										className="checkbox"
+									></button>{" "}
+									Sort by price quality (ASC)
+								</div>
+								<div>
+									<button
+										onClick={(ev) => {
+											console.log(ev.target.classList.toggle("active"));
+										}}
+										className="checkbox"
+									></button>{" "}
+									Sort by price quality (DESC)
+								</div>
+								<div>
+									<button
+										onClick={(ev) => {
+											console.log(ev.target.classList.toggle("active"));
+										}}
+										className="checkbox"
+									></button>{" "}
+									Sort by price (ASC)
+								</div>
+								<div>
+									<button
+										onClick={(ev) => {
+											console.log(ev.target.classList.toggle("active"));
+										}}
+										className="checkbox"
+									></button>{" "}
+									Sort by price (DESC)
+								</div>
+							</div>
+
+							<div className="title">
+								Attributes Filter{" "}
+								<span
+									className={accordionHidden[2] ? "hidden" : ""}
+									onClick={() => {
+										accordionChange(2);
+									}}
+								></span>
+							</div>
+							<div className="text"></div>
+							<div className={accordionHidden[2] ? "hide" : "filter"}>
+								<div>
+									<button
+										onClick={(ev) => {
+											console.log(ev.target.classList.toggle("active"));
+										}}
+										className="checkbox"
+									></button>{" "}
+									Sort by ID
+								</div>
+								<div>
+									<button
+										onClick={(ev) => {
+											console.log(ev.target.classList.toggle("active"));
+										}}
+										className="checkbox"
+									></button>{" "}
+									Sort by rank
+								</div>
+								<div>
+									<button
+										onClick={(ev) => {
+											console.log(ev.target.classList.toggle("active"));
+										}}
+										className="checkbox"
+									></button>{" "}
+									Sort by price quality (ASC)
+								</div>
+								<div>
+									<button
+										onClick={(ev) => {
+											console.log(ev.target.classList.toggle("active"));
+										}}
+										className="checkbox"
+									></button>{" "}
+									Sort by price quality (DESC)
+								</div>
+								<div>
+									<button
+										onClick={(ev) => {
+											console.log(ev.target.classList.toggle("active"));
+										}}
+										className="checkbox"
+									></button>{" "}
+									Sort by price (ASC)
+								</div>
+								<div>
+									<button
+										onClick={(ev) => {
+											console.log(ev.target.classList.toggle("active"));
+										}}
+										className="checkbox"
+									></button>{" "}
+									Sort by price (DESC)
+								</div>
+							</div>
 						</div>
-						<div class="content">
-							<div class="name">Robot #23245</div>
-							<div class="rank">
+						<div class="modal-constructor modal-constructor-market">
+							<div className="grid">
+								{collections.length > 0 ? (
+									collections.map((item, index) => {
+										return (
+											<div className="element">
+												<div class="rarity">L</div>
+												<div class="img">
+													<img src={item.icon} />
+												</div>
+												<div class="nameCol">{item.name.substring(0, 40)}</div>
+												<div class="name">{item.desc.substring(0, 20)}</div>
+												<div class="subtitle">Price</div>
+												<div class="price">
+													<span></span> {item.price.toFixed(3)} NEAR
+												</div>
+											</div>
+											// <div key={"uniqueId"+index} className="collection">
+
+											// 	<div className="img">
+											// 		<img src={item.icon} />
+											// 	</div>
+											// 	<div className="content">
+											// 		<div className="name">{item.name.substring(0, 40)}</div>
+											// 		<div className="description">
+											// 			<span>Description:</span>
+											// 			{item.desc.substring(0, 50)}
+											// 		</div>
+											// 		<div className="description">
+											// 			<span>Price:</span>
+											// 			{item.price.toFixed(3)} NEAR
+											// 		</div>
+											// 		{/* <div className="rank">
+											// 			<span>Rank:</span>100
+											// 		</div>
+											// 		<div className="price">
+											// 			<span>Price:</span>149000.00
+											// 		</div>
+											// 		<div className="price-quality">
+											// 			<span>Price quality:</span>50%
+											// 		</div> */}
+											// 		<div
+											// 			className="button-1-square"
+											// 			// onClick={() => setMintNftData({hidden: false})}
+											// 			onClick={() => buyNft(item)}
+											// 		>
+											// 			Buy
+											// 		</div>
+											// 	</div>
+											// </div>
+										);
+									})
+								) : (
+									// <button className="button-1-square" onClick={getCollections}>
+									// 	Load Collections
+									// </button>
+
+									<div className={loader ? "hide" : ""}>No NFT`s</div>
+								)}
+
+								{loader ? (
+									<div className="loader">
+										<div></div>
+										<div></div>
+										<div></div>
+									</div>
+								) : null}
+
+								{/* <div className="element">
+									<div class="rarity">L</div>
+									<div class="img"></div>
+									<div class="nameCol">Untitled Coolection #1239239</div>
+									<div class="name">Roboto #2054</div>
+									<div class="subtitle">Price</div>
+									<div class="price">
+										<span></span> 10,50 NEAR
+									</div>
+								</div> */}
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div className="collections">
+					{/* <div className="collection">
+						<div className="img">
+						</div>
+						<div className="content">
+							<div className="name">Robot #23245</div>
+							<div className="rank">
 								<span>Rank:</span>100
 							</div>
-							<div class="price">
+							<div className="price">
 								<span>Price:</span>149000.00
 							</div>
-							<div class="price-quality">
+							<div className="price-quality">
 								<span>Price quality:</span>50%
 							</div>
-							<div class="button-1-square" onClick={()=>openCollection("owner1", "collection1")}>Buy & Open Pack</div>
+							<div className="button-1-square" onClick={()=>openCollection("owner1", "collection1")}>Buy & Open Pack</div>
 						</div>
 					</div> */}
 
-					{/* <button onClick={getCollections}>Test</button> */}
-					{collections.length > 0 ? (
+					{/* {collections.length > 0 ? (
 						collections.map((item, index) => {
 							return (
-								<div class="collection">
-									<div class="img">
+								<div key={"uniqueId"+index} className="collection">
+									<div className="img">
 										<img src={item.icon} />
 									</div>
-									<div class="content">
-										<div class="name">{item.name.substring(0, 40)}</div>
-										<div class="description">
+									<div className="content">
+										<div className="name">{item.name.substring(0, 40)}</div>
+										<div className="description">
 											<span>Description:</span>
 											{item.desc.substring(0, 50)}
 										</div>
-										<div class="description">
+										<div className="description">
 											<span>Price:</span>
 											{item.price.toFixed(3)} NEAR
 										</div>
-										{/* <div class="rank">
-											<span>Rank:</span>100
-										</div>
-										<div class="price">
-											<span>Price:</span>149000.00
-										</div>
-										<div class="price-quality">
-											<span>Price quality:</span>50%
-										</div> */}
+										
 										<div
-											class="button-1-square"
-											// onClick={() => setMintNftData({hidden: false})}
+											className="button-1-square"
 											onClick={() => buyNft(item)}
 										>
 											Buy
@@ -453,20 +698,17 @@ function NftMarket() {
 							);
 						})
 					) : (
-						// <button className="button-1-square" onClick={getCollections}>
-						// 	Load Collections
-						// </button>
 
 						<div className={loader ? "hide" : ""}>No NFT`s</div>
-					)}
+					)} */}
 
-					{loader ? (
+					{/* {loader ? (
 						<div className="loader">
 							<div></div>
 							<div></div>
 							<div></div>
 						</div>
-					) : null}
+					) : null} */}
 
 					{redirect ? <Redirect to="/collection-market-pack" /> : ""}
 				</div>

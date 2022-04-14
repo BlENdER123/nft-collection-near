@@ -91,8 +91,10 @@ function LoadNftPageSingle() {
 	const [width, setWidth] = useState();
 	const [height, setHeight] = useState();
 
-	const [projectName, setProjectName] = useState();
-	const [projectDescription, setProjectDescription] = useState();
+	const [projectName, setProjectName] = useState("Project Name");
+	const [projectDescription, setProjectDescription] = useState(
+		"Project Description",
+	);
 
 	const [curentImages, setCurentImages] = useState([0]);
 
@@ -296,10 +298,10 @@ function LoadNftPageSingle() {
 		// }
 		// console.log(sizeImgs);
 
-		if (event.target.files[0].size / 1024 / 1024 > 1) {
+		if (event.target.files[0].size / 1024 / 1024 > 5) {
 			setErrorModal({
 				hidden: true,
-				message: "Image is larger than 1MB",
+				message: "Image is larger than 5MB",
 			});
 			return;
 		}
@@ -446,7 +448,7 @@ function LoadNftPageSingle() {
 	}
 
 	function getSrc(src) {
-		return "https://gateway.pinata.cloud/ipfs/" + src;
+		return "https://cloudflare-ipfs.com/ipfs/" + src;
 	}
 
 	function logData() {
@@ -473,19 +475,21 @@ function LoadNftPageSingle() {
 		}
 
 		if (projectName === "" || projectName === undefined) {
-			setErrorModal({
-				hidden: true,
-				message: "Set project name",
-			});
-			return;
+			// setErrorModal({
+			// 	hidden: true,
+			// 	message: "Set project name",
+			// });
+			// return;
+			setProjectName("Project Name");
 		}
 
 		if (projectDescription === "" || projectDescription === undefined) {
-			setErrorModal({
-				hidden: true,
-				message: "Set project description",
-			});
-			return;
+			// setErrorModal({
+			// 	hidden: true,
+			// 	message: "Set project description",
+			// });
+			// return;
+			setProjectDescription("Project Description");
 		}
 
 		// for (let i = 0; i < classArr1.length; i++) {
@@ -622,8 +626,8 @@ function LoadNftPageSingle() {
 			>
 				<Header activeCat={1}></Header>
 
-				<div class="constructors">
-					<div class="container-header">
+				<div className="constructors">
+					<div className="container-header">
 						<div
 							className={errorModal.hidden === true ? "error-modal" : "hide"}
 						>
@@ -638,11 +642,12 @@ function LoadNftPageSingle() {
 						</div>
 
 						<div className="modal-constructor modal-constructor-layers">
-							<div class="title">Layers</div>
-							<div class="text">Add and edit layers</div>
+							<div className="title">Layers</div>
+							<div className="text">Add and edit layers</div>
 							{classArr1.map((item, index) => {
 								return (
 									<div
+										key={"uniqueId" + index}
 										className={
 											item.active
 												? "layers-list_layer layers-list_layer-active"
@@ -650,14 +655,14 @@ function LoadNftPageSingle() {
 										}
 										onClick={() => setActive(item)}
 									>
-										<div class="index">{index + 1}. </div>
+										<div className="index">{index + 1}. </div>
 										<span>{item.name}</span>
 									</div>
 								);
 							})}
 
-							<div class="layers-list_layer-input">
-								<div class="title">Add New Layers</div>
+							<div className="layers-list_layer-input">
+								<div className="title">Add New Layer</div>
 								<input
 									type="text"
 									placeholder="Layer Name"
@@ -666,25 +671,26 @@ function LoadNftPageSingle() {
 									}}
 								/>
 								<button
-									class="button-1-square"
+									className="button-1-square"
 									onClick={() => newClass(newLayer, false, [], 0, 0, 0, 0, 0)}
 								>
 									Add Layer
 								</button>
 							</div>
 						</div>
-						<div class="modal-constructor modal-constructor-upload">
+						<div className="modal-constructor modal-constructor-upload">
 							<a href="https://www.youtube.com/watch?v=YHatcktJM8I">
-								<button class="button-3-square">
+								<button className="button-3-square">
 									Not sure where to start? Check out our intro video here.
 								</button>
 							</a>
 
-							<div class="drop-img">
-								<div class="imgs-list">
+							<div className="drop-img">
+								<div className="imgs-list">
 									{classArr1[curentLayer].imgs.map((item, index) => {
 										return (
 											<div
+												key={"uniqueId" + index}
 												className={
 													curentImages[curentLayer] == index
 														? "img-element img-element-active"
@@ -692,12 +698,12 @@ function LoadNftPageSingle() {
 												}
 												onClick={() => setImgActive(index)}
 											>
-												<div class="close" onClick={() => removeImg(index)}>
+												<div className="close" onClick={() => removeImg(index)}>
 													<span></span>
 													<span></span>
 												</div>
 												<img src={getSrc(item)}></img>
-												<div class="name">
+												<div className="name">
 													{classArr1[curentLayer].names[index].substring(0, 7)}
 												</div>
 											</div>
@@ -712,11 +718,11 @@ function LoadNftPageSingle() {
 									onChange={download}
 								/>
 
-								<label for="input_file" class="input__file-button">
-									<span class="input__file-icon-wrapper"></span>
-									<span class="input__file-text">Browse Image</span>
-									<span class="input__file-text2">
-										(image/png, image/jpg, image/jpeg, Max size: 1MB)
+								<label htmlFor="input_file" className="input__file-button">
+									<span className="input__file-icon-wrapper"></span>
+									<span className="input__file-text">Browse Image</span>
+									<span className="input__file-text2">
+										(image/png, image/jpg, image/jpeg, Max size: 5MB)
 									</span>
 								</label>
 								{/* <input className="text" type="file" onChange={(ev) => download(ev.target)}/> */}
@@ -725,73 +731,74 @@ function LoadNftPageSingle() {
 								{/* </input> */}
 								{/* <button type="button" onClick={logImgs}>Log imgs</button> */}
 							</div>
-							<div class="button-1-square" onClick={logData}>
+							<div className="button-1-square" onClick={logData}>
 								Upload & Next
 							</div>
 						</div>
 
-						<div class="modal-constructor modal-constructor-settings">
-							<div class="project-settings">
-								<div class="title">Project details</div>
-								<div class="text">Add project name & description.</div>
-								<div class="setting">
-									<div class="title-settings">Project Name</div>
+						<div className="modal-constructor modal-constructor-settings">
+							<div className="project-settings">
+								<div className="title">Project details</div>
+								<div className="text">Add project name & description.</div>
+								<div className="setting">
+									<div className="title-settings">Project Name</div>
 									<input
 										type="text"
 										placeholder="No Name"
-										class="input-settings"
+										className="input-settings"
 										onChange={(event) => setProjectName(event.target.value)}
 									/>
 								</div>
-								<div class="setting">
-									<div class="title-settings">Project Description</div>
+								<div className="setting">
+									<div className="title-settings">Project Description</div>
 									<textarea
 										type="text"
 										placeholder="Project Description"
-										class="input-settings"
+										className="input-settings"
 										onChange={(event) =>
 											setProjectDescription(event.target.value)
 										}
 									/>
 								</div>
-								<div class="setting">
-									<div class="title-settings">Demension (px)</div>
+								<div className="setting">
+									<div className="title-settings">Dimension (px)</div>
 
 									<input
 										type="text"
 										placeholder="700"
-										class="input-settings inputL inputL1"
+										className="input-settings inputL inputL1"
 										onChange={(event) => setWidth(event.target.value)}
 									/>
 
 									<input
 										type="text"
 										placeholder="800"
-										class="input-settings inputL"
+										className="input-settings inputL"
 										onChange={(event) => setHeight(event.target.value)}
 									/>
-									<span>Max size: 1MB</span>
+									<span>Max size: 5MB</span>
 								</div>
 
-								<div class="title">Layer Settings</div>
-								<div class="text">Change your layers settings</div>
-								<div class="setting">
-									<div class="title-settings">Layer Name</div>
+								<div className="title">Layer Settings</div>
+								<div className="text">Change your layers settings</div>
+								<div className="setting">
+									<div className="title-settings">Layer Name</div>
 									<input
 										type="text"
-										class="input-settings"
+										className="input-settings"
 										placeholder={classArr1[curentLayer].name}
 										onChange={setNewLayerName}
 									/>
 								</div>
 
-								<div class="title">Element Settings</div>
-								<div class="text">Change your element settings</div>
-								<div class="setting">
-									<div class="title-settings">Rarity</div>
+								<div className="title">Element Settings</div>
+								<div className="text">Change your element settings</div>
+								<div className="setting">
+									<div className="title-settings">Rarity</div>
 									{classArr1[curentLayer].imgs.map((item, index) => {
 										return (
 											<input
+												key={"uniqueId" + index}
 												className={
 													curentImages[curentLayer] == index ? "" : "hide"
 												}
@@ -805,7 +812,7 @@ function LoadNftPageSingle() {
 										);
 									})}
 
-									<div class="grades">
+									<div className="grades">
 										<span className="legendary">Legendary</span>
 										<span className="epic">Epic</span>
 										<span className="rare">Rare</span>
@@ -815,8 +822,8 @@ function LoadNftPageSingle() {
 								</div>
 							</div>
 						</div>
-						<div class="break"></div>
-						{/* <a href="#/nft-customization"><div class="next" onClick={logData}>Next</div></a> */}
+						<div className="break"></div>
+						{/* <a href="#/nft-customization"><div className="next" onClick={logData}>Next</div></a> */}
 
 						{redirect ? <Redirect to="/nft-customization-single" /> : ""}
 					</div>

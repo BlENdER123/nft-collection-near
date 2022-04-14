@@ -34,6 +34,7 @@ class MyClass {
 		this.imgs = imgs;
 		this.src = src;
 		this.rarity = rarity;
+		this.rarityLayer = ["4"];
 		this.names = names;
 		this.x = x;
 		this.y = y;
@@ -72,12 +73,21 @@ function LoadNftPage() {
 	const [width, setWidth] = useState();
 	const [height, setHeight] = useState();
 
-	const [projectName, setProjectName] = useState();
-	const [projectDescription, setProjectDescription] = useState();
+	const [projectName, setProjectName] = useState("Project Name");
+	const [collectionName, setCollectionName] = useState("");
+	const [projectDescription, setProjectDescription] = useState("");
 
 	const [curentImages, setCurentImages] = useState([0]);
 
 	const [connect, setConnect] = useState(false);
+
+	const [urlImg, setUrlImg] = useState("");
+
+	const [videoPlay, setVideoPlay] = useState(false);
+
+	const [accordionHidden, setAccordioHidden] = useState([false, false]);
+
+	const [errorInput, setErrorInput] = useState();
 
 	// const [sizeImgs, setSizeImgs] = useState([0]);
 
@@ -88,9 +98,11 @@ function LoadNftPage() {
 
 	const [redirect, setRedirect] = useState(false);
 
+	const [activeNext, setActiveNext] = useState(false);
+
 	const [tempBg, setTempBg] = useState([]);
 
-	const pinFileToIPFS = (
+	const pinFileToIPFS = async (
 		pinataKey,
 		pinataSecretKey,
 		src,
@@ -105,7 +117,7 @@ function LoadNftPage() {
 		console.log(src);
 		data.append("file", src);
 
-		return axios
+		await axios
 			.post(url, data, {
 				maxBodyLength: "Infinity", //this is needed to prevent axios from erroring out with large files
 				headers: {
@@ -117,6 +129,8 @@ function LoadNftPage() {
 			.then(function (response) {
 				//handle response here
 				console.log(response.data.IpfsHash);
+
+				console.log(src);
 
 				let tempArr = [];
 				for (let i = 0; i < classArr1.length; i++) {
@@ -260,92 +274,34 @@ function LoadNftPage() {
 	}
 
 	function download(event) {
-		let file = event.target.files[0];
+		for (let i = 0; i < event.target.files.length; i++) {
+			let file = event.target.files[i];
 
-		// console.log(sizeImgs);
-		// let summ = summImgs();
-		// console.log(summ);
-		// if(summ < 4.5 && (event.target.files[0].size/1024/1024) < 4.5 && (event.target.files[0].size/1024/1024+summ)<4.5) {
-		// 	let size = event.target.files[0].size/1024/1024;
-		// 	let temp = sizeImgs;
-		// 	temp.push(size);
-		// 	setSizeImgs(temp);
-		// } else {
-		// 	setErrorModal({
-		// 		hidden: true,
-		// 		message: "Images are larger than 5 MB",
-		// 	});
-		// 	return;
-		// }
-		// console.log(sizeImgs);
+			if (event.target.files[0].size / 1024 / 1024 > 5) {
+				setErrorModal({
+					hidden: true,
+					message: "Image is larger than 5MB",
+				});
+				return;
+			}
 
-		if (event.target.files[0].size / 1024 / 1024 > 1) {
-			setErrorModal({
-				hidden: true,
-				message: "Image is larger than 1MB",
-			});
-			return;
+			var image = new Image();
+			image.src = URL.createObjectURL(file);
+			image.onload = function () {
+				console.log(image.width, image.height);
+
+				let name = file.name.substring(0, file.name.indexOf("."));
+
+				pinFileToIPFS(
+					pinataKey,
+					pinataSecretKey,
+					event.target.files[i],
+					image.width,
+					image.height,
+					name,
+				);
+			};
 		}
-
-		var image = new Image();
-		image.src = URL.createObjectURL(file);
-		image.onload = function () {
-			//console.log(image.width);
-
-			// var canvas = document.createElement("canvas");
-			// canvas.width = image.width;
-			// canvas.height = image.height;
-
-			// var ctx = canvas.getContext("2d");
-			// ctx.drawImage(image, 0, 0);
-
-			// var dataURL = canvas.toDataURL("image/png");
-
-			// //console.log(dataURL.replace(/^data:image\/(png|jpg);base64,/, ""));
-
-			// let src = dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
-
-			console.log(image.width, image.height);
-
-			let name = file.name.substring(0, file.name.indexOf("."));
-
-			pinFileToIPFS(
-				pinataKey,
-				pinataSecretKey,
-				event.target.files[0],
-				image.width,
-				image.height,
-				name,
-			);
-
-			//setSrc(URL.createObjectURL(file));
-
-			// let tempArr = [];
-			// for (let i = 0; i < classArr1.length; i++) {
-			// 	let temp = classArr1[i];
-			// 	if (classArr1[curentLayer].name == classArr1[i].name) {
-			// 		if (temp.imgs[0] == undefined) {
-			// 			temp.imgs = [];
-			// 			temp.imgs.push(src);
-			// 			temp.width = image.width;
-			// 			temp.height = image.height;
-			// 		} else {
-			// 			temp.imgs.push(src);
-			// 			// if ((temp.height == image.height && temp.width == image.width)) {
-			// 			// 	temp.imgs.push(src);
-			// 			// } else {
-			// 			// 	setErrorModal({
-			// 			// 		hidden: true,
-			// 			// 		message: "Your images are different sizes",
-			// 			// 	});
-			// 			// }
-			// 		}
-			// 	}
-			// 	tempArr.push(temp);
-			// }
-			// console.log(tempArr);
-			// setClassArr1(tempArr);
-		};
 	}
 
 	function removeImg(index) {
@@ -404,7 +360,7 @@ function LoadNftPage() {
 		let tempArr = [];
 		for (let i = 0; i < classArr1.length; i++) {
 			let temp = classArr1[i];
-			if (classArr1[curentLayer].name == classArr1[i].name) {
+			if (curentLayer == i) {
 				temp.name = tempVal;
 			}
 			tempArr.push(temp);
@@ -437,20 +393,38 @@ function LoadNftPage() {
 
 	function logData() {
 		console.log("-----------");
-		if (
-			width <= 0 ||
-			height <= 0 ||
-			width == undefined ||
-			height == undefined
-		) {
-			setErrorModal({
-				hidden: true,
-				message: "Enter size",
-			});
+
+		for (let i = 0; i < classArr1.length; i++) {
+			// console.log(classArr1[i].imgs[0]);
+			if (classArr1[i].imgs[0] == undefined) {
+				setErrorModal({
+					hidden: true,
+					message: "Each layer must contain at least 1 image.",
+				});
+			}
+		}
+
+		// console.log(width, height);
+
+		if (width <= 0 || width == undefined) {
+			setErrorInput("width");
+			// setErrorModal({
+			// 	hidden: true,
+			// 	message: "Enter size",
+			// });
 			return;
 		}
 
-		if (width > 700 || height > 800) {
+		if (height <= 0 || height == undefined) {
+			setErrorInput("height");
+			// setErrorModal({
+			// 	hidden: true,
+			// 	message: "Enter size",
+			// });
+			return;
+		}
+
+		if (width > 700 || height > 700) {
 			setErrorModal({
 				hidden: true,
 				message: "The size is too large",
@@ -458,19 +432,53 @@ function LoadNftPage() {
 			return;
 		}
 
+		// if (width/height > 2) {
+		// 	setErrorModal({
+		// 		hidden: true,
+		// 		message: "The aspect ratio must be no more than 4:2",
+		// 	});
+		// 	return;
+		// }
+
+		// if (width/height < 0.5) {
+		// 	setErrorModal({
+		// 		hidden: true,
+		// 		message: "The aspect ratio must be no more than 2:4",
+		// 	});
+		// 	return;
+		// }
+
+		if (collectionName === "" || collectionName === undefined) {
+			// setErrorModal({
+			// 	hidden: true,
+			// 	message: "Set collection name",
+			// });
+
+			setErrorInput("colName");
+
+			// setProjectName("Project Name");
+			return;
+		}
+
 		if (projectName === "" || projectName === undefined) {
-			setErrorModal({
-				hidden: true,
-				message: "Set project name",
-			});
+			// setErrorModal({
+			// 	hidden: true,
+			// 	message: "Set project name",
+			// });
+
+			setProjectName("Project Name");
 			return;
 		}
 
 		if (projectDescription === "" || projectDescription === undefined) {
-			setErrorModal({
-				hidden: true,
-				message: "Set project description",
-			});
+			// setErrorModal({
+			// 	hidden: true,
+			// 	message: "Set project description",
+			// });
+
+			setErrorInput("colDesc");
+
+			// setProjectDescription("Project Description");
 			return;
 		}
 
@@ -490,6 +498,97 @@ function LoadNftPage() {
 
 		history.push("/nft-customization");
 		// setRedirect(true);
+	}
+
+	async function downloadUrl() {
+		const pinataKey = "0a2ed9f679a6c395f311";
+		const pinataSecretKey =
+			"7b53c4d13eeaf7063ac5513d4c97c4f530ce7e660f0c147ab5d6aee6da9a08b9";
+		console.log(urlImg);
+
+		var image = new Image();
+		image.src = urlImg;
+		console.log(image);
+		image.onload = function () {
+			console.log(image);
+		};
+
+		await fetch(urlImg, {
+			mode: "no-cors",
+			// headers: {
+			// 	"Content-Type": "application/json",
+
+			// },
+		})
+			.then((res) => res.blob())
+			.then((blob) => {
+				const file = new File([blob], "File name", {type: "image/png"});
+
+				const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
+
+				let data = new FormData();
+
+				data.append("file", file);
+
+				console.log(file);
+
+				var image = new Image();
+				image.src = URL.createObjectURL(file);
+				console.log(image);
+				image.onload = function () {
+					console.log(image);
+				};
+
+				return axios
+					.post(url, data, {
+						maxBodyLength: "Infinity",
+						headers: {
+							"Content-Type": `multipart/form-data; boundary=${data._boundary}`,
+							pinata_api_key: pinataKey,
+							pinata_secret_api_key: pinataSecretKey,
+						},
+					})
+					.then(async function (response) {
+						console.log(response.data.IpfsHash);
+
+						// let tempArr = [];
+						// for (let i = 0; i < classArr1.length; i++) {
+						// 	let temp = classArr1[i];
+						// 	if (classArr1[curentLayer].name == classArr1[i].name) {
+						// 		if (temp.imgs[0] == undefined) {
+						// 			console.log("empty");
+
+						// 			setWidth(width);
+						// 			setHeight(height);
+
+						// 			temp.imgs = [];
+						// 			temp.imgs.push(response.data.IpfsHash);
+						// 			temp.width = width;
+						// 			temp.height = height;
+						// 			temp.names = [];
+						// 			temp.rarity = [];
+						// 			temp.rarity.push("4");
+						// 			temp.names.push("Name");
+						// 		} else {
+						// 			temp.imgs.push(response.data.IpfsHash);
+						// 			temp.names.push("Name");
+						// 			temp.rarity.push("4");
+						// 			// if ((temp.height == image.height && temp.width == image.width)) {
+						// 			// 	temp.imgs.push(src);
+						// 			// } else {
+						// 			// 	setErrorModal({
+						// 			// 		hidden: true,
+						// 			// 		message: "Your images are different sizes",
+						// 			// 	});
+						// 			// }
+						// 		}
+						// 	}
+						// 	tempArr.push(temp);
+						// }
+						// console.log(tempArr);
+						// setClassArr1(tempArr);
+					});
+			});
 	}
 
 	function closeError() {
@@ -523,6 +622,55 @@ function LoadNftPage() {
 		console.log(connectWallet);
 	}
 
+	function changeError(input, value) {
+		if (value !== "" && value !== undefined) {
+			setErrorInput("");
+			if (
+				width !== "" &&
+				width !== undefined &&
+				height !== "" &&
+				height !== undefined &&
+				collectionName !== "" &&
+				collectionName !== undefined &&
+				projectDescription !== "" &&
+				projectDescription !== undefined
+			) {
+				setActiveNext(true);
+			} else {
+				setActiveNext(false);
+			}
+		} else {
+			setErrorInput(input);
+			setActiveNext(false);
+		}
+
+		if (input == "width") {
+			setWidth(value);
+		}
+		if (input == "height") {
+			setHeight(value);
+		}
+		if (input == "colName") {
+			setCollectionName(value);
+		}
+		if (input == "colDesc") {
+			setProjectDescription(value);
+		}
+	}
+
+	function accordionChange(index) {
+		let tempValue = [];
+		for (let i = 0; i < accordionHidden.length; i++) {
+			if (i == index) {
+				tempValue.push(!accordionHidden[i]);
+			} else {
+				tempValue.push(accordionHidden[i]);
+			}
+			console.log(accordionHidden[i]);
+		}
+		setAccordioHidden(tempValue);
+	}
+
 	return (
 		<Router>
 			<div
@@ -534,6 +682,22 @@ function LoadNftPage() {
 			>
 				<span className={connectWallet ? "" : "hide"} onClick={close}></span>
 			</div>
+			<div className={videoPlay ? "video-player" : "hide"}>
+				<button className="close" onClick={() => setVideoPlay(false)}>
+					<span></span>
+					<span></span>
+				</button>
+
+				<div className="video">
+					<iframe
+						src="https://www.youtube.com/embed/YHatcktJM8I"
+						title="YouTube video player"
+						frameBorder="0"
+						allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+						allowFullScreen
+					></iframe>
+				</div>
+			</div>
 			<div
 				className={
 					errorModal.hidden === true || connect === true || connectWallet
@@ -543,8 +707,8 @@ function LoadNftPage() {
 			>
 				<Header activeCat={1}></Header>
 
-				<div class="constructors">
-					<div class="container-header">
+				<div className="constructors">
+					<div className="container-header">
 						<div
 							className={errorModal.hidden === true ? "error-modal" : "hide"}
 						>
@@ -559,11 +723,13 @@ function LoadNftPage() {
 						</div>
 
 						<div className="modal-constructor modal-constructor-layers">
-							<div class="title">Layers</div>
-							<div class="text">Add and edit layers</div>
+							<div className="title-1">NFT Editor</div>
+							<div className="title">Layers</div>
+							<div className="text">Add and edit layers</div>
 							{classArr1.map((item, index) => {
 								return (
 									<div
+										key={"uniqueId" + index}
 										className={
 											item.active
 												? "layers-list_layer layers-list_layer-active"
@@ -571,14 +737,14 @@ function LoadNftPage() {
 										}
 										onClick={() => setActive(item)}
 									>
-										<div class="index">{index + 1}. </div>
-										<span>{item.name}</span>
+										<div className="index">{index + 1}. </div>
+										<span>{item.name.slice(0, 27)}</span>
 									</div>
 								);
 							})}
 
-							<div class="layers-list_layer-input">
-								<div class="title">Add New Layers</div>
+							<div className="layers-list_layer-input">
+								<div className="title">Add New Layer</div>
 								<input
 									type="text"
 									placeholder="Layer Name"
@@ -587,25 +753,80 @@ function LoadNftPage() {
 									}}
 								/>
 								<button
-									class="button-1-square"
+									className="button-4-square"
 									onClick={() => newClass(newLayer, false, [], 0, 0, 0, 0, 0)}
 								>
-									Add Layer
+									+
 								</button>
 							</div>
-						</div>
-						<div class="modal-constructor modal-constructor-upload">
-							<a href="https://www.youtube.com/watch?v=YHatcktJM8I">
-								<button class="button-3-square">
-									Not sure where to start? Check out our intro video here.
-								</button>
-							</a>
 
-							<div class="drop-img">
-								<div class="imgs-list">
+							<div className="title">Layer Settings</div>
+							<div className="text">Change your layers settings</div>
+							<div className="setting">
+								<div className="title-settings">Layer Name</div>
+								<input
+									type="text"
+									className="input-settings"
+									placeholder={classArr1[curentLayer].name}
+									onChange={setNewLayerName}
+								/>
+							</div>
+						</div>
+						<div className="modal-constructor modal-constructor-upload">
+							<div class="steps">
+								<div class="step step1 active">
+									<div class="img"></div>
+									<div class="text">
+										<div class="name">Step 1</div>
+										<div class="desc">Upload images</div>
+									</div>
+								</div>
+								<div class="line"></div>
+								<div class="step step2">
+									<div class="img"></div>
+									<div class="text">
+										<div class="name">Step 2</div>
+										<div class="desc">Customize layers</div>
+									</div>
+								</div>
+								<div class="line"></div>
+								<div class="step step3">
+									<div class="img"></div>
+									<div class="text">
+										<div class="name">Step 3</div>
+										<div class="desc">Create Collection</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="video-start">
+								Not sure where to start? &nbsp;{" "}
+								<span onClick={() => setVideoPlay(true)}>
+									{" "}
+									Check out our intro video here.
+								</span>
+							</div>
+
+							<div
+								className="drop-img"
+								onDrop={(e) => {
+									let event = e;
+									console.log(e);
+									event.stopPropagation();
+									event.preventDefault();
+								}}
+								onDragOver={(e) => {
+									let event = e;
+									console.log(e);
+									event.stopPropagation();
+									event.preventDefault();
+								}}
+							>
+								<div className="imgs-list">
 									{classArr1[curentLayer].imgs.map((item, index) => {
 										return (
 											<div
+												key={"uniqueId" + index}
 												className={
 													curentImages[curentLayer] == index
 														? "img-element img-element-active"
@@ -613,12 +834,12 @@ function LoadNftPage() {
 												}
 												onClick={() => setImgActive(index)}
 											>
-												<div class="close" onClick={() => removeImg(index)}>
+												<div className="close" onClick={() => removeImg(index)}>
 													<span></span>
 													<span></span>
 												</div>
 												<img src={getSrc(item)}></img>
-												{/* <div class="name">
+												{/* <div className="name">
 													{classArr1[curentLayer].names[index]}
 												</div> */}
 											</div>
@@ -631,13 +852,14 @@ function LoadNftPage() {
 									id="input_file"
 									accept=".png,.jpg,.jpeg"
 									onChange={download}
+									multiple
 								/>
 
-								<label for="input_file" class="input__file-button">
-									<span class="input__file-icon-wrapper"></span>
-									<span class="input__file-text">Browse Image</span>
-									<span class="input__file-text2">
-										(image/png, image/jpg, image/jpeg, Max size: 1MB)
+								<label htmlFor="input_file" className="input__file-button">
+									<span className="input__file-icon-wrapper"></span>
+									<span className="input__file-text">Browse Image</span>
+									<span className="input__file-text2">
+										(image/png, image/jpg, image/jpeg, Max size: 5MB)
 									</span>
 								</label>
 								{/* <input className="text" type="file" onChange={(ev) => download(ev.target)}/> */}
@@ -646,74 +868,156 @@ function LoadNftPage() {
 								{/* </input> */}
 								{/* <button type="button" onClick={logImgs}>Log imgs</button> */}
 							</div>
-							<div class="button-1-square" onClick={logData}>
-								Upload & Next
+							{/* <div>
+								<div className="text">Download the image from the link</div>
+								<input className="input" onChange={(ev)=>{
+									setUrlImg(ev.target.value);
+								}}/>
+								<button className="button-1-square" onClick={downloadUrl}>Add</button>
+							</div> */}
+							<div
+								className={
+									activeNext ? "button-1-square" : "button-1-square unactive"
+								}
+								onClick={logData}
+							>
+								Next
 							</div>
 						</div>
 
-						<div class="modal-constructor modal-constructor-settings">
-							<div class="project-settings">
-								<div class="title">Project details</div>
-								<div class="text">Add project name & description.</div>
-								<div class="setting">
-									<div class="title-settings">Project Name</div>
+						<div className="modal-constructor modal-constructor-settings">
+							<div className="import">Import Project</div>
+							<div className="project-settings">
+								<div className="title">
+									Project details{" "}
+									<span
+										className={accordionHidden[0] ? "hidden" : ""}
+										onClick={() => {
+											accordionChange(0);
+										}}
+									></span>
+								</div>
+								<div className="text">Add project name & description.</div>
+								<div className={accordionHidden[0] ? "hidden" : "setting"}>
+									<div className="title-settings">Project Name</div>
 									<input
 										type="text"
 										placeholder="No Name"
-										class="input-settings"
+										className="input-settings"
 										onChange={(event) => setProjectName(event.target.value)}
 									/>
+									{/* <span className="errMsg">Set project name</span> */}
 								</div>
-								<div class="setting">
-									<div class="title-settings">Project Description</div>
-									<textarea
+								<div className={accordionHidden[0] ? "hidden" : "setting"}>
+									<div className="title-settings">Collcetion Name</div>
+									<input
 										type="text"
-										placeholder="Project Description"
-										class="input-settings"
+										placeholder="No Name"
+										className={
+											errorInput == "colName"
+												? "input-settings inputErr"
+												: "input-settings"
+										}
 										onChange={(event) =>
-											setProjectDescription(event.target.value)
+											changeError("colName", event.target.value)
 										}
 									/>
+									<span className={errorInput == "colName" ? "errMsg" : "hide"}>
+										Set Collection Name
+									</span>
 								</div>
-								<div class="setting">
-									<div class="title-settings">Demension (px)</div>
-
-									<input
+								<div className={accordionHidden[0] ? "hidden" : "setting"}>
+									<div className="title-settings">Collection Description</div>
+									<textarea
 										type="text"
-										placeholder="700"
-										class="input-settings inputL inputL1"
-										onChange={(event) => setWidth(event.target.value)}
+										placeholder="Collection Description"
+										className={
+											errorInput == "colDesc"
+												? "input-settings inputErr"
+												: "input-settings"
+										}
+										onChange={(event) =>
+											changeError("colDesc", event.target.value)
+										}
 									/>
+									<span className={errorInput == "colDesc" ? "errMsg" : "hide"}>
+										Set Collection Description
+									</span>
+								</div>
+								<div className="title">
+									Dimensions{" "}
+									<div
+										aria-label="The image resolution are picked from the first image you drag and drop. We expect all images to be the same resolution."
+										className="hint hint--top hint--large"
+									></div>{" "}
+									<span
+										className={accordionHidden[1] ? "hidden" : ""}
+										onClick={() => {
+											accordionChange(1);
+										}}
+									></span>
+								</div>
+								<div className="text">
+									Edit canvas dimensions <br /> Max size: 5 MB
+								</div>
+								<div
+									className={
+										accordionHidden[1] ? "hidden" : "setting setting-grid"
+									}
+								>
+									{/* <div className="title-settings">Dimension (px)</div> */}
 
-									<input
-										type="text"
-										placeholder="800"
-										class="input-settings inputL"
-										onChange={(event) => setHeight(event.target.value)}
-									/>
+									<div class="dim-title">Width (px)</div>
+									<div class="dim-title">Height (px)</div>
+									<div className="dimensions">
+										<input
+											type="text"
+											placeholder="700"
+											value={width}
+											className={
+												errorInput == "width"
+													? "input-settings inputL inputL1 inputErr"
+													: "input-settings inputL inputL1"
+											}
+											onChange={(event) =>
+												changeError("width", event.target.value)
+											}
+										/>
+										<span className={errorInput == "width" ? "errMsg" : "hide"}>
+											Set width
+										</span>
+									</div>
 
-									<span>Max size: 1MB</span>
+									<div className="dimensions">
+										<input
+											type="text"
+											placeholder="700"
+											value={height}
+											className={
+												errorInput == "height"
+													? "input-settings inputL inputErr"
+													: "input-settings inputL"
+											}
+											onChange={(event) =>
+												changeError("height", event.target.value)
+											}
+										/>
+										<span
+											className={errorInput == "height" ? "errMsg" : "hide"}
+										>
+											Set height
+										</span>
+									</div>
 								</div>
 
-								<div class="title">Layer Settings</div>
-								<div class="text">Change your layers settings</div>
-								<div class="setting">
-									<div class="title-settings">Layer Name</div>
-									<input
-										type="text"
-										class="input-settings"
-										placeholder={classArr1[curentLayer].name}
-										onChange={setNewLayerName}
-									/>
-								</div>
-
-								<div class="title">Element Settings</div>
-								<div class="text">Change your element settings</div>
-								<div class="setting">
-									<div class="title-settings">Rarity</div>
+								{/* <div className="title">Element Settings</div>
+								<div className="text">Change your element settings</div>
+								<div className="setting">
+									<div className="title-settings">Rarity</div>
 									{classArr1[curentLayer].imgs.map((item, index) => {
 										return (
 											<input
+												key={"uniqueId"+index}
 												className={
 													curentImages[curentLayer] == index ? "" : "hide"
 												}
@@ -727,18 +1031,18 @@ function LoadNftPage() {
 										);
 									})}
 
-									<div class="grades">
+									<div className="grades">
 										<span className="legendary">Legendary</span>
 										<span className="epic">Epic</span>
 										<span className="rare">Rare</span>
 										<span className="uncommon">Unusual</span>
 										<span className="common">Usual</span>
 									</div>
-								</div>
+								</div> */}
 							</div>
 						</div>
-						<div class="break"></div>
-						{/* <a href="#/nft-customization"><div class="next" onClick={logData}>Next</div></a> */}
+						<div className="break"></div>
+						{/* <a href="#/nft-customization"><div className="next" onClick={logData}>Next</div></a> */}
 
 						{redirect ? <Redirect to="/nft-customization" /> : ""}
 					</div>

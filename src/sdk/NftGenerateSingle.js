@@ -260,7 +260,7 @@ function NftCustomizationSingle() {
 	}
 
 	function getSrc(src) {
-		return "https://gateway.pinata.cloud/ipfs/" + src;
+		return "https://cloudflare-ipfs.com/ipfs/" + src;
 	}
 
 	function random() {
@@ -578,8 +578,8 @@ function NftCustomizationSingle() {
 			>
 				<Header activeCat={1}></Header>
 
-				<div class="constructors">
-					<div class="container-header">
+				<div className="constructors">
+					<div className="container-header">
 						<div
 							className={errorModal.hidden === true ? "error-modal" : "hide"}
 						>
@@ -593,12 +593,13 @@ function NftCustomizationSingle() {
 							</button>
 						</div>
 
-						<div class="modal-constructor modal-constructor-layers ">
-							<div class="title">Layers</div>
-							<div class="text">Select and edit the layer</div>
+						<div className="modal-constructor modal-constructor-layers ">
+							<div className="title">Layers</div>
+							<div className="text">Select and edit the layer</div>
 							{classArr.map((item, index) => {
 								return (
 									<div
+										key={"uniqueId" + index}
 										className={
 											item.active
 												? "layers-list_layer layers-list_layer-active"
@@ -606,36 +607,36 @@ function NftCustomizationSingle() {
 										}
 										onClick={() => setActive(item)}
 									>
-										<div class="index">{index + 1}. </div>
+										<div className="index">{index + 1}. </div>
 										<span>{item.name}</span>
 									</div>
 								);
 							})}
 
-							{/* <div class="title" style={{margin: "30px 0px 0px 0px"}}>
+							{/* <div className="title" style={{margin: "30px 0px 0px 0px"}}>
 								Settings
 							</div>
-							<div class="text">NFT Settings</div>
+							<div className="text">NFT Settings</div>
 
-							<div class="button-1-square" onClick={random}>
+							<div className="button-1-square" onClick={random}>
 								Randomize
 							</div>
-							<div class="randomize-many">
+							<div className="randomize-many">
 								<input
 									type="number"
 									onChange={(event) => setRandomNft(event.target.value)}
 								/>
-								<button class="button-1-square" onClick={randomMany}>
+								<button className="button-1-square" onClick={randomMany}>
 									Randomize Many
 								</button>
 							</div>
-							<div class="button-3-square" onClick={split}>
+							<div className="button-3-square" onClick={split}>
 								Save
 							</div> */}
 						</div>
 
-						<div class="modal-constructor modal-constructor-position">
-							<div class="nft-img">
+						<div className="modal-constructor modal-constructor-position">
+							<div className="nft-img">
 								<div
 									className={contrBg ? "img img-contrast" : "img"}
 									style={{
@@ -647,20 +648,21 @@ function NftCustomizationSingle() {
 										? classArr.map((item, index) => {
 												return (
 													<img
+														key={"uniqueId" + index}
 														src={item.src[curentImg[index]]}
 														style={{
 															left: item.x + "px",
 															top: item.y + "px",
-															"z-index": item.z_index,
+															zIndex: item.z_index,
 														}}
 													/>
 												);
 										  })
 										: copySrc()}
 								</div>
-								<div class="break"></div>
+								<div className="break"></div>
 								<div
-									class="button-1-square"
+									className="button-1-square"
 									style={{width: localStorage.getItem("width") + "px"}}
 									onClick={logData}
 								>
@@ -669,14 +671,15 @@ function NftCustomizationSingle() {
 							</div>
 						</div>
 
-						<div class="modal-constructor modal-constructor-elements">
-							<div class="title">Elements</div>
-							<div class="text">Edit element position & properties</div>
+						<div className="modal-constructor modal-constructor-elements">
+							<div className="title">Elements</div>
+							<div className="text">Edit element position & properties</div>
 
-							<div class="elements">
+							<div className="elements">
 								{classArr[curentLayer].imgs.map((item, index) => {
 									return (
 										<div
+											key={"uniqueId" + index}
 											className={
 												curentImg[curentLayer] == index
 													? "position-img position-img-active"
@@ -690,26 +693,28 @@ function NftCustomizationSingle() {
 								})}
 							</div>
 
-							<div class="title">How to use?</div>
-							<div class="text text-nonline">
+							<div className="title">How to use?</div>
+							<div className="text text-nonline">
 								To create a collection you need to save your NFT, set price and
 								royalty.{" "}
 							</div>
 
-							<div style={{margin: "20px 0px 0px 0px"}} class="title">
+							<div style={{margin: "20px 0px 0px 0px"}} className="title">
 								Price Settings
 							</div>
-							<div class="text">Set a price for your NFT</div>
-							<div class="price">
-								<div class="title">NFT Price</div>
+							<div className="text">Set a price for your NFT</div>
+							<div className="price">
+								<div className="title">NFT Price</div>
 								<input
 									placeholder="100.0000"
 									type="number"
 									onChange={(event) => setColPrice(event.target.value)}
 								/>
 							</div>
-							<div class="royalty">
-								<div class="title">Royalty ({royalty ? royalty : "0"}%)</div>
+							<div className="royalty">
+								<div className="title">
+									Royalty ({royalty ? royalty : "0"}%)
+								</div>
 								<input
 									type="range"
 									min="1"
@@ -717,7 +722,7 @@ function NftCustomizationSingle() {
 									step="1"
 									onChange={(event) => setRoyalty(event.target.value)}
 								/>
-								<div class="procent">
+								<div className="procent">
 									<span>1%</span>
 									<span>40%</span>
 								</div>

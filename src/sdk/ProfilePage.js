@@ -694,17 +694,21 @@ function ProfilePage() {
 				console.log(data);
 			});
 
-		contractSale.nft_approve(
-			{
-				token_id: nft.token_id,
-				account_id: marketNft,
-				msg: JSON.stringify({
-					sale_conditions: parseNearAmount(salePrice),
-				}),
-			},
-			"30000000000000",
-			parseNearAmount("0.01"),
-		);
+		contractSale
+			.nft_approve(
+				{
+					token_id: nft.token_id,
+					account_id: marketNft,
+					msg: JSON.stringify({
+						sale_conditions: parseNearAmount(salePrice),
+					}),
+				},
+				"30000000000000",
+				parseNearAmount("0.01"),
+			)
+			.catch((err) => {
+				alert("Connect Wallet");
+			});
 
 		setSalePrice(0);
 	}
@@ -728,11 +732,18 @@ function ProfilePage() {
 		// 	console.log(data);
 		// })
 
-		contractMarket.storage_minimum_balance().then(async (data) => {
-			console.log(data);
+		contractMarket
+			.storage_minimum_balance()
+			.then(async (data) => {
+				console.log(data);
 
-			contractMarket.storage_deposit({}, "30000000000000", data);
-		});
+				contractMarket.storage_deposit({}, "30000000000000", data).catch(() => {
+					alert("Connect Wallet");
+				});
+			})
+			.catch(() => {
+				alert("Connect Wallet");
+			});
 	}
 
 	async function removeSale(nft) {
@@ -752,14 +763,18 @@ function ProfilePage() {
 			},
 		);
 
-		contractMarket.remove_sale(
-			{
-				nft_contract_id: nft.addrCol,
-				token_id: nft.token_id,
-			},
-			"30000000000000",
-			"1",
-		);
+		contractMarket
+			.remove_sale(
+				{
+					nft_contract_id: nft.addrCol,
+					token_id: nft.token_id,
+				},
+				"30000000000000",
+				"1",
+			)
+			.catch(() => {
+				alert("Connect Wallet");
+			});
 	}
 
 	async function withdraw() {
@@ -777,7 +792,9 @@ function ProfilePage() {
 			},
 		);
 
-		contractMarket.storage_withdraw({}, "30000000000000", "1");
+		contractMarket.storage_withdraw({}, "30000000000000", "1").catch(() => {
+			alert("Connect Wallet");
+		});
 	}
 
 	return (

@@ -73,10 +73,20 @@ function NftCustomization() {
 	const [colPrice, setColPrice] = useState();
 	const [royalty, setRoyalty] = useState();
 
-	let comb = 1;
+	const [accordionHidden, setAccordioHidden] = useState([false, false, false]);
+
+	let allComb = 1;
+
 	for (let i = 0; i < classArr.length; i++) {
-		comb = comb * classArr[i].imgs.length;
+		allComb = allComb * classArr[i].imgs.length;
 	}
+
+	console.log(allComb);
+
+	// let comb = 1;
+	// for (let i = 0; i < classArr.length; i++) {
+	// 	comb = comb * classArr[i].imgs.length;
+	// }
 
 	function copySrc() {
 		const asyncFunction = async function () {
@@ -279,7 +289,7 @@ function NftCustomization() {
 		setCurentImg(temp);
 	}
 
-	function randomMany() {
+	async function randomMany(num) {
 		let imgsLength = [];
 		let combinations = 1;
 		for (let i = 0; i < classArr.length; i++) {
@@ -288,7 +298,7 @@ function NftCustomization() {
 		for (let i = 0; i < imgsLength.length; i++) {
 			combinations = combinations * imgsLength[i];
 		}
-		if (randomNft > combinations - nftCombinations.length) {
+		if (num > combinations - nftCombinations.length) {
 			setErrorModal({
 				hidden: true,
 				message:
@@ -296,7 +306,7 @@ function NftCustomization() {
 			});
 			return;
 		}
-		if (randomNft <= 0) {
+		if (num <= 0) {
 			setErrorModal({
 				hidden: true,
 				message: "Specify a positive number",
@@ -328,7 +338,7 @@ function NftCustomization() {
 
 		console.log(nftRarityCombinations);
 
-		while (uniqC < randomNft) {
+		while (uniqC < num) {
 			for (let i = 0; i < classArr.length; i++) {
 				newnft[i] =
 					nftRarityCombinations[i][
@@ -421,7 +431,7 @@ function NftCustomization() {
 			console.log(indexArr);
 			console.log(mergeArr);
 
-			mergeImages(mergeArr, {
+			await mergeImages(mergeArr, {
 				width: localStorage.getItem("width"),
 				height: localStorage.getItem("height"),
 			}).then((b64) => tempCollection.push(b64));
@@ -430,6 +440,14 @@ function NftCustomization() {
 		setCollection(tempCollection);
 
 		console.log(tempCollection);
+
+		sessionStorage.setItem("colPrice", colPrice);
+		sessionStorage.setItem("royalty", royalty);
+		sessionStorage.setItem("collection", JSON.stringify(tempCollection));
+		sessionStorage.setItem("collectionName", JSON.stringify(collectionName));
+
+		// setRedirect(true);
+		history.push("/nft-collection");
 
 		alertM("Generated " + uniqC + " uniq NFT");
 	}
@@ -469,45 +487,47 @@ function NftCustomization() {
 	function logData() {
 		console.log(collection);
 
-		if (collection[0] === "" || collection[0] === undefined) {
-			console.log("Save at least one NFT");
-			setErrorModal({
-				hidden: true,
-				message: "Please, Save at least one NFT!",
-			});
-			return;
-		}
+		// randomMany(allComb);
 
-		if (colPrice === "" || colPrice === undefined || colPrice < 1) {
-			console.log("Please, set NFT Price!");
-			setErrorModal({
-				hidden: true,
-				message: "Please, set collection Price!",
-			});
-			return;
-		}
+		// if (collection[0] === "" || collection[0] === undefined) {
+		// 	console.log("Save at least one NFT");
+		// 	setErrorModal({
+		// 		hidden: true,
+		// 		message: "Please, Save at least one NFT!",
+		// 	});
+		// 	return;
+		// }
 
-		if (royalty === "" || royalty === undefined) {
-			console.log("Set collection royalty");
-			setErrorModal({
-				hidden: true,
-				message: "Please, set collection Royalty!",
-			});
-			return;
-		}
+		// if (colPrice === "" || colPrice === undefined || colPrice < 1) {
+		// 	console.log("Please, set NFT Price!");
+		// 	setErrorModal({
+		// 		hidden: true,
+		// 		message: "Please, set collection Price!",
+		// 	});
+		// 	return;
+		// }
 
-		console.log(collectionName);
+		// if (royalty === "" || royalty === undefined) {
+		// 	console.log("Set collection royalty");
+		// 	setErrorModal({
+		// 		hidden: true,
+		// 		message: "Please, set collection Royalty!",
+		// 	});
+		// 	return;
+		// }
 
-		for (let i = 0; i < collectionName.length; i++) {
-			if (collectionName[i] == "" || collectionName[i] == undefined) {
-				console.log("Set a name for each nft");
-				setErrorModal({
-					hidden: true,
-					message: "Set a name for each nft",
-				});
-				return;
-			}
-		}
+		// console.log(collectionName);
+
+		// for (let i = 0; i < collectionName.length; i++) {
+		// 	if (collectionName[i] == "" || collectionName[i] == undefined) {
+		// 		console.log("Set a name for each nft");
+		// 		setErrorModal({
+		// 			hidden: true,
+		// 			message: "Set a name for each nft",
+		// 		});
+		// 		return;
+		// 	}
+		// }
 
 		sessionStorage.setItem("colPrice", colPrice);
 		sessionStorage.setItem("royalty", royalty);
@@ -521,6 +541,19 @@ function NftCustomization() {
 	function close() {
 		dispatch({type: "closeConnect"});
 		console.log(connectWallet);
+	}
+
+	function accordionChange(index) {
+		let tempValue = [];
+		for (let i = 0; i < accordionHidden.length; i++) {
+			if (i == index) {
+				tempValue.push(!accordionHidden[i]);
+			} else {
+				tempValue.push(accordionHidden[i]);
+			}
+			console.log(accordionHidden[i]);
+		}
+		setAccordioHidden(tempValue);
 	}
 
 	return (
@@ -543,8 +576,8 @@ function NftCustomization() {
 			>
 				<Header activeCat={1}></Header>
 
-				<div class="constructors">
-					<div class="container-header">
+				<div className="constructors">
+					<div className="container-header">
 						<div
 							className={errorModal.hidden === true ? "error-modal" : "hide"}
 						>
@@ -558,12 +591,59 @@ function NftCustomization() {
 							</button>
 						</div>
 
-						<div class="modal-constructor modal-constructor-layers ">
-							<div class="title">Layers</div>
-							<div class="text">Select and edit the layer</div>
-							{classArr.map((item, index) => {
+						<div className="modal-constructor modal-constructor-layers ">
+							<div className="title-1">NFT Editor</div>
+
+							<div className="title">
+								Mint Price{" "}
+								<span
+									className={accordionHidden[0] ? "hidden" : ""}
+									onClick={() => {
+										accordionChange(0);
+									}}
+								></span>
+							</div>
+							<div className="text">Set a price</div>
+							<div className={accordionHidden[0] ? "hide" : "price"}>
+								<div className="title">Mint Price (NEAR)</div>
+								<input
+									placeholder="100.0000"
+									type="number"
+									onChange={(event) => setColPrice(event.target.value)}
+								/>
+							</div>
+							<div style={{margin: "40px 0px 10px 0px"}} className="title">
+								Resale Royalty{" "}
+								<div aria-label="hint" className="hint hint--top"></div>{" "}
+								<span
+									className={accordionHidden[1] ? "hidden" : ""}
+									onClick={() => {
+										accordionChange(1);
+									}}
+								></span>
+							</div>
+							<div className="text">Author's percentage of sales</div>
+							<div className={accordionHidden[1] ? "hide" : "royalty"}>
+								{/* <div className="title">Royalty ({royalty ? royalty : "0"}%)</div> */}
+								<input
+									type="range"
+									min="1"
+									max="40"
+									step="1"
+									onChange={(event) => setRoyalty(event.target.value)}
+								/>
+								<div className="procent">
+									<span>1%</span>
+									<span>40%</span>
+								</div>
+							</div>
+
+							{/* <div className="title">Layers</div>
+							<div className="text">Select and edit the layer</div> */}
+							{/* {classArr.map((item, index) => {
 								return (
 									<div
+										key={"uniqueId"+index}
 										className={
 											item.active
 												? "layers-list_layer layers-list_layer-active"
@@ -571,36 +651,61 @@ function NftCustomization() {
 										}
 										onClick={() => setActive(item)}
 									>
-										<div class="index">{index + 1}. </div>
+										<div className="index">{index + 1}. </div>
 										<span>{item.name}</span>
 									</div>
 								);
-							})}
+							})} */}
 
-							<div class="title" style={{margin: "30px 0px 0px 0px"}}>
+							{/* <div className="title" style={{margin: "30px 0px 0px 0px"}}>
 								Settings
 							</div>
-							<div class="text">NFT Settings</div>
+							<div className="text">NFT Settings</div>
 
-							<div class="button-1-square" onClick={random}>
+							<div className="button-1-square" onClick={random}>
 								Randomize
 							</div>
-							<div class="randomize-many">
+							<div className="randomize-many">
 								<input
 									type="number"
 									onChange={(event) => setRandomNft(event.target.value)}
 								/>
-								<button class="button-1-square" onClick={randomMany}>
+								<button className="button-1-square" onClick={randomMany}>
 									Randomize Many
 								</button>
 							</div>
-							<div class="button-3-square" onClick={split}>
+							<div className="button-3-square" onClick={split}>
 								Save
-							</div>
+							</div> */}
 						</div>
 
-						<div class="modal-constructor modal-constructor-position">
-							<div class="nft-img">
+						<div className="modal-constructor modal-constructor-position">
+							<div class="steps">
+								<div class="step step1 ">
+									<div class="img"></div>
+									<div class="text">
+										<div class="name">Step 1</div>
+										<div class="desc">Upload images</div>
+									</div>
+								</div>
+								<div class="line"></div>
+								<div class="step step2 ">
+									<div class="img"></div>
+									<div class="text">
+										<div class="name">Step 2</div>
+										<div class="desc">Customize layers</div>
+									</div>
+								</div>
+								<div class="line"></div>
+								<div class="step step3 active">
+									<div class="img"></div>
+									<div class="text">
+										<div class="name">Step 3</div>
+										<div class="desc">Create Collection</div>
+									</div>
+								</div>
+							</div>
+							<div className="nft-img">
 								<div
 									className={contrBg ? "img img-contrast" : "img"}
 									style={{
@@ -612,35 +717,43 @@ function NftCustomization() {
 										? classArr.map((item, index) => {
 												return (
 													<img
+														key={"uniqueId" + index}
 														src={item.src[curentImg[index]]}
 														style={{
 															left: item.x + "px",
 															top: item.y + "px",
-															"z-index": item.z_index,
+															zIndex: item.z_index,
 														}}
 													/>
 												);
 										  })
 										: copySrc()}
 								</div>
-								<div class="break"></div>
+								<div className="break"></div>
+								<div className="button-3-square" onClick={random}>
+									Preview
+								</div>
 								<div
-									class="button-1-square"
+									className="button-1-square"
 									style={{width: localStorage.getItem("width") + "px"}}
-									onClick={logData}
+									onClick={async () => {
+										await randomMany(allComb);
+										// console.log(tempr);
+										logData();
+									}}
 								>
-									Create Collection
+									Create Collection ({allComb} items)
 								</div>
 							</div>
 
-							<div class="collection-preview">
-								<div class="title">Preview Collection</div>
+							{/* <div className="collection-preview">
+								<div className="title">Preview Collection</div>
 								{collection.length == 0 ? (
 									<div>Null</div>
 								) : (
 									collection.map((item, index) => {
 										return (
-											<div class="preview-item">
+											<div key={"uniqueId"+index} className="preview-item">
 												<img src={item} />
 												<div className="title">Name:</div>
 												<input
@@ -652,17 +765,45 @@ function NftCustomization() {
 										);
 									})
 								)}
-							</div>
+							</div> */}
 						</div>
 
-						<div class="modal-constructor modal-constructor-elements">
-							<div class="title">Elements</div>
-							<div class="text">Edit element position & properties</div>
+						<div className="modal-constructor modal-constructor-elements">
+							<div className="import opacity">Import Project</div>
+							<div className="title">
+								Elements{" "}
+								<span
+									className={accordionHidden[2] ? "hidden" : ""}
+									onClick={() => {
+										accordionChange(2);
+									}}
+								></span>
+							</div>
+							<div className="text">Amount of elements</div>
 
-							<div class="elements">
+							<div className={accordionHidden[2] ? "hide" : "elements"}>
+								<div className="elem leg">
+									<span>Legendary</span>100
+								</div>
+								<div className="elem epic">
+									<span>Epic</span>200
+								</div>
+								<div className="elem rare">
+									<span>Rare</span>300
+								</div>
+								<div className="elem unus">
+									<span>Unusual</span>400
+								</div>
+								<div className="elem us">
+									<span>Usual</span>1000
+								</div>
+							</div>
+
+							{/* <div className="elements">
 								{classArr[curentLayer].imgs.map((item, index) => {
 									return (
 										<div
+											key={"uniqueId"+index}
 											className={
 												curentImg[curentLayer] == index
 													? "position-img position-img-active"
@@ -674,53 +815,26 @@ function NftCustomization() {
 										</div>
 									);
 								})}
-							</div>
+							</div> */}
 
-							<div class="title">How to use?</div>
-							<div class="text text-nonline">
+							{/* <div className="title">How to use?</div>
+							<div className="text text-nonline">
 								To create a collection you need to save your NFT, create a name
 								of your collection, set price and royalty.{" "}
-							</div>
-
-							<div style={{margin: "20px 0px 0px 0px"}} class="title">
-								Price Settings
-							</div>
-							<div class="text">Set a price for your collection</div>
-							<div class="price">
-								<div class="title">Collection Price</div>
-								<input
-									placeholder="100.0000"
-									type="number"
-									onChange={(event) => setColPrice(event.target.value)}
-								/>
-							</div>
-							<div class="royalty">
-								<div class="title">Royalty ({royalty ? royalty : "0"}%)</div>
-								<input
-									type="range"
-									min="1"
-									max="40"
-									step="1"
-									onChange={(event) => setRoyalty(event.target.value)}
-								/>
-								<div class="procent">
-									<span>1%</span>
-									<span>40%</span>
-								</div>
-							</div>
+							</div> */}
 						</div>
 					</div>
 					{redirect ? <Redirect to="/nft-collection" /> : ""}
 				</div>
 
-				{/* <div class="collection-preview">
-					<div class="title">Preview Collection</div>
+				{/* <div className="collection-preview">
+					<div className="title">Preview Collection</div>
 					{collection.length == 0 ? (
 						<div>Null</div>
 					) : (
 						collection.map((item, index) => {
 							return (
-								<div class="preview-item">
+								<div className="preview-item">
 									<img src={item} />
 									<div className="title">Name:</div>
 									<input

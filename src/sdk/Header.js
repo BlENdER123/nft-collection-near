@@ -54,7 +54,8 @@ function Header({activeCat}) {
 
 	function logOut(e) {
 		walletAccount.signOut();
-		localStorage.clear();
+		// localStorage.clear();
+		localStorage.removeItem("undefined_wallet_auth_key");
 		location.reload();
 	}
 
@@ -196,10 +197,10 @@ function Header({activeCat}) {
 					<div className="acc-info">
 						<div className={mobMenu ? "hide" : "acc-info1"}>
 							<a href="#/">
-								<div class="name">NFT Art Generator</div>
+								<div className="name">NFT Art Generator</div>
 							</a>
 							{localStorage.undefined_wallet_auth_key ? (
-								<div class="wallet">
+								<div className="wallet">
 									<div className="acc-status">Connected:</div>
 									<div className="acc-wallet">{walletAddress}</div>
 									<div
@@ -225,8 +226,8 @@ function Header({activeCat}) {
 									<button onClick={mint_new}>mint Collection</button> */}
 								</div>
 							) : (
-								<div class="wallet">
-									<div class="button-1-square" onClick={connectWal}>
+								<div className="wallet">
+									<div className="button-1-square" onClick={connectWal}>
 										Connect
 									</div>
 
@@ -239,7 +240,7 @@ function Header({activeCat}) {
 							)}
 						</div>
 
-						<div class="pages">
+						<div className="pages">
 							<a href="#/">
 								<div
 									className={
@@ -255,16 +256,16 @@ function Header({activeCat}) {
 										activeCat == 1 ? "page-element active" : "page-element"
 									}
 								>
-									NFT Generator
+									Collection Editor
 								</div>
 							</a>
-							<a href="#/collection-market">
+							<a href="#/nft-market">
 								<div
 									className={
 										activeCat == 2 ? "page-element active" : "page-element"
 									}
 								>
-									NFT Collection Market
+									Marketplace
 								</div>
 							</a>
 							<a href="#/how">
@@ -294,16 +295,16 @@ function Header({activeCat}) {
 										activeCat == 1 ? "page-element active" : "page-element"
 									}
 								>
-									NFT Generator
+									Collection Editor
 								</div>
 							</a>
-							<a href="#/collection-market">
+							<a href="#/nft-market">
 								<div
 									className={
 										activeCat == 2 ? "page-element active" : "page-element"
 									}
 								>
-									NFT Collection Market
+									Marketplace
 								</div>
 							</a>
 							<a href="#/how">

@@ -193,7 +193,7 @@ function NftCustomizationSingle() {
 	}
 
 	function getSrc(src) {
-		return "https://gateway.pinata.cloud/ipfs/" + src;
+		return "https://cloudflare-ipfs.com/ipfs/" + src;
 	}
 
 	function logData() {
@@ -302,8 +302,8 @@ function NftCustomizationSingle() {
 			>
 				<Header activeCat={1}></Header>
 
-				<div class="constructors">
-					<div class="container-header">
+				<div className="constructors">
+					<div className="container-header">
 						<div
 							className={errorModal.hidden === true ? "error-modal" : "hide"}
 						>
@@ -314,12 +314,13 @@ function NftCustomizationSingle() {
 							<div className="message">{errorModal.message}</div>
 						</div>
 
-						<div class="modal-constructor modal-constructor-layers ">
-							<div class="title">Layers</div>
-							<div class="text">Select and edit the layer</div>
+						<div className="modal-constructor modal-constructor-layers ">
+							<div className="title">Layers</div>
+							<div className="text">Select and edit the layer</div>
 							{classArr.map((item, index) => {
 								return (
 									<div
+										key={"uniqueId" + index}
 										className={
 											item.active
 												? "layers-list_layer layers-list_layer-active"
@@ -327,14 +328,14 @@ function NftCustomizationSingle() {
 										}
 										onClick={() => setActive(item)}
 									>
-										<div class="index">{index + 1}. </div>
+										<div className="index">{index + 1}. </div>
 										<span>{item.name}</span>
 									</div>
 								);
 							})}
 
-							<div class="title">How to use?</div>
-							<div class="text text-nonline">
+							<div className="title">How to use?</div>
+							<div className="text text-nonline">
 								Phasellus condimentum suscipit metus vel mattis. Ut vulputate
 								tincidunt odio. Nam odio augue, molestie id rutrum et, cursus id
 								libero. Quisque nulla dolor, condimentum quis posuere et, mattis
@@ -349,8 +350,8 @@ function NftCustomizationSingle() {
 							</div>
 						</div>
 
-						<div class="modal-constructor modal-constructor-position">
-							<div class="nft-img">
+						<div className="modal-constructor modal-constructor-position">
+							<div className="nft-img">
 								<div
 									className={contrBg ? "img img-contrast" : "img"}
 									style={{
@@ -362,11 +363,12 @@ function NftCustomizationSingle() {
 										? classArr.map((item, index) => {
 												return (
 													<img
+														key={"uniqueId" + index}
 														src={item.src[0]}
 														style={{
 															left: item.x + "px",
 															top: item.y + "px",
-															"z-index": item.z_index,
+															zIndex: item.z_index,
 														}}
 													/>
 												);
@@ -380,9 +382,9 @@ function NftCustomizationSingle() {
 										<div></div>
 									</div>
 								</div>
-								<div class="break"></div>
+								<div className="break"></div>
 								<div
-									class="button-1-square"
+									className="button-1-square"
 									style={{width: localStorage.getItem("width") + "px"}}
 									onClick={logData}
 								>
@@ -391,15 +393,20 @@ function NftCustomizationSingle() {
 							</div>
 						</div>
 
-						<div class="modal-constructor modal-constructor-settings">
+						<div className="modal-constructor modal-constructor-settings">
 							{classArr.map((item, index) => {
 								return (
-									<div className={item.active ? "project-settings" : "hide"}>
-										<div class="title">Settings</div>
-										<div class="text">Edit element position & properties</div>
-										<div class="setting">
-											<div class="title-settings">Position</div>
-											<div class="inputs">
+									<div
+										key={"uniqueId" + index}
+										className={item.active ? "project-settings" : "hide"}
+									>
+										<div className="title">Settings</div>
+										<div className="text">
+											Edit element position & properties
+										</div>
+										<div className="setting">
+											<div className="title-settings">Position</div>
+											<div className="inputs">
 												<input
 													type="text"
 													placeholder="X:50"
@@ -413,9 +420,9 @@ function NftCustomizationSingle() {
 												/>
 											</div>
 										</div>
-										<div class="setting">
-											<div class="title-settings">Size</div>
-											<div class="inputs">
+										<div className="setting">
+											<div className="title-settings">Size</div>
+											<div className="inputs">
 												<input
 													type="text"
 													placeholder="150"
@@ -433,8 +440,8 @@ function NftCustomizationSingle() {
 												/>
 											</div>
 										</div>
-										<div class="setting">
-											<div class="title-settings">Z-Index</div>
+										<div className="setting">
+											<div className="title-settings">Z-Index</div>
 
 											<input
 												type="text"
@@ -442,7 +449,7 @@ function NftCustomizationSingle() {
 												onChange={(event) => setZ(item, event)}
 											/>
 										</div>
-										<div class="button-1-square" onClick={saveSize}>
+										<div className="button-1-square" onClick={saveSize}>
 											Save size
 										</div>
 									</div>

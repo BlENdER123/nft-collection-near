@@ -650,7 +650,7 @@ function ConnectWalletPage() {
 				}
 			>
 				<div className="title">Welcome to NFTour!</div>
-				<div class="text">
+				<div className="text">
 					You need to log in or register to use the functionality of the service
 				</div>
 				<div className="content content-first">
@@ -698,10 +698,10 @@ function ConnectWalletPage() {
 			>
 				<div className="title">Enter your PIN</div>
 				<div className="pin-inputs">
-					<input type="text" value={inputL1} autoFocus maxLength={1} />
+					{/* <input type="text" value={inputL1} autoFocus maxLength={1} />
 					<input type="text" value={inputL2} maxLength={1} />
 					<input type="text" value={inputL3} maxLength={1} />
-					<input type="text" value={inputL4} maxLength={1} />
+					<input type="text" value={inputL4} maxLength={1} /> */}
 					<button onClick={deletevalueInputL}>
 						<img src={backspace} alt="backspace" />
 					</button>
@@ -767,10 +767,10 @@ function ConnectWalletPage() {
 			>
 				<div className="title">Enter your PIN</div>
 				<div className="pin-inputs">
-					<input type="text" value={input1} maxLength={1} />
+					{/* <input type="text" value={input1} maxLength={1} />
 					<input type="text" value={input2} maxLength={1} />
 					<input type="text" value={input3} maxLength={1} />
-					<input type="text" value={input4} maxLength={1} />
+					<input type="text" value={input4} maxLength={1} /> */}
 				</div>
 				<div className="pin-board">
 					<div className="board">
@@ -801,10 +801,10 @@ function ConnectWalletPage() {
 			>
 				<div className="title">Repeat PIN</div>
 				<div className="pin-inputs">
-					<input type="text" value={inputV1} autoFocus maxLength={1} />
+					{/* <input type="text" value={inputV1} autoFocus maxLength={1} />
 					<input type="text" value={inputV2} maxLength={1} />
 					<input type="text" value={inputV3} maxLength={1} />
-					<input type="text" value={inputV4} maxLength={1} />
+					<input type="text" value={inputV4} maxLength={1} /> */}
 				</div>
 				<div className="pin-board">
 					<div className="board">
@@ -834,7 +834,7 @@ function ConnectWalletPage() {
 				}
 			>
 				<div className="title">Copy your seed phrase</div>
-				<div class="text">
+				<div className="text">
 					Don`t forget to save the seed-phrase from your{" "}
 					<a href="https://defispace.com/">account recovery settings</a>
 				</div>
@@ -848,7 +848,7 @@ function ConnectWalletPage() {
 				}
 			>
 				<div className="title">Top up your wallet for activation</div>
-				{/* <div class="text">
+				{/* <div className="text">
 				Please send 2 or more TON to this address:
 					<span>{addr}</span>, and click "Create wallet".
 				</div> */}

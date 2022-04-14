@@ -15,11 +15,11 @@ import {useDispatch, useSelector} from "react-redux";
 function Footer() {
 	return (
 		<Router>
-			<div class="footer">
-				<div class="container-header">
-					<div class="footer-1">
-						<div class="name">RADIANCETEAM</div>
-						<div class="copyright">
+			<div className="footer">
+				<div className="container-header">
+					<div className="footer-1">
+						<div className="name">RADIANCETEAM</div>
+						<div className="copyright">
 							© 2022, radianceteam.com
 							<br />
 							Terms of Service
@@ -27,15 +27,15 @@ function Footer() {
 							Privacy Policy
 						</div>
 					</div>
-					<div class="footer-2">
-						<div class="pages">
+					<div className="footer-2">
+						<div className="pages">
 							{/* <a href="https://t.me/DefiSpacecom">
-								<div class="page-element">Telegram</div>
+								<div className="page-element">Telegram</div>
 							</a> */}
 						</div>
-						<div class="email">
+						<div className="email">
 							<span>For corporation</span>
-							<div class="text">info@radianceteam.com</div>
+							<div className="text">info@radianceteam.com</div>
 						</div>
 					</div>
 				</div>

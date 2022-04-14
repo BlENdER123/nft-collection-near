@@ -6,6 +6,7 @@
 	"contractRootNft1": "blender1.testnet",
 	"contractNft": "dev-1646972874579-36142488542328",
 	"marketNft": "dev-1648581158866-16348149344133",
+	"singleNFt": "dev-1649669626808-71116101604821",
 	"nearConfig": {
 		"networkId": "testnet",
 		"nodeUrl": "https://rpc.testnet.near.org",

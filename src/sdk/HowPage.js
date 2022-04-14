@@ -41,15 +41,17 @@ function HowPage() {
 			<div className={connectWallet ? "App-error" : "App2"}>
 				<Header activeCat={3}></Header>
 
-				<div class="start-screen">
+				<div className="start-screen">
 					<div
-						class="container-header"
+						className="container-header"
 						style={{display: "flex", justifyContent: "center"}}
 					>
 						<div style={{width: "700px"}}>
-							<div class="title">How to Use NFTour Collection Generator?</div>
+							<div className="title">
+								How to Use NFTour Collection Generator?
+							</div>
 							<br />
-							<div class="text how-text">
+							<div className="text how-text">
 								NFTour collection generator is a special software by which you
 								can easily create thousands of unique NFT arts. The software
 								application will generate a series of digital collectibles based

@@ -6,6 +6,8 @@ import {libWeb} from "@tonclient/lib-web";
 
 import {signerKeys, TonClient, signerNone} from "@tonclient/core";
 
+// import radIco from "./img/radiance.ico";
+
 // const fileBuffer = Buffer.from("./main.wasm", 'base64');
 
 // console.log(fileBuffer);
@@ -112,6 +114,10 @@ function NftCollection() {
 
 	let arr = JSON.parse(sessionStorage.getItem("collection"));
 	let arrName = JSON.parse(sessionStorage.getItem("collectionName"));
+
+	let details = JSON.parse(sessionStorage.getItem("details"));
+
+	console.log(arrName);
 
 	const [collection, setCollection] = useState(arr);
 	const [collectionName, setCollectionName] = useState(arrName);
@@ -551,7 +557,7 @@ function NftCollection() {
 						spec: "nft-1.0.0",
 						name: deployData.projectName,
 						symbol: "RTEAM",
-						icon: null,
+						icon: "data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAQAABMLAAATCwAAAAAAAAAAAAD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8Ap6alAKekngB+g5QAQV64OxtL7tclVPPPJFLw0hlM+/IbTfn0Fkr9+h5P9+guVMdsaoXWABobMgAAAAAA////AIODfgCck3MAX3S+VApE//8YTf//Klbr1RZK//8SR///GEv8/yNS8/kdT/j7E0j7+k919G8ZFhcAAAAAAP///wAVEyMALTdqKh1W//8QR///KFXrxh1M9+8LQ///J1Tt1CZU8sgcT/zoJVTz2x9M6+AbUv/6Jzh8QDMyNQD///8AsqmfADVa4aYDQP//G0z6/yRV/esgUvXhTG3YXnCDvgBKY68tIk/t0wdC//8XS///EEf9/yld//ZXY4wF////AHqT0hopWPjhEUb//xdM/f8sTd2YVXe8DGmFwABtgskAWWqRAFxjfQBCXLd0HVL89hhM/f8LRv//PFi5Yf///wAiUueGIVDz/iFQ9O8OSP//R1y0NW57ngBsgcAAaoDGAEdhsQCCjrwAh5TBACtW6cQdTfXqDkb//zFc9Jr///8AH1H/pRxN9f8wWOe5Az7//4qXw0zPwJcAu7GZAIaSwAAlVvsALF7/ACZX/x0dTvf0L1jmwR9P+f4ZTPew////ACpV7IoQR///JFL03yNS8uJfdsMyi5OtAJqdqwBYZp0AQGLlAGeB3ABpg98KFUn+/x9P9fMqVez3Gkz4r////wBJZ+VQD0f//xdK/f8ZTPfvNVbHVl9wtgCJkbcAOEyOAGJywQCLjZcAc4fFNxNH/f8SR///HU/5/Etp0Vn///8AgI+2BC1d/+8ORP//E0j9/xdL//86X+Wkgo67IU9ZfwBidMYAMlbVfxxM8d4cTvj4FUn//xRI9/tyfJAA////AE1JLwA2TIFMFFD//yNS9u8eT/bxEkj//y9Y5rQ2VcNzJFP21BBH//8lUe3VHE/6/QQ///8uVNiVgIWfAP///wAwL24ATEZsAENk1HsfVP/1JlPv1iNR8NYbTfjrFEv//w5G//8mU+/VJ1Pr0AA9//8gTvTV0NPnA97f8wD///8AXV3CAGJetgBhYocALFDFlRFL//8MRf//EUb9/xpN/P8WS///JFH27hBH//8iUOS3Z3qzCP///wD///8A////AFRUqwBYWbAAWFl/AGVthABngdIzK1PikyVV+dYYS/nuLlbjpipR149NcuJXb4PDAGV5pADy7/8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A//8AAOAPAADABwAAgAMAAIEBAAADwQAAB+EAAAfBAAAHwQAAB8EAAAGDAACAAwAAwAMAAOAHAADwHwAA//8AAA==",
 						base_uri: null,
 						reference: null,
 						reference_hash: null,
@@ -674,11 +680,19 @@ function NftCollection() {
 
 		// console.log(nearAPI.transactions.createTransaction);
 
-		const result = await walletConnection.requestSignTransactions([
-			transaction,
-		]);
+		try {
+			const result = await walletConnection.requestSignTransactions([
+				transaction,
+			]);
 
-		console.log(result);
+			console.log(result);
+		} catch {
+			setErrorModal({
+				hidden: true,
+				message: "Connect Wallet",
+				img: "",
+			});
+		}
 	}
 
 	async function deployColectionNear() {
@@ -696,13 +710,22 @@ function NftCollection() {
 		sessionStorage.setItem("addrCol", result + "." + contractRootNft);
 
 		sessionStorage.setItem("curentAction", "deploy");
-		contractRoot.deploy_contract_code(
-			{
-				account_id: result + "." + contractRootNft,
-			},
-			"30000000000000",
-			"17490000000000000000000000",
-		);
+
+		contractRoot
+			.deploy_contract_code(
+				{
+					account_id: result + "." + contractRootNft,
+				},
+				"30000000000000",
+				"17490000000000000000000000",
+			)
+			.catch((err) => {
+				setErrorModal({
+					hidden: true,
+					message: "Connect Wallet",
+					img: "",
+				});
+			});
 
 		// let functionCallResult = await walletConnection.account().functionCall({
 		// 	contractId: contractRootNft,
@@ -931,11 +954,108 @@ function NftCollection() {
 			>
 				<Header activeCat={1}></Header>
 
-				<div class="collection">
+				<div class="construtors constructors-col">
+					<div class="container-header">
+						<div
+							className={
+								errorModal.hidden === true ? "error-modal-img" : "hide"
+							}
+						>
+							{/* <span onClick={closeError}></span> */}
+							<button className="close" onClick={closeError}>
+								<span></span>
+								<span></span>
+							</button>
+							{errorModal.img ? <img src={errorModal.img}></img> : null}
+
+							<div className="message">{errorModal.message}</div>
+						</div>
+
+						<div class="modal-constructor modal-constructor-back">
+							<button
+								onClick={() => {
+									history.back();
+								}}
+							></button>
+						</div>
+						<div class="modal-constructor modal-constructor-param">
+							<div class="title">Your Collection</div>
+							<div class="desc">
+								NFT art creator’s main goal is to invent, and using NFTour
+								artists
+							</div>
+							<div class="owner">
+								<div class="avatar">H</div>
+								<div class="text">
+									<span>Owner</span>
+									Hello World
+								</div>
+							</div>
+							<div class="subtitle">Collection Name</div>
+							<div style={{margin: "0px 0px 20px 0px"}} class="desc">
+								New Collection
+							</div>
+							<div class="subtitle">Description</div>
+							<div class="desc">
+								Tattooed Kitty Gang (“TKG”) is a collection of 666 badass kitty
+								gangsters, with symbol of tattoos, living in the Proud Kitty
+								Gang (“PKG”) metaverse. Each TKG is an{" "}
+							</div>
+							<div class="show">Show full description </div>
+							<div class="price">
+								<div class="subtitle">Mint Price</div>
+								<div class="near">
+									<span></span> <div class="price">10,50 NEAR</div>
+								</div>
+							</div>
+							<div class="button-4-square">
+								<span></span>Download project
+							</div>
+							<div class="button-1-square">Publish Collection</div>
+						</div>
+						<div class="modal-constructor modal-constructor-collection">
+							<div class="progress">
+								<div class="title">Collection generation process</div>
+								<div class="bar"></div>
+								<span>100/100</span>
+							</div>
+							<div class="collection">
+								{collection.map((item, index) => {
+									return (
+										<div
+											key={"uniqueId" + index}
+											className="element"
+											// onClick={() =>
+											// 	setErrorModal({
+											// 		hidden: true,
+											// 		message: "",
+											// 		img: item,
+											// 	})
+											// }
+										>
+											<div class="img">
+												<img src={item} />
+											</div>
+											<div class="nameCol">{details.projectName}</div>
+											<div class="name">{details.projectDescription}</div>
+										</div>
+									);
+								})}
+
+								{/* <div class="element">
+									<div class="img"></div>
+									<div class="nameCol">Untitled Coolection #1239239</div>
+									<div class="name">Roboto #2103</div>
+								</div> */}
+							</div>
+						</div>
+					</div>
+				</div>
+
+				{/* <div className="collection">
 					<div
 						className={errorModal.hidden === true ? "error-modal-img" : "hide"}
 					>
-						{/* <span onClick={closeError}></span> */}
 						<button className="close" onClick={closeError}>
 							<span></span>
 							<span></span>
@@ -945,15 +1065,14 @@ function NftCollection() {
 						<div className="message">{errorModal.message}</div>
 					</div>
 
-					<div class="title">Your Collection</div>
-					<div class="text">
+					<div className="title">Your Collection</div>
+					<div className="text">
 						NFT art creator’s main goal is to invent, and using NFTour artists
 					</div>
 
-					{/* <button onClick={testTrans}>Test</button> */}
 
 					<div
-						class={
+						className={
 							activeButtons[0]
 								? "button-1-square"
 								: "button-1-square button-1-square-disabled"
@@ -963,16 +1082,7 @@ function NftCollection() {
 						Deploy Collection
 					</div>
 
-					{/* <div
-						class={
-							activeButtons[1]
-								? "button-1-square"
-								: "button-1-square button-1-square-disabled"
-						}
-						onClick={activeButtons[1] ? initCollection : null}
-					>
-						Init Collection
-					</div> */}
+					
 
 					<div
 						className={
@@ -993,30 +1103,13 @@ function NftCollection() {
 						)}
 					</div>
 
-					{/* {collection.map((item, i) => {
-						return (
-							<div
-								class={
-									activeButtons[2]
-										? "button-1-square"
-										: "button-1-square button-1-square-disabled"
-								}
-								onClick={activeButtons[2] ? () => deployNft([item, i]) : null}
-							>
-								Deploy NFT {i + 1}
-							</div>
-						);
-					})} */}
+					
 
-					{/* <div class="button-1-square" onClick={()=>deployNft(13)}>
-						Deploy NFT 2
-					</div> */}
-
-					<div class="button-3-square" onClick={saveZip}>
+					<div className="button-3-square" onClick={saveZip}>
 						Save As
 					</div>
 
-					<div class="nft-avatar">
+					<div className="nft-avatar">
 						<input
 							type="file"
 							id="input_avatar"
@@ -1024,21 +1117,22 @@ function NftCollection() {
 							onChange={test}
 						/>
 
-						<div class="nft-img">
+						<div className="nft-img">
 							<img src={avatar} />
-							<label for="input_avatar" class="input-avatar-btn">
+							<label htmlFor="input_avatar" className="input-avatar-btn">
 								<span>1</span>
 							</label>
 						</div>
 
-						<div class="title">Collection avatar</div>
+						<div className="title">Collection avatar</div>
 					</div>
 
-					<div class="nft-collection">
+					<div className="nft-collection">
 						{collection.map((item, index) => {
 							return (
 								<div
-									class="nft-element"
+									key={"uniqueId"+index}
+									className="nft-element"
 									onClick={() =>
 										setErrorModal({
 											hidden: true,
@@ -1048,12 +1142,12 @@ function NftCollection() {
 									}
 								>
 									<img src={item} />
-									<div class="title">{collectionName[index]}</div>
+									<div className="title">{collectionName[index]}</div>
 								</div>
 							);
 						})}
 					</div>
-				</div>
+				</div> */}
 
 				<Footer></Footer>
 			</div>

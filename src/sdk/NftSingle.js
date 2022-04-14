@@ -29,7 +29,12 @@ import {useDispatch, useSelector} from "react-redux";
 
 import * as nearAPI from "near-api-js";
 
-const {contractNft, nearConfig, contractRootNft} = require("./config.json");
+const {
+	contractNft,
+	singleNFt,
+	nearConfig,
+	contractRootNft,
+} = require("./config.json");
 
 const {connect, keyStores, WalletConnection} = nearAPI;
 
@@ -183,11 +188,11 @@ function NftSingle() {
 						console.log(1);
 						return;
 					}
-					if (event == "new") {
+					if (event == "nft_mint") {
 						setActiveButtons([false, false, true]);
 						setErrorModal({
 							hidden: true,
-							message: "Collection successfully created, go to profile to view",
+							message: "NFT successfully created, go to profile to view",
 							img: "",
 						});
 						console.log(1);
@@ -236,13 +241,21 @@ function NftSingle() {
 		sessionStorage.setItem("addrCol", result + "." + contractRootNft);
 
 		sessionStorage.setItem("curentAction", "deploy");
-		contractRoot.deploy_contract_code(
-			{
-				account_id: result + "." + contractRootNft,
-			},
-			"30000000000000",
-			"17490000000000000000000000",
-		);
+		contractRoot
+			.deploy_contract_code(
+				{
+					account_id: result + "." + contractRootNft,
+				},
+				"30000000000000",
+				"17490000000000000000000000",
+			)
+			.catch((err) => {
+				setErrorModal({
+					hidden: true,
+					message: "Connect Wallet",
+					img: "",
+				});
+			});
 	}
 	async function multTrans() {
 		setActiveButtons([false, false, false]);
@@ -383,11 +396,19 @@ function NftSingle() {
 
 		console.log(transaction);
 
-		const result = await walletConnection.requestSignTransactions([
-			transaction,
-		]);
+		try {
+			const result = await walletConnection.requestSignTransactions([
+				transaction,
+			]);
 
-		console.log(result);
+			console.log(result);
+		} catch {
+			setErrorModal({
+				hidden: true,
+				message: "Connect Wallet",
+				img: "",
+			});
+		}
 	}
 
 	// let functionCallResult = await walletConnection.account().functionCall({
@@ -833,6 +854,102 @@ function NftSingle() {
 		}
 	}
 
+	async function deploySingle() {
+		setLoaderMult(true);
+
+		window.contractCollection = await new nearAPI.Contract(
+			window.walletConnection.account(),
+			singleNFt,
+			{
+				// View methods are read-only – tfey don't modify the state, but usually return some value
+				viewMethods: ["nft_total_supply"],
+				// Change methods can modify the state, but you don't receive the returned value when called
+				changeMethods: ["new", "nft_mint"],
+				// Sender is the account ID to initialize transactions.
+				// getAccountId() will return empty string if user is still unauthorized
+				sender: window.walletConnection.getAccountId(),
+			},
+		);
+
+		contractCollection.nft_total_supply().then(async (data) => {
+			let token_id = data;
+
+			const pinataKey = "0a2ed9f679a6c395f311";
+			const pinataSecretKey =
+				"7b53c4d13eeaf7063ac5513d4c97c4f530ce7e660f0c147ab5d6aee6da9a08b9";
+
+			let deployData = JSON.parse(sessionStorage.getItem("details"));
+
+			for (let i = 0; i < collection.length; i++) {
+				const url = collection[i];
+				await fetch(url)
+					.then((res) => res.blob())
+					.then((blob) => {
+						const file = new File([blob], "File name", {type: "image/png"});
+
+						const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
+
+						let data = new FormData();
+
+						data.append("file", file);
+
+						return axios
+							.post(url, data, {
+								maxBodyLength: "Infinity",
+								headers: {
+									"Content-Type": `multipart/form-data; boundary=${data._boundary}`,
+									pinata_api_key: pinataKey,
+									pinata_secret_api_key: pinataSecretKey,
+								},
+							})
+							.then(async function (response) {
+								console.log(response.data.IpfsHash);
+
+								contractCollection
+									.nft_mint(
+										{
+											token_id: token_id,
+											metadata: {
+												title: deployData.projectName,
+												description: deployData.projectDescription,
+												media: response.data.IpfsHash,
+												copies: 1,
+											},
+											receiver_id: walletConnection.getAccountId(),
+										},
+										"30000000000000",
+										"7490000000000000000000",
+									)
+									.then((data) => {
+										console.log(data);
+									});
+
+								// actionsTrans.push(
+								// 	nearAPI.transactions.functionCall(
+								// 		"nft_mint",
+								// 		{
+								// 			token_id: i.toString(),
+								// 			metadata: {
+								// 				title: deployData.projectName,
+								// 				description: deployData.projectDescription,
+								// 				media: response.data.IpfsHash,
+								// 				copies: 1,
+								// 			},
+								// 			receiver_id: walletConnection.getAccountId(),
+								// 		},
+								// 		"30000000000000",
+								// 		"7490000000000000000000",
+								// 	),
+								// );
+							})
+							.catch(function (error) {
+								console.error(error);
+							});
+					});
+			}
+		});
+	}
+
 	function close() {
 		dispatch({type: "closeConnect"});
 		console.log(connectWallet);
@@ -854,7 +971,7 @@ function NftSingle() {
 			>
 				<Header activeCat={1}></Header>
 
-				<div class="collection">
+				<div className="collection">
 					<div
 						className={errorModal.hidden === true ? "error-modal-img" : "hide"}
 					>
@@ -867,13 +984,13 @@ function NftSingle() {
 						<div className="message">{errorModal.message}</div>
 					</div>
 
-					<div class="title">Your NFT</div>
-					<div class="text">
+					<div className="title">Your NFT</div>
+					<div className="text">
 						NFT art creator’s main goal is to invent, and using NFTour artists
 					</div>
 
-					<div
-						class={
+					{/* <div
+						className={
 							activeButtons[0]
 								? "button-1-square"
 								: "button-1-square button-1-square-disabled"
@@ -881,15 +998,15 @@ function NftSingle() {
 						onClick={activeButtons[0] ? deployColectionNear : null}
 					>
 						Deploy Storage
-					</div>
+					</div> */}
 
 					<div
 						className={
-							activeButtons[1]
+							activeButtons[0]
 								? "button-1-square"
 								: "button-1-square button-1-square-disabled"
 						}
-						onClick={activeButtons[1] ? multTrans : null}
+						onClick={activeButtons[0] ? deploySingle : null}
 					>
 						{loaderMult ? (
 							<div className="loader">
@@ -902,15 +1019,18 @@ function NftSingle() {
 						)}
 					</div>
 
-					<div class="button-3-square" onClick={saveZip}>
+					{/* <div onClick={deploySingle}> Deploy 2</div> */}
+
+					<div className="button-3-square" onClick={saveZip}>
 						Save As
 					</div>
 
-					<div class="nft-collection">
-						{collection.map((item) => {
+					<div className="nft-collection">
+						{collection.map((item, index) => {
 							return (
 								<div
-									class="nft-element"
+									key={"uniqueId" + index}
+									className="nft-element"
 									onClick={() =>
 										setErrorModal({
 											hidden: true,

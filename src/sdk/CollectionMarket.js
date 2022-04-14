@@ -173,35 +173,35 @@ function CollectionMarket() {
 						<span></span>
 						<span></span>
 					</button>
-					<div class="title">Robots Collection</div>
-					<div class="mint owner">
+					<div className="title">Robots Collection</div>
+					<div className="mint owner">
 						Owner: <span>0:65eb...fe7b</span>{" "}
 					</div>
-					<div class="mint price">
+					<div className="mint price">
 						Price: <span>149</span>{" "}
 					</div>
-					<div class="mint royalty">
+					<div className="mint royalty">
 						Royalty for Author <span>15%</span>{" "}
 					</div>
-					<div class="button-1-square">Buy & Open Pack</div>
+					<div className="button-1-square">Buy & Open Pack</div>
 				</div>
 
-				<div class="collections">
-					{/* <div class="collection">
-						<div class="img">
+				<div className="collections">
+					{/* <div className="collection">
+						<div className="img">
 						</div>
-						<div class="content">
-							<div class="name">Robot #23245</div>
-							<div class="rank">
+						<div className="content">
+							<div className="name">Robot #23245</div>
+							<div className="rank">
 								<span>Rank:</span>100
 							</div>
-							<div class="price">
+							<div className="price">
 								<span>Price:</span>149000.00
 							</div>
-							<div class="price-quality">
+							<div className="price-quality">
 								<span>Price quality:</span>50%
 							</div>
-							<div class="button-1-square" onClick={()=>openCollection("owner1", "collection1")}>Buy & Open Pack</div>
+							<div className="button-1-square" onClick={()=>openCollection("owner1", "collection1")}>Buy & Open Pack</div>
 						</div>
 					</div> */}
 
@@ -209,29 +209,29 @@ function CollectionMarket() {
 					{collections.length > 0 ? (
 						collections.map((item, index) => {
 							return (
-								<div class="collection">
-									<div class="img">
+								<div key={"uniqueId" + index} className="collection">
+									<div className="img">
 										<img
-											src={"https://gateway.pinata.cloud/ipfs/" + item.icon}
+											src={"https://cloudflare-ipfs.com/ipfs/" + item.icon}
 										/>
 									</div>
-									<div class="content">
-										<div class="name">{item.name}</div>
-										<div class="description">
+									<div className="content">
+										<div className="name">{item.name}</div>
+										<div className="description">
 											<span>Description:</span>
 											{item.desc}
 										</div>
-										{/* <div class="rank">
+										{/* <div className="rank">
 											<span>Rank:</span>100
 										</div>
-										<div class="price">
+										<div className="price">
 											<span>Price:</span>149000.00
 										</div>
-										<div class="price-quality">
+										<div className="price-quality">
 											<span>Price quality:</span>50%
 										</div> */}
 										<div
-											class="button-1-square"
+											className="button-1-square"
 											// onClick={() => setMintNftData({hidden: false})}
 											onClick={() => openCollection(item.addrCol)}
 										>
