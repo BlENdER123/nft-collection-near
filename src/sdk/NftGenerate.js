@@ -835,7 +835,7 @@ function NftCustomization() {
 							<div className="text">Amount of elements</div>
 
 							<div className={accordionHidden[2] ? "hide" : "elements"}>
-								<div className="elem leg">
+								{/* <div className="elem leg">
 									<span>Legendary</span>100
 								</div>
 								<div className="elem epic">
@@ -849,6 +849,10 @@ function NftCustomization() {
 								</div>
 								<div className="elem us">
 									<span>Usual</span>1000
+								</div> */}
+								<div className="elem us">
+									<span>Total</span>
+									{allComb}
 								</div>
 							</div>
 

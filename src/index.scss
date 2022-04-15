@@ -2165,11 +2165,14 @@ input[type="text"] {
 
 	width: 150px;
 	height: 150px;
-	padding-bottom: 17.2%;
+	// padding-bottom: 17.2%;
 	margin-bottom: 10px;
 
 	box-sizing: border-box;
 	margin: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 .imgs-list > .img-element-active {
 	border: 2px solid #6333ff;
@@ -2180,8 +2183,8 @@ input[type="text"] {
 	opacity: 1;
 }
 .imgs-list > .img-element > img {
-	width: 150px;
-	height: 150px;
+	max-width: 150px;
+	max-height: 150px;
 }
 .imgs-list > .img-element > .name {
 	position: absolute;

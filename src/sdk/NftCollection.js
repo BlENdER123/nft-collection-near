@@ -114,6 +114,10 @@ function NftCollection() {
 	let classArr = JSON.parse(localStorage.getItem("class"));
 	console.log(classArr);
 
+	// let arr = JSON.parse(sessionStorage.getItem("collection"));
+	let arrClass = JSON.parse(localStorage.getItem("class"));
+	// let arrName = JSON.parse(sessionStorage.getItem("collectionName"));
+
 	function getSrc(src) {
 		return "https://cloudflare-ipfs.com/ipfs/" + src;
 	}
@@ -175,6 +179,47 @@ function NftCollection() {
 	// 	let uniq = JSON.parse(sessionStorage.getItem("uniqFor"));
 	// 	console.log(uniq);
 	// },[]);
+
+	const downloadFile = ({data, fileName, fileType}) => {
+		// Create a blob with the data we want to download as a file
+		const blob = new Blob([data], {type: fileType});
+		// Create an anchor element and dispatch a click event on it
+		// to trigger a download
+		const a = document.createElement("a");
+		a.download = fileName;
+		a.href = window.URL.createObjectURL(blob);
+		const clickEvt = new MouseEvent("click", {
+			view: window,
+			bubbles: true,
+			cancelable: true,
+		});
+		a.dispatchEvent(clickEvt);
+		a.remove();
+	};
+
+	const exportToJson = (e) => {
+		if (details.projectName === undefined) {
+			setErrorModal({
+				hidden: true,
+				message: "Project name is empty!",
+			});
+			return;
+		} else {
+			const data = {
+				projectName: details.projectName,
+				collectionName: details.collectionName,
+				projectDescription: details.projectDescription,
+				classArr: arrClass,
+			};
+
+			e.preventDefault();
+			downloadFile({
+				data: JSON.stringify(data),
+				fileName: details.projectName + ".json",
+				fileType: "text/json",
+			});
+		}
+	};
 
 	useEffect(async () => {
 		const {providers} = require("near-api-js");
@@ -1149,7 +1194,7 @@ function NftCollection() {
 									<span></span> <div class="price">10,50 NEAR</div>
 								</div>
 							</div>
-							<div class="button-4-square">
+							<div class="button-4-square" onClick={exportToJson}>
 								<span></span>Download project
 							</div>
 							{/* <div class="button-1-square">Publish Collection</div> */}

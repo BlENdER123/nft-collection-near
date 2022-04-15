@@ -98,10 +98,42 @@ function NftCustomization() {
 
 	const [redirect, setRedirect] = useState(false);
 
+	const [activePosition, setActivePosition] = useState({x: 0, y: 0});
+
 	const [errorModal, setErrorModal] = useState({
 		hidden: false,
 		message: "",
 	});
+
+	const dragStart = (e) => {
+		console.log("START", e.clientX, e.clientY);
+		if (e.clientX === 0 && e.clientY === 0) return;
+		setActivePosition({x: e.clientX, y: e.clientY});
+	};
+
+	const dragEnd = (e) => {
+		console.log("END", e.clientX, e.clientY);
+		setActivePosition({x: 0, y: 0});
+	};
+
+	const Drag = (e, index) => {
+		if (e.clientX === 0 && e.clientY === 0) return;
+		const deltaX = activePosition.x - e.clientX;
+		const deltaY = activePosition.y - e.clientY;
+		//console.log(deltaX, deltaY);
+		let tempArr = [];
+		for (let i = 0; i < classArr.length; i++) {
+			let temp = classArr[i];
+			if (i == index) {
+				temp.x = -deltaX;
+				temp.y = -deltaY;
+				tempArr.push(temp);
+			} else {
+				tempArr.push(temp);
+			}
+		}
+		setClassArr(tempArr);
+	};
 
 	function copySrc() {
 		const asyncFunction = async function () {
@@ -671,6 +703,8 @@ function NftCustomization() {
 										? classArr.map((item, index) => {
 												return (
 													<img
+														onDragStart={dragStart}
+														onDrag={(e) => Drag(e, index)}
 														key={"uniqueId" + index}
 														src={item.src[curentImages[index]]}
 														style={{

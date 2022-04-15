@@ -4,6 +4,8 @@ import Context from "./Context";
 import Header from "./Header";
 import Footer from "./Footer";
 
+import {Button, Box} from "@mui/material";
+
 import {useDispatch, useSelector} from "react-redux";
 //import 'idempotent-babel-polyfill';
 
@@ -192,6 +194,23 @@ function LoadNftPage() {
 				console.error(error);
 			});
 	};
+
+	function handleFile(e) {
+		console.log(e.target.files[0]);
+		const fileReader = new FileReader();
+		fileReader.readAsText(e.target.files[0], "UTF-8");
+		fileReader.onload = (e) => {
+			console.log("e.target.result", e.target.result);
+			const data = JSON.parse(e.target.result);
+			setProjectName(data.projectName || "");
+			setCollectionName(data.collectionName || "");
+			setProjectDescription(data.projectDescription || "");
+			console.log(data.projectName);
+			setClassArr1(data.classArr);
+
+			//setFiles(e.target.result);
+		};
+	}
 
 	function newClass(name, active, imgsL, x, y, z) {
 		console.log(classArr1);
@@ -418,6 +437,7 @@ function LoadNftPage() {
 					hidden: true,
 					message: "Each layer must contain at least 1 image.",
 				});
+				return;
 			}
 		}
 
@@ -809,6 +829,7 @@ function LoadNftPage() {
 								<input
 									type="text"
 									placeholder="Layer Name"
+									value={newLayer}
 									onChange={(ev) => {
 										setNewLayer(ev.target.value);
 									}}
@@ -820,6 +841,7 @@ function LoadNftPage() {
 											console.log(1);
 											return;
 										} else {
+											setNewLayer("");
 											newClass(newLayer, false, [], 0, 0, 0, 0, 0);
 										}
 									}}
@@ -835,6 +857,7 @@ function LoadNftPage() {
 								<input
 									type="text"
 									className="input-settings"
+									value={classArr1[curentLayer].name}
 									placeholder={classArr1[curentLayer].name}
 									onChange={setNewLayerName}
 								/>
@@ -975,7 +998,11 @@ function LoadNftPage() {
 						</div>
 
 						<div className="modal-constructor modal-constructor-settings">
-							<div className="import">Import Project</div>
+							{/* <div className="import">Import Project</div> */}
+							<Box className="import" type="button" component="label">
+								Import Project
+								<input type="file" hidden onChange={handleFile} />
+							</Box>
 							<div className="project-settings">
 								<div className="title">
 									Project details{" "}
