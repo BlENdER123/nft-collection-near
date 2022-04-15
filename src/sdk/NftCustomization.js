@@ -607,6 +607,14 @@ function NftCustomization() {
 											className={
 												curentImages[curentLayer] == index ? "rarity" : "hide"
 											}
+											style={{
+												background:
+													"linear-gradient(to right, #6333FF 0%, #6333FF " +
+													classArr[curentLayer].rarityLayer * 25 +
+													"%, #444444 " +
+													classArr[curentLayer].rarityLayer * 25 +
+													"%, #444444 100%)",
+											}}
 											type="range"
 											min="0"
 											max="4"
@@ -903,6 +911,14 @@ function NftCustomization() {
 																? "rarity"
 																: "hide"
 														}
+														style={{
+															background:
+																"linear-gradient(to right, #6333FF 0%, #6333FF " +
+																classArr[curentLayer].rarity[index] * 25 +
+																"%, #444444 " +
+																classArr[curentLayer].rarity[index] * 25 +
+																"%, #444444 100%)",
+														}}
 														type="range"
 														min="0"
 														max="4"

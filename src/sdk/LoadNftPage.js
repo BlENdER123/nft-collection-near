@@ -51,23 +51,9 @@ class MyClass {
 }
 
 function LoadNftPage() {
-	useEffect(() => {
-		if (document.location.href.split("?transactionHashes=")[1]) {
-			let href = document.location.origin + document.location.hash;
-			document.location.href = href;
-		}
-		if (localStorage.getItem("class") !== undefined) {
-			let result = confirm("Continue with the current project?");
-
-			if (result) {
-				setClassArr1(JSON.parse(localStorage.getItem("class")));
-			} else {
-				setClassArr1([
-					new MyClass("background", true, [], [], [], 0, 0, 0, 0, 0),
-				]);
-			}
-		}
-	}, []);
+	// setClassArr1([
+	// 	new MyClass("background", true, [], [], [], 0, 0, 0, 0, 0),
+	// ]);
 
 	//const {status} = useContext(Context);
 	let history = useHistory();
@@ -116,6 +102,25 @@ function LoadNftPage() {
 	const [activeNext, setActiveNext] = useState(false);
 
 	const [tempBg, setTempBg] = useState([]);
+
+	useEffect(() => {
+		if (document.location.href.split("?transactionHashes=")[1]) {
+			let href = document.location.origin + document.location.hash;
+			document.location.href = href;
+		}
+		if (localStorage.getItem("class") !== undefined) {
+			// let result = confirm("Continue with the current project?");
+			let localClass = JSON.parse(localStorage.getItem("class"));
+
+			setWidth(localClass.width);
+			setHeight(localClass.height);
+			setClassArr1(localClass);
+		} else {
+			setClassArr1([
+				new MyClass("background", true, [], [], [], 0, 0, 0, 0, 0),
+			]);
+		}
+	}, []);
 
 	const pinFileToIPFS = async (
 		pinataKey,
@@ -533,7 +538,7 @@ function LoadNftPage() {
 		sessionStorage.setItem(
 			"details",
 			JSON.stringify({
-				projectName: projectName,
+				projectName: collectionName,
 				projectDescription: projectDescription,
 			}),
 		);

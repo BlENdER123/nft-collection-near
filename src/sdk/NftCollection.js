@@ -390,6 +390,13 @@ function NftCollection() {
 	let arrName = JSON.parse(sessionStorage.getItem("collectionName"));
 
 	let details = JSON.parse(sessionStorage.getItem("details"));
+	let price;
+
+	try {
+		price = JSON.parse(sessionStorage.getItem("colPrice"));
+	} catch {
+		price = "0";
+	}
 
 	console.log(arrName);
 
@@ -1179,19 +1186,15 @@ function NftCollection() {
 							</div>
 							<div class="subtitle">Collection Name</div>
 							<div style={{margin: "0px 0px 20px 0px"}} class="desc">
-								New Collection
+								{details.projectName}
 							</div>
 							<div class="subtitle">Description</div>
-							<div class="desc">
-								Tattooed Kitty Gang (“TKG”) is a collection of 666 badass kitty
-								gangsters, with symbol of tattoos, living in the Proud Kitty
-								Gang (“PKG”) metaverse. Each TKG is an{" "}
-							</div>
+							<div class="desc">{details.projectDescription}</div>
 							<div class="show">Show full description </div>
 							<div class="price">
 								<div class="subtitle">Mint Price</div>
 								<div class="near">
-									<span></span> <div class="price">10,50 NEAR</div>
+									<span></span> <div class="price">{price} NEAR</div>
 								</div>
 							</div>
 							<div class="button-4-square" onClick={exportToJson}>

@@ -673,6 +673,14 @@ function NftCustomization() {
 									min="1"
 									max="40"
 									step="1"
+									style={{
+										background:
+											"linear-gradient(to right, #6333FF 0%, #6333FF " +
+											royalty * 2.5 +
+											"%, #444444 " +
+											royalty * 2.5 +
+											"%, #444444 100%)",
+									}}
 									onChange={(event) => setRoyalty(event.target.value)}
 								/>
 								<div className="procent">
