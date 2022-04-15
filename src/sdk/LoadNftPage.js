@@ -108,10 +108,15 @@ function LoadNftPage() {
 			let href = document.location.origin + document.location.hash;
 			document.location.href = href;
 		}
-		if (localStorage.getItem("class") !== undefined) {
+
+		if (
+			localStorage.getItem("class") !== undefined &&
+			localStorage.getItem("class") !== null
+		) {
 			// let result = confirm("Continue with the current project?");
 			let localClass = JSON.parse(localStorage.getItem("class"));
 
+			console.log(1);
 			setWidth(localClass.width);
 			setHeight(localClass.height);
 			setClassArr1(localClass);
