@@ -330,6 +330,7 @@ function NftCustomization() {
 		for (let i = 0; i < classArr.length; i++) {
 			let tempArrImg = [];
 			for (let j = 0; j < classArr[i].imgs.length; j++) {
+				console.log(classArr[i].imgs[j]);
 				let res = await getResize(
 					classArr[i].imgs[j],
 					classArr[i].width,

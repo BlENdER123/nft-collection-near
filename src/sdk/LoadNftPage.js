@@ -166,7 +166,11 @@ function LoadNftPage() {
 						} else {
 							temp.imgs.push(response.data.IpfsHash);
 							temp.names.push(name);
+							temp.width = width;
+							temp.height = height;
 							temp.rarity.push("4");
+							setWidth(width);
+							setHeight(height);
 							// if ((temp.height == image.height && temp.width == image.width)) {
 							// 	temp.imgs.push(src);
 							// } else {

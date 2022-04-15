@@ -110,62 +110,63 @@ const aes = new pidCrypt.AES.CBC();
 // 	return result.toUpperCase();
 // }
 
-let classArr = JSON.parse(localStorage.getItem("class"));
+function NftCollection() {
+	let classArr = JSON.parse(localStorage.getItem("class"));
+	console.log(classArr);
 
-function getSrc(src) {
-	return "https://cloudflare-ipfs.com/ipfs/" + src;
-}
-
-async function getResizeMany() {
-	let tempArr = [];
-	for (let i = 0; i < classArr.length; i++) {
-		let tempArrImg = [];
-		for (let j = 0; j < classArr[i].imgs.length; j++) {
-			let res = await getResize(
-				classArr[i].imgs[j],
-				classArr[i].width,
-				classArr[i].height,
-			);
-			tempArrImg.push(res);
-		}
-		tempArr.push(tempArrImg);
+	function getSrc(src) {
+		return "https://cloudflare-ipfs.com/ipfs/" + src;
 	}
 
-	console.log(tempArr);
-	return tempArr;
-}
+	async function getResizeMany() {
+		let tempArr = [];
+		for (let i = 0; i < classArr.length; i++) {
+			let tempArrImg = [];
+			for (let j = 0; j < classArr[i].imgs.length; j++) {
+				let res = await getResize(
+					classArr[i].imgs[j],
+					classArr[i].width,
+					classArr[i].height,
+				);
+				tempArrImg.push(res);
+			}
+			tempArr.push(tempArrImg);
+		}
 
-function getResize(img, width, height) {
-	return new Promise((resolve, reject) => {
-		var image = new Image();
-		image.src = getSrc(img);
-		console.log(getSrc(img));
+		console.log(tempArr);
+		return tempArr;
+	}
 
-		var canvas = document.createElement("canvas");
-		canvas.width = width;
-		canvas.height = height;
+	function getResize(img, width, height) {
+		return new Promise((resolve, reject) => {
+			var image = new Image();
+			image.src = getSrc(img);
+			console.log(getSrc(img));
 
-		var ctx = canvas.getContext("2d");
-		// ctx.drawImage(image, 0, 0, width, height);
+			var canvas = document.createElement("canvas");
+			canvas.width = width;
+			canvas.height = height;
 
-		// console.log(canvas);
+			var ctx = canvas.getContext("2d");
+			// ctx.drawImage(image, 0, 0, width, height);
 
-		image.setAttribute("crossorigin", "anonymous");
+			// console.log(canvas);
 
-		image.onload = function () {
-			ctx.drawImage(image, 0, 0, width, height);
-			resolve(canvas.toDataURL("image/png"));
-		};
+			image.setAttribute("crossorigin", "anonymous");
 
-		//console.log(canvas.toDataURL("image/png"));
+			image.onload = function () {
+				ctx.drawImage(image, 0, 0, width, height);
+				resolve(canvas.toDataURL("image/png"));
+			};
 
-		// var dataURL = canvas.toDataURL("image/png");
-		// console.log(dataURL);
-		// return dataURL;
-	});
-}
+			//console.log(canvas.toDataURL("image/png"));
 
-function NftCollection() {
+			// var dataURL = canvas.toDataURL("image/png");
+			// console.log(dataURL);
+			// return dataURL;
+		});
+	}
+
 	let history = useHistory();
 	const dispatch = useDispatch();
 	const connectWallet = useSelector((state) => state.connectWallet);
