@@ -815,7 +815,14 @@ function LoadNftPage() {
 								/>
 								<button
 									className="button-4-square"
-									onClick={() => newClass(newLayer, false, [], 0, 0, 0, 0, 0)}
+									onClick={() => {
+										if (newLayer == "" || newLayer == undefined) {
+											console.log(1);
+											return;
+										} else {
+											newClass(newLayer, false, [], 0, 0, 0, 0, 0);
+										}
+									}}
 								>
 									+
 								</button>

@@ -286,6 +286,13 @@ function NftMarket() {
 						mediaUrl = info.media;
 					}
 
+					if (info.title == null || undefined) {
+						info.title = "No Name";
+					}
+					if (info.description == null || undefined) {
+						info.description = "No Description";
+					}
+
 					tempCols.push({
 						name: info.title,
 						desc: info.description,

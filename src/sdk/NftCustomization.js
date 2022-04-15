@@ -345,7 +345,7 @@ function NftCustomization() {
 		return tempArr;
 	}
 
-	function getResize(img, width, height) {
+	async function getResize(img, width, height) {
 		return new Promise((resolve, reject) => {
 			var image = new Image();
 			image.src = getSrc(img);
