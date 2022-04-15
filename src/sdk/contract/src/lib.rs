@@ -41,7 +41,7 @@ impl ContractThatDeploysContracts {
     pub fn deploy_contract_code(account_id: AccountId) {
         Promise::new(account_id)
             .create_account()
-            .transfer(17490000000000000000000000) // 17
+            .transfer(490000000000000000000000) // .4
             .add_full_access_key(env::signer_account_pk())
             .deploy_contract(include_bytes!("../../wasmFile/main.wasm").to_vec());
     }

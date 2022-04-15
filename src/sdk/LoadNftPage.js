@@ -54,6 +54,17 @@ function LoadNftPage() {
 			let href = document.location.origin + document.location.hash;
 			document.location.href = href;
 		}
+		if (localStorage.getItem("class") !== undefined) {
+			let result = confirm("Continue with the current project?");
+
+			if (result) {
+				setClassArr1(JSON.parse(localStorage.getItem("class")));
+			} else {
+				setClassArr1([
+					new MyClass("background", true, [], [], [], 0, 0, 0, 0, 0),
+				]);
+			}
+		}
 	}, []);
 
 	//const {status} = useContext(Context);
@@ -74,8 +85,10 @@ function LoadNftPage() {
 	const [height, setHeight] = useState();
 
 	const [projectName, setProjectName] = useState("Project Name");
-	const [collectionName, setCollectionName] = useState("");
-	const [projectDescription, setProjectDescription] = useState("");
+	const [collectionName, setCollectionName] = useState("No Name");
+	const [projectDescription, setProjectDescription] = useState(
+		"Project Description",
+	);
 
 	const [curentImages, setCurentImages] = useState([0]);
 
@@ -406,22 +419,24 @@ function LoadNftPage() {
 
 		// console.log(width, height);
 
-		if (width <= 0 || width == undefined) {
+		// console.log("12ghj3"==parseInt("1ghj23", 10));
+
+		if (width <= 0 || width == undefined || width != parseInt(width, 10)) {
 			setErrorInput("width");
 			// setErrorModal({
 			// 	hidden: true,
 			// 	message: "Enter size",
 			// });
-			return;
+			return false;
 		}
 
-		if (height <= 0 || height == undefined) {
+		if (height <= 0 || height == undefined || height != parseInt(height, 10)) {
 			setErrorInput("height");
 			// setErrorModal({
 			// 	hidden: true,
 			// 	message: "Enter size",
 			// });
-			return;
+			return false;
 		}
 
 		if (width > 700 || height > 700) {
@@ -429,7 +444,7 @@ function LoadNftPage() {
 				hidden: true,
 				message: "The size is too large",
 			});
-			return;
+			return false;
 		}
 
 		// if (width/height > 2) {
@@ -454,10 +469,10 @@ function LoadNftPage() {
 			// 	message: "Set collection name",
 			// });
 
-			setErrorInput("colName");
+			// setErrorInput("colName");
 
-			// setProjectName("Project Name");
-			return;
+			setCollectionName("No Name");
+			// return;
 		}
 
 		if (projectName === "" || projectName === undefined) {
@@ -466,8 +481,11 @@ function LoadNftPage() {
 			// 	message: "Set project name",
 			// });
 
+			// setProjectName("Project Name");
+
 			setProjectName("Project Name");
-			return;
+
+			// return;
 		}
 
 		if (projectDescription === "" || projectDescription === undefined) {
@@ -476,10 +494,10 @@ function LoadNftPage() {
 			// 	message: "Set project description",
 			// });
 
-			setErrorInput("colDesc");
+			// setErrorInput("colDesc");
 
-			// setProjectDescription("Project Description");
-			return;
+			setProjectDescription("Project Description");
+			// return;
 		}
 
 		console.log(classArr1);
@@ -496,7 +514,7 @@ function LoadNftPage() {
 			}),
 		);
 
-		history.push("/nft-customization");
+		return true;
 		// setRedirect(true);
 	}
 
@@ -629,11 +647,7 @@ function LoadNftPage() {
 				width !== "" &&
 				width !== undefined &&
 				height !== "" &&
-				height !== undefined &&
-				collectionName !== "" &&
-				collectionName !== undefined &&
-				projectDescription !== "" &&
-				projectDescription !== undefined
+				height !== undefined
 			) {
 				setActiveNext(true);
 			} else {
@@ -724,6 +738,49 @@ function LoadNftPage() {
 
 						<div className="modal-constructor modal-constructor-layers">
 							<div className="title-1">NFT Editor</div>
+
+							<div class="steps mobile-steps">
+								<div class="step step1 active">
+									<div class="img"></div>
+									<div class="text">
+										<div class="name">Step 1</div>
+										<div class="desc">Upload images</div>
+									</div>
+								</div>
+								<div class="line"></div>
+								<div
+									class="step step2"
+									onClick={() => {
+										let res = logData();
+										if (res) {
+											history.push("/nft-customization");
+										}
+									}}
+								>
+									<div class="img"></div>
+									<div class="text">
+										<div class="name">Step 2</div>
+										<div class="desc">Customize layers</div>
+									</div>
+								</div>
+								<div class="line"></div>
+								<div
+									class="step step3"
+									onClick={() => {
+										let res = logData();
+										if (res) {
+											history.push("/nft-generate");
+										}
+									}}
+								>
+									<div class="img"></div>
+									<div class="text">
+										<div class="name">Step 3</div>
+										<div class="desc">Create Collection</div>
+									</div>
+								</div>
+							</div>
+
 							<div className="title">Layers</div>
 							<div className="text">Add and edit layers</div>
 							{classArr1.map((item, index) => {
@@ -782,7 +839,15 @@ function LoadNftPage() {
 									</div>
 								</div>
 								<div class="line"></div>
-								<div class="step step2">
+								<div
+									class="step step2"
+									onClick={() => {
+										let res = logData();
+										if (res) {
+											history.push("/nft-customization");
+										}
+									}}
+								>
 									<div class="img"></div>
 									<div class="text">
 										<div class="name">Step 2</div>
@@ -790,7 +855,15 @@ function LoadNftPage() {
 									</div>
 								</div>
 								<div class="line"></div>
-								<div class="step step3">
+								<div
+									class="step step3"
+									onClick={() => {
+										let res = logData();
+										if (res) {
+											history.push("/nft-generate");
+										}
+									}}
+								>
 									<div class="img"></div>
 									<div class="text">
 										<div class="name">Step 3</div>
@@ -879,7 +952,12 @@ function LoadNftPage() {
 								className={
 									activeNext ? "button-1-square" : "button-1-square unactive"
 								}
-								onClick={logData}
+								onClick={() => {
+									let res = logData();
+									if (res) {
+										history.push("/nft-customization");
+									}
+								}}
 							>
 								Next
 							</div>
@@ -902,17 +980,19 @@ function LoadNftPage() {
 									<div className="title-settings">Project Name</div>
 									<input
 										type="text"
-										placeholder="No Name"
+										placeholder="Project Name"
 										className="input-settings"
+										// value={projectName}
 										onChange={(event) => setProjectName(event.target.value)}
 									/>
 									{/* <span className="errMsg">Set project name</span> */}
 								</div>
 								<div className={accordionHidden[0] ? "hidden" : "setting"}>
-									<div className="title-settings">Collcetion Name</div>
+									<div className="title-settings">Collection Name</div>
 									<input
 										type="text"
 										placeholder="No Name"
+										value={collectionName}
 										className={
 											errorInput == "colName"
 												? "input-settings inputErr"

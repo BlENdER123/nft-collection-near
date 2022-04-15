@@ -1,10 +1,12 @@
 import React, {useState, useEffect} from "react";
-import {HashRouter as Router} from "react-router-dom";
+import {HashRouter as Router, useHistory} from "react-router-dom";
 
 import {Account} from "@tonclient/appkit";
 import {libWeb} from "@tonclient/lib-web";
 
 import {signerKeys, TonClient, signerNone} from "@tonclient/core";
+
+import mergeImages from "merge-images";
 
 // import radIco from "./img/radiance.ico";
 
@@ -108,9 +110,235 @@ const aes = new pidCrypt.AES.CBC();
 // 	return result.toUpperCase();
 // }
 
+let classArr = JSON.parse(localStorage.getItem("class"));
+
+function getSrc(src) {
+	return "https://cloudflare-ipfs.com/ipfs/" + src;
+}
+
+async function getResizeMany() {
+	let tempArr = [];
+	for (let i = 0; i < classArr.length; i++) {
+		let tempArrImg = [];
+		for (let j = 0; j < classArr[i].imgs.length; j++) {
+			let res = await getResize(
+				classArr[i].imgs[j],
+				classArr[i].width,
+				classArr[i].height,
+			);
+			tempArrImg.push(res);
+		}
+		tempArr.push(tempArrImg);
+	}
+
+	console.log(tempArr);
+	return tempArr;
+}
+
+function getResize(img, width, height) {
+	return new Promise((resolve, reject) => {
+		var image = new Image();
+		image.src = getSrc(img);
+		console.log(getSrc(img));
+
+		var canvas = document.createElement("canvas");
+		canvas.width = width;
+		canvas.height = height;
+
+		var ctx = canvas.getContext("2d");
+		// ctx.drawImage(image, 0, 0, width, height);
+
+		// console.log(canvas);
+
+		image.setAttribute("crossorigin", "anonymous");
+
+		image.onload = function () {
+			ctx.drawImage(image, 0, 0, width, height);
+			resolve(canvas.toDataURL("image/png"));
+		};
+
+		//console.log(canvas.toDataURL("image/png"));
+
+		// var dataURL = canvas.toDataURL("image/png");
+		// console.log(dataURL);
+		// return dataURL;
+	});
+}
+
 function NftCollection() {
+	let history = useHistory();
 	const dispatch = useDispatch();
 	const connectWallet = useSelector((state) => state.connectWallet);
+
+	// useEffect(()=>{
+	// 	let uniq = JSON.parse(sessionStorage.getItem("uniqFor"));
+	// 	console.log(uniq);
+	// },[]);
+
+	useEffect(async () => {
+		const {providers} = require("near-api-js");
+
+		const provider = new providers.JsonRpcProvider(
+			"https://archival-rpc.testnet.near.org",
+		);
+
+		let uniqFor = JSON.parse(sessionStorage.getItem("uniqFor"));
+		// console.log(uniq);
+
+		// let classArr;
+
+		let tempCollection = [];
+
+		const asyncFunction = async function () {
+			return await getResizeMany();
+		};
+		asyncFunction().then(async (res) => {
+			let tempArr = [];
+			console.log(res);
+			console.log(classArr.length);
+			for (let i = 0; i < classArr.length; i++) {
+				let temp = classArr[i];
+				temp.src = res[i];
+				tempArr.push(temp);
+			}
+			console.log(tempArr);
+			classArr = tempArr;
+
+			console.log(classArr);
+
+			for (let i = 0; i < uniqFor.length; i++) {
+				let tempCur = uniqFor[i].split(",");
+				// console.log(tempCur);
+				//alertM("Saved!");
+				let mergeArr = [];
+
+				let indexArr = [];
+
+				for (let i = 0; i < classArr.length; i++) {
+					for (let j = 0; j < classArr[i].imgs.length; j++) {
+						if (classArr[i].imgs[j] == classArr[i].imgs[tempCur[i]]) {
+							mergeArr.push({
+								src: classArr[i].src[j],
+								x: classArr[i].x,
+								y: classArr[i].y,
+							});
+							indexArr.push(classArr[i].z_index);
+						}
+					}
+				}
+
+				for (let i = 0; i < indexArr.length; i++) {
+					for (let j = 0; j < indexArr.length; j++) {
+						if (indexArr[j] > indexArr[j + 1]) {
+							let temp = indexArr[j];
+							let temp1 = mergeArr[j];
+							indexArr[j] = indexArr[j + 1];
+							mergeArr[j] = mergeArr[j + 1];
+							indexArr[j + 1] = temp;
+							mergeArr[j + 1] = temp1;
+						}
+					}
+				}
+
+				console.log(indexArr);
+				console.log(mergeArr);
+
+				await mergeImages(mergeArr, {
+					width: localStorage.getItem("width"),
+					height: localStorage.getItem("height"),
+				}).then((b64) => tempCollection.push(b64));
+			}
+
+			console.log(tempCollection);
+
+			setCollection(tempCollection);
+
+			let hashTrans = document.location.search.split("?transactionHashes=")[1];
+			// let hashTrans = "H1Wh3Kf96NWE56HwGLnajVtQGB55rsXAgTTopHdWX72N";
+			if (hashTrans != undefined) {
+				console.log(hashTrans);
+				async function hashLog() {
+					const result = await provider.txStatus(
+						hashTrans,
+						window.walletConnection.getAccountId(),
+					);
+
+					// const transDet = await connectNear();
+
+					// console.log(provider);
+
+					// const response = await provider.txStatus(
+					// 	hashTrans,
+					// 	window.walletConnection.getAccountId()
+					// );
+
+					if (result.status.Failure == undefined) {
+						console.log(result);
+						let event;
+						let token_id;
+						try {
+							event = JSON.parse(
+								result.receipts_outcome[0].outcome.logs[0].split(
+									"EVENT_JSON:",
+								)[1],
+							).event;
+							token_id = JSON.parse(
+								result.receipts_outcome[0].outcome.logs[0].split(
+									"EVENT_JSON:",
+								)[1],
+							).token_ids[0];
+						} catch {
+							event = result.transaction.actions[0].FunctionCall.method_name;
+						}
+
+						console.log(event);
+
+						if (event == "deploy_contract_code") {
+							setActiveButtons([false, true, false]);
+							console.log(1);
+							return;
+						}
+						if (event == "new") {
+							setActiveButtons([false, false, true]);
+							console.log(1);
+							setErrorModal({
+								hidden: true,
+								message:
+									"Collection successfully created, go to profile to view",
+								img: "",
+							});
+							return;
+						}
+						if (event == "nft_mint" && token_id + 1 != collection.length) {
+							setActiveButtons([false, false, true]);
+							console.log("dep");
+							return;
+						}
+						if (event == "nft_mint") {
+							setActiveButtons([false, false, false]);
+							console.log("complete");
+							return;
+						}
+					} else {
+						console.log("error");
+						// if(event=="new") {
+						// 	setActiveButtons([false,true,false]);
+						// 	return;
+						// }
+						return;
+					}
+				}
+				hashLog();
+			} else {
+				console.log("No trans");
+				setActiveButtons([true, false, false]);
+				console.log("dep");
+				return;
+			}
+		});
+
+		// console.log(classArr);
+	}, []);
 
 	let arr = JSON.parse(sessionStorage.getItem("collection"));
 	let arrName = JSON.parse(sessionStorage.getItem("collectionName"));
@@ -119,7 +347,7 @@ function NftCollection() {
 
 	console.log(arrName);
 
-	const [collection, setCollection] = useState(arr);
+	const [collection, setCollection] = useState([]);
 	const [collectionName, setCollectionName] = useState(arrName);
 
 	const [errorModal, setErrorModal] = useState({
@@ -175,96 +403,6 @@ function NftCollection() {
 			setNearInit(true);
 		});
 	}
-
-	useEffect(() => {
-		const {providers} = require("near-api-js");
-
-		const provider = new providers.JsonRpcProvider(
-			"https://archival-rpc.testnet.near.org",
-		);
-
-		let hashTrans = document.location.search.split("?transactionHashes=")[1];
-		// let hashTrans = "H1Wh3Kf96NWE56HwGLnajVtQGB55rsXAgTTopHdWX72N";
-		if (hashTrans != undefined) {
-			console.log(hashTrans);
-			async function hashLog() {
-				const result = await provider.txStatus(
-					hashTrans,
-					window.walletConnection.getAccountId(),
-				);
-
-				// const transDet = await connectNear();
-
-				// console.log(provider);
-
-				// const response = await provider.txStatus(
-				// 	hashTrans,
-				// 	window.walletConnection.getAccountId()
-				// );
-
-				if (result.status.Failure == undefined) {
-					console.log(result);
-					let event;
-					let token_id;
-					try {
-						event = JSON.parse(
-							result.receipts_outcome[0].outcome.logs[0].split(
-								"EVENT_JSON:",
-							)[1],
-						).event;
-						token_id = JSON.parse(
-							result.receipts_outcome[0].outcome.logs[0].split(
-								"EVENT_JSON:",
-							)[1],
-						).token_ids[0];
-					} catch {
-						event = result.transaction.actions[0].FunctionCall.method_name;
-					}
-
-					console.log(event);
-
-					if (event == "deploy_contract_code") {
-						setActiveButtons([false, true, false]);
-						console.log(1);
-						return;
-					}
-					if (event == "new") {
-						setActiveButtons([false, false, true]);
-						console.log(1);
-						setErrorModal({
-							hidden: true,
-							message: "Collection successfully created, go to profile to view",
-							img: "",
-						});
-						return;
-					}
-					if (event == "nft_mint" && token_id + 1 != collection.length) {
-						setActiveButtons([false, false, true]);
-						console.log("dep");
-						return;
-					}
-					if (event == "nft_mint") {
-						setActiveButtons([false, false, false]);
-						console.log("complete");
-						return;
-					}
-				} else {
-					console.log("error");
-					// if(event=="new") {
-					// 	setActiveButtons([false,true,false]);
-					// 	return;
-					// }
-					return;
-				}
-			}
-			hashLog();
-		} else {
-			console.log("No trans");
-			setActiveButtons([true, false, false]);
-			console.log("dep");
-			return;
-		}
-	}, []);
 
 	async function deployCollection() {
 		const pinataKey = "0a2ed9f679a6c395f311";
@@ -711,13 +849,15 @@ function NftCollection() {
 
 		sessionStorage.setItem("curentAction", "deploy");
 
+		console.log(sessionStorage.getItem("collection"));
+
 		contractRoot
 			.deploy_contract_code(
 				{
 					account_id: result + "." + contractRootNft,
 				},
 				"30000000000000",
-				"17490000000000000000000000",
+				"7490000000000000000000000",
 			)
 			.catch((err) => {
 				setErrorModal({
@@ -974,7 +1114,7 @@ function NftCollection() {
 						<div class="modal-constructor modal-constructor-back">
 							<button
 								onClick={() => {
-									history.back();
+									history.push("/nft-generate");
 								}}
 							></button>
 						</div>
@@ -1011,7 +1151,38 @@ function NftCollection() {
 							<div class="button-4-square">
 								<span></span>Download project
 							</div>
-							<div class="button-1-square">Publish Collection</div>
+							{/* <div class="button-1-square">Publish Collection</div> */}
+
+							<div
+								className={
+									activeButtons[0]
+										? "button-1-square"
+										: "button-1-square button-1-square-disabled"
+								}
+								style={{margin: "0px 0px 10px 0px"}}
+								onClick={activeButtons[0] ? deployColectionNear : null}
+							>
+								Publish Collection
+							</div>
+
+							<div
+								className={
+									activeButtons[1]
+										? "button-1-square"
+										: "button-1-square button-1-square-disabled"
+								}
+								onClick={activeButtons[1] ? multTrans : null}
+							>
+								{loaderMult ? (
+									<div className="loader">
+										<div></div>
+										<div></div>
+										<div></div>
+									</div>
+								) : (
+									<span>Publish NFT`s</span>
+								)}
+							</div>
 						</div>
 						<div class="modal-constructor modal-constructor-collection">
 							<div class="progress">

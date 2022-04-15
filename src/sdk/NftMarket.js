@@ -572,7 +572,18 @@ function NftMarket() {
 								{collections.length > 0 ? (
 									collections.map((item, index) => {
 										return (
-											<div className="element">
+											<div
+												onClick={() => {
+													// console.log(item);
+													history.push(
+														"/nft-market-nft/" +
+															item.addrNftCol +
+															"token" +
+															item.token_id,
+													);
+												}}
+												className="element"
+											>
 												<div class="rarity">L</div>
 												<div class="img">
 													<img src={item.icon} />

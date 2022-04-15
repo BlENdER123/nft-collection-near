@@ -99,7 +99,7 @@ function App() {
 						></Route>
 						<Route
 							exact
-							path="/nft-market-nft"
+							path="/nft-market-nft/:address"
 							component={NftMarketNft}
 						></Route>
 						<Route exact path="/nft-details" component={NftDetails}></Route>

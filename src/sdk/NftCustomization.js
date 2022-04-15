@@ -488,6 +488,47 @@ function NftCustomization() {
 
 						<div className="modal-constructor modal-constructor-layers ">
 							<div className="title-1">NFT Editor</div>
+							<div class="steps mobile-steps">
+								<div class="step step1">
+									<div class="img"></div>
+									<div class="text">
+										<div class="name">Step 1</div>
+										<div class="desc">Upload images</div>
+									</div>
+								</div>
+								<div class="line"></div>
+								<div
+									class="step step2  active"
+									onClick={() => {
+										let res = logData();
+										if (res) {
+											history.push("/nft-customization");
+										}
+									}}
+								>
+									<div class="img"></div>
+									<div class="text">
+										<div class="name">Step 2</div>
+										<div class="desc">Customize layers</div>
+									</div>
+								</div>
+								<div class="line"></div>
+								<div
+									class="step step3"
+									onClick={() => {
+										let res = logData();
+										if (res) {
+											history.push("/nft-generate");
+										}
+									}}
+								>
+									<div class="img"></div>
+									<div class="text">
+										<div class="name">Step 3</div>
+										<div class="desc">Create Collection</div>
+									</div>
+								</div>
+							</div>
 							<div className="title">Layers</div>
 							<div className="text">Select and edit the layer</div>
 							{classArr.map((item, index) => {
@@ -570,7 +611,12 @@ function NftCustomization() {
 
 						<div className="modal-constructor modal-constructor-position">
 							<div class="steps">
-								<div class="step step1 ">
+								<div
+									class="step step1"
+									onClick={() => {
+										history.push("/load-nft");
+									}}
+								>
 									<div class="img"></div>
 									<div class="text">
 										<div class="name">Step 1</div>
@@ -586,7 +632,12 @@ function NftCustomization() {
 									</div>
 								</div>
 								<div class="line"></div>
-								<div class="step step3">
+								<div
+									class="step step3"
+									onClick={() => {
+										history.push("/nft-generate");
+									}}
+								>
 									<div class="img"></div>
 									<div class="text">
 										<div class="name">Step 3</div>
@@ -768,7 +819,7 @@ function NftCustomization() {
 												}}
 											></span>
 										</div>
-										<div className="text">Edit element size</div>
+										<div className="text">Uploaded elements</div>
 										<div className={accordionHidden[2] ? "hidden" : "setting"}>
 											<div className="inputs">
 												{classArr[curentLayer].imgs.map((item, index) => {

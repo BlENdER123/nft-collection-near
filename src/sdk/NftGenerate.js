@@ -380,70 +380,72 @@ function NftCustomization() {
 		setUniqComb(uniqC);
 		console.log(uniqFor);
 
-		let tempNftCombinations = nftCombinations;
-		for (let i = 0; i < uniqFor.length; i++) {
-			tempNftCombinations.push(uniqFor[i]);
-		}
-		setNftCombinations(tempNftCombinations);
-		//tempNftCombinations.push(tempCurentImg);
+		// let tempNftCombinations = nftCombinations;
+		// for (let i = 0; i < uniqFor.length; i++) {
+		// 	tempNftCombinations.push(uniqFor[i]);
+		// }
+		// setNftCombinations(tempNftCombinations);
+		// //tempNftCombinations.push(tempCurentImg);
 
-		let tempCollection = [];
+		// let tempCollection = [];
 
-		for (let i = 0; i < collection.length; i++) {
-			tempCollection[i] = collection[i];
-		}
+		// for (let i = 0; i < collection.length; i++) {
+		// 	tempCollection[i] = collection[i];
+		// }
 
-		//console.log(uniqFor);
-		for (let i = 0; i < uniqFor.length; i++) {
-			let tempCur = uniqFor[i].split(",");
-			//console.log(tempCur);
-			//alertM("Saved!");
-			let mergeArr = [];
+		// //console.log(uniqFor);
+		// for (let i = 0; i < uniqFor.length; i++) {
+		// 	let tempCur = uniqFor[i].split(",");
+		// 	//console.log(tempCur);
+		// 	//alertM("Saved!");
+		// 	let mergeArr = [];
 
-			let indexArr = [];
+		// 	let indexArr = [];
 
-			for (let i = 0; i < classArr.length; i++) {
-				for (let j = 0; j < classArr[i].imgs.length; j++) {
-					if (classArr[i].imgs[j] == classArr[i].imgs[tempCur[i]]) {
-						mergeArr.push({
-							src: classArr[i].src[j],
-							x: classArr[i].x,
-							y: classArr[i].y,
-						});
-						indexArr.push(classArr[i].z_index);
-					}
-				}
-			}
+		// 	for (let i = 0; i < classArr.length; i++) {
+		// 		for (let j = 0; j < classArr[i].imgs.length; j++) {
+		// 			console.log(classArr[i].src[j]);
+		// 			if (classArr[i].imgs[j] == classArr[i].imgs[tempCur[i]]) {
+		// 				mergeArr.push({
+		// 					src: classArr[i].src[j],
+		// 					x: classArr[i].x,
+		// 					y: classArr[i].y,
+		// 				});
+		// 				indexArr.push(classArr[i].z_index);
+		// 			}
+		// 		}
+		// 	}
 
-			for (let i = 0; i < indexArr.length; i++) {
-				for (let j = 0; j < indexArr.length; j++) {
-					if (indexArr[j] > indexArr[j + 1]) {
-						let temp = indexArr[j];
-						let temp1 = mergeArr[j];
-						indexArr[j] = indexArr[j + 1];
-						mergeArr[j] = mergeArr[j + 1];
-						indexArr[j + 1] = temp;
-						mergeArr[j + 1] = temp1;
-					}
-				}
-			}
+		// 	for (let i = 0; i < indexArr.length; i++) {
+		// 		for (let j = 0; j < indexArr.length; j++) {
+		// 			if (indexArr[j] > indexArr[j + 1]) {
+		// 				let temp = indexArr[j];
+		// 				let temp1 = mergeArr[j];
+		// 				indexArr[j] = indexArr[j + 1];
+		// 				mergeArr[j] = mergeArr[j + 1];
+		// 				indexArr[j + 1] = temp;
+		// 				mergeArr[j + 1] = temp1;
+		// 			}
+		// 		}
+		// 	}
 
-			console.log(indexArr);
-			console.log(mergeArr);
+		// 	console.log(indexArr);
+		// 	console.log(mergeArr);
 
-			await mergeImages(mergeArr, {
-				width: localStorage.getItem("width"),
-				height: localStorage.getItem("height"),
-			}).then((b64) => tempCollection.push(b64));
-		}
+		// 	await mergeImages(mergeArr, {
+		// 		width: localStorage.getItem("width"),
+		// 		height: localStorage.getItem("height"),
+		// 	}).then((b64) => tempCollection.push(b64));
+		// }
 
-		setCollection(tempCollection);
+		// setCollection(tempCollection);
 
-		console.log(tempCollection);
+		// console.log(tempCollection);
 
 		sessionStorage.setItem("colPrice", colPrice);
 		sessionStorage.setItem("royalty", royalty);
-		sessionStorage.setItem("collection", JSON.stringify(tempCollection));
+		sessionStorage.setItem("uniqFor", JSON.stringify(uniqFor));
+		// sessionStorage.setItem("collection", JSON.stringify(tempCollection));
 		sessionStorage.setItem("collectionName", JSON.stringify(collectionName));
 
 		// setRedirect(true);
@@ -593,6 +595,47 @@ function NftCustomization() {
 
 						<div className="modal-constructor modal-constructor-layers ">
 							<div className="title-1">NFT Editor</div>
+							<div class="steps mobile-steps">
+								<div class="step step1">
+									<div class="img"></div>
+									<div class="text">
+										<div class="name">Step 1</div>
+										<div class="desc">Upload images</div>
+									</div>
+								</div>
+								<div class="line"></div>
+								<div
+									class="step step2"
+									onClick={() => {
+										let res = logData();
+										if (res) {
+											history.push("/nft-customization");
+										}
+									}}
+								>
+									<div class="img"></div>
+									<div class="text">
+										<div class="name">Step 2</div>
+										<div class="desc">Customize layers</div>
+									</div>
+								</div>
+								<div class="line"></div>
+								<div
+									class="step step3 active"
+									onClick={() => {
+										let res = logData();
+										if (res) {
+											history.push("/nft-generate");
+										}
+									}}
+								>
+									<div class="img"></div>
+									<div class="text">
+										<div class="name">Step 3</div>
+										<div class="desc">Create Collection</div>
+									</div>
+								</div>
+							</div>
 
 							<div className="title">
 								Mint Price{" "}
@@ -681,7 +724,12 @@ function NftCustomization() {
 
 						<div className="modal-constructor modal-constructor-position">
 							<div class="steps">
-								<div class="step step1 ">
+								<div
+									class="step step1"
+									onClick={() => {
+										history.push("/load-nft");
+									}}
+								>
 									<div class="img"></div>
 									<div class="text">
 										<div class="name">Step 1</div>
@@ -689,7 +737,12 @@ function NftCustomization() {
 									</div>
 								</div>
 								<div class="line"></div>
-								<div class="step step2 ">
+								<div
+									class="step step2"
+									onClick={() => {
+										history.push("/nft-customization");
+									}}
+								>
 									<div class="img"></div>
 									<div class="text">
 										<div class="name">Step 2</div>
@@ -739,7 +792,7 @@ function NftCustomization() {
 									onClick={async () => {
 										await randomMany(allComb);
 										// console.log(tempr);
-										logData();
+										// logData();
 									}}
 								>
 									Create Collection ({allComb} items)

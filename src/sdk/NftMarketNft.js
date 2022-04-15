@@ -26,6 +26,16 @@ import Footer from "./Footer";
 
 import {useDispatch, useSelector} from "react-redux";
 
+const {
+	contractNft,
+	nearConfig,
+	contractRootNft,
+	marketNft,
+} = require("./config.json");
+
+import * as nearAPI from "near-api-js";
+const {parseNearAmount} = require("near-api-js/lib/utils/format");
+
 TonClient.useBinaryLibrary(libWeb);
 
 const axios = require("axios");
@@ -59,11 +69,13 @@ function base64ToHex(str) {
 }
 
 function NftMarketNft() {
-	// const dispatch = useDispatch();
+	const dispatch = useDispatch();
 	const connectWallet = useSelector((state) => state.connectWallet);
-	// const params = useParams();
-	// console.log(params);
-	// let addrCol = params.address;
+	const params = useParams();
+	console.log(params);
+	let addrCol = params.address.split("token")[0];
+	let token_id = params.address.split("token")[1];
+	console.log(addrCol, token_id);
 	// let arr = JSON.parse(localStorage.getItem("collection"));
 
 	// const [collection, setCollection] = useState(arr);
@@ -73,6 +85,14 @@ function NftMarketNft() {
 		addrOwner: "null",
 		desc: "null",
 		name: "null",
+	});
+
+	const [nftInfo, setNftInfo] = useState({
+		name: "No Name",
+		desc: "No Description",
+		img: null,
+		owner: "No Owner",
+		price: 0,
 	});
 
 	const [errorModal, setErrorModal] = useState({
@@ -87,6 +107,98 @@ function NftMarketNft() {
 
 	const zeroAddress =
 		"0:0000000000000000000000000000000000000000000000000000000000000000";
+
+	async function getNft() {
+		window.near = await nearAPI.connect({
+			deps: {
+				keyStore: new nearAPI.keyStores.BrowserLocalStorageKeyStore(),
+			},
+			...nearConfig,
+		});
+
+		window.walletConnection = new nearAPI.WalletConnection(window.near);
+		window.accountId = window.walletConnection.getAccountId();
+
+		window.ContractMarket = await new nearAPI.Contract(
+			window.walletConnection.account(),
+			marketNft,
+			{
+				// View methods are read-only – they don't modify the state, but usually return some value
+				viewMethods: ["get_sale"],
+				changeMethods: ["offer"],
+				// Change methods can modify the state, but you don't receive the returned value when called
+				// changeMethods: ["new"],
+				// Sender is the account ID to initialize transactions.
+				// getAccountId() will return empty string if user is still unauthorized
+				sender: window.walletConnection.getAccountId(),
+			},
+		);
+
+		let tempPrice;
+
+		await ContractMarket.get_sale({
+			nft_contract_token: addrCol + "." + token_id,
+		}).then((data) => {
+			console.log(data);
+			tempPrice = data.sale_conditions;
+		});
+
+		window.ContractCol = await new nearAPI.Contract(
+			window.walletConnection.account(),
+			addrCol,
+			{
+				// View methods are read-only – they don't modify the state, but usually return some value
+				viewMethods: [
+					"nft_tokens",
+					"nft_supply_for_owner",
+					"nft_tokens_for_owner",
+					"nft_token",
+				],
+				// Change methods can modify the state, but you don't receive the returned value when called
+				// changeMethods: ["new"],
+				// Sender is the account ID to initialize transactions.
+				// getAccountId() will return empty string if user is still unauthorized
+				sender: window.walletConnection.getAccountId(),
+			},
+		);
+
+		ContractCol.nft_token({
+			token_id: token_id,
+		}).then((data) => {
+			let info = data.metadata;
+
+			let mediaUrl;
+
+			try {
+				if (
+					info.media.includes("http://") ||
+					(info.media.includes("data") && info.media.length > 25) ||
+					info.media.includes("https://")
+				) {
+					mediaUrl = info.media;
+				} else {
+					mediaUrl = "https://cloudflare-ipfs.com/ipfs/" + info.media;
+				}
+			} catch {
+				mediaUrl = info.media;
+			}
+
+			console.log(mediaUrl);
+			console.log(data);
+
+			setNftInfo({
+				name: info.title,
+				desc: info.description,
+				img: mediaUrl,
+				owner: data.owner_id,
+				price: tempPrice / 1000000000000000000000000,
+			});
+		});
+	}
+
+	useEffect(() => {
+		getNft();
+	}, []);
 
 	async function getCollection() {
 		console.log(addrCol);
@@ -184,6 +296,17 @@ function NftMarketNft() {
 		console.log(connectWallet);
 	}
 
+	async function buyNft() {
+		await ContractMarket.offer(
+			{
+				nft_contract_id: addrCol,
+				token_id: token_id,
+			},
+			"300000000000000",
+			parseNearAmount(nftInfo.price.toString()),
+		);
+	}
+
 	return (
 		<Router>
 			<div
@@ -202,21 +325,23 @@ function NftMarketNft() {
 
 				<div class="container auction-sale">
 					<div class="img">
-						<div class="img"></div>
+						<div class="img">
+							<img src={nftInfo.img} />
+						</div>
 						<div class="text">3200 x 3200 px.IMAGE(3.21MB)</div>
 						<div class="text">
 							<div class="title">Contract Address</div>
-							0x1dDB2C0897daF18632662E71fdD2dbDC0eB3a9Ec
+							{addrCol}
 						</div>
 						<div class="text">
 							<div class="title">Token ID</div>
-							100300666241
+							{token_id}
 						</div>
 					</div>
 					<div class="content">
-						<div class="title-col">Untitled Coolection #1239239</div>
+						<div class="title-col">{nftInfo.desc}</div>
 						<div class="title-nft">
-							Roboto #20542040
+							{nftInfo.name}
 							<span className="share">
 								<div class="img"></div>
 								Share
@@ -232,7 +357,8 @@ function NftMarketNft() {
 							<div class="user">
 								<div class="img">M</div>
 								<div class="text">
-									<span>Owner</span>Mr_Crouch
+									<span>Owner</span>
+									{nftInfo.owner}
 								</div>
 							</div>
 						</div>
@@ -248,10 +374,13 @@ function NftMarketNft() {
 						<div class="price">
 							<div class="title">Price</div>
 							<div class="price">
-								<span></span>269.8 NEAR
+								<span></span>
+								{nftInfo.price.toFixed(3)} NEAR
 							</div>
 							<div class="buttons">
-								<div class="button button-1-square">Buy now</div>
+								<div class="button button-1-square" onClick={buyNft}>
+									Buy now
+								</div>
 							</div>
 						</div>
 						{/* <div class="time">
@@ -278,13 +407,13 @@ function NftMarketNft() {
 
 						<div class="history">
 							<div class="menu-history">
-								<div class="menu-item">Bid History</div>
+								<div class="menu-item">Item Activity</div>
 								<div class="menu-item">Provenance</div>
 							</div>
 							<div class="content">
 								<div class="item">
 									<div class="name">
-										HAL <span>Placed a bid</span>
+										radiance.testnet <span>Mint</span>
 									</div>
 									<div class="price">242 BUSD</div>
 									<div class="date">3 hours ago</div>
