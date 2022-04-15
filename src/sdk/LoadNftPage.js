@@ -830,7 +830,7 @@ function LoadNftPage() {
 							</div>
 						</div>
 						<div className="modal-constructor modal-constructor-upload">
-							<div class="steps">
+							<div class="steps steps-desk">
 								<div class="step step1 active">
 									<div class="img"></div>
 									<div class="text">

@@ -610,7 +610,7 @@ function NftCustomization() {
 						</div>
 
 						<div className="modal-constructor modal-constructor-position">
-							<div class="steps">
+							<div class="steps steps-desk">
 								<div
 									class="step step1"
 									onClick={() => {
