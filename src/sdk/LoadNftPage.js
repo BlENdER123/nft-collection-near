@@ -164,8 +164,10 @@ function LoadNftPage() {
 						if (temp.imgs[0] == undefined) {
 							console.log("empty");
 
-							setWidth(width);
-							setHeight(height);
+							// setWidth(width);
+							changeError("width", width);
+							// setHeight(height);
+							changeError("height", height);
 
 							temp.imgs = [];
 							temp.imgs.push(response.data.IpfsHash);
@@ -181,8 +183,10 @@ function LoadNftPage() {
 							temp.width = width;
 							temp.height = height;
 							temp.rarity.push("4");
-							setWidth(width);
-							setHeight(height);
+							// setWidth(width);
+							changeError("width", width);
+							// setHeight(height);
+							changeError("height", height);
 							// if ((temp.height == image.height && temp.width == image.width)) {
 							// 	temp.imgs.push(src);
 							// } else {
@@ -215,6 +219,8 @@ function LoadNftPage() {
 			setProjectName(data.projectName || "");
 			setCollectionName(data.collectionName || "");
 			setProjectDescription(data.projectDescription || "");
+			setWidth(data.width);
+			setHeight(data.height);
 			console.log(data.projectName);
 			setClassArr1(data.classArr);
 
@@ -1011,7 +1017,12 @@ function LoadNftPage() {
 							{/* <div className="import">Import Project</div> */}
 							<Box className="import" type="button" component="label">
 								Import Project
-								<input type="file" hidden onChange={handleFile} />
+								<input
+									type="file"
+									accept=".json"
+									hidden
+									onChange={handleFile}
+								/>
 							</Box>
 							<div className="project-settings">
 								<div className="title">
@@ -1065,7 +1076,8 @@ function LoadNftPage() {
 												: "input-settings"
 										}
 										onChange={(event) =>
-											changeError("colDesc", event.target.value)
+											// changeError("colDesc", event.target.value);
+											setProjectDescription(event.target.value)
 										}
 									/>
 									<span className={errorInput == "colDesc" ? "errMsg" : "hide"}>

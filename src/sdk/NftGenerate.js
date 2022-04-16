@@ -652,6 +652,7 @@ function NftCustomization() {
 								<input
 									placeholder="100.0000"
 									type="number"
+									min="0"
 									onChange={(event) => setColPrice(event.target.value)}
 								/>
 							</div>

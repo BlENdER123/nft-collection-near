@@ -235,7 +235,7 @@ function NftCustomization() {
 
 	function setWidth(item, event) {}
 
-	async function saveSize() {
+	async function saveSize(curentWidth, curentHeight) {
 		let tempArr = [];
 
 		if (curentWidth <= 1 || curentHeight <= 1) {
@@ -847,9 +847,25 @@ function NftCustomization() {
 											className={
 												accordionHidden[1] ? "hidden" : "button-1-square"
 											}
-											onClick={saveSize}
+											onClick={() => {
+												saveSize(curentWidth, curentHeight);
+											}}
 										>
 											Save size
+										</div>
+
+										<div
+											className={
+												accordionHidden[1] ? "hidden" : "button-1-square"
+											}
+											onClick={() => {
+												saveSize(
+													localStorage.getItem("width"),
+													localStorage.getItem("height"),
+												);
+											}}
+										>
+											Fit into the frame
 										</div>
 
 										<div className="title">

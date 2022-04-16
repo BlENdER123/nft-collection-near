@@ -209,6 +209,8 @@ function NftCollection() {
 				projectName: details.projectName,
 				collectionName: details.collectionName,
 				projectDescription: details.projectDescription,
+				width: details.width,
+				height: details.height,
 				classArr: arrClass,
 			};
 
