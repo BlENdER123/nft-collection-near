@@ -380,6 +380,7 @@ function NftCustomization() {
 	async function getResize(img, width, height) {
 		return new Promise((resolve, reject) => {
 			var image = new Image();
+			image.crossOrigin = "Anonymous";
 			image.src = getSrc(img);
 			console.log(getSrc(img));
 
@@ -396,6 +397,8 @@ function NftCustomization() {
 
 			image.onload = function () {
 				ctx.drawImage(image, 0, 0, width, height);
+				console.log(resolve);
+				console.log(canvas.toDataURL());
 				resolve(canvas.toDataURL("image/png"));
 			};
 
