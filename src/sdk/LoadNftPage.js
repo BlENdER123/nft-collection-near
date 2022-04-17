@@ -1,4 +1,4 @@
-import React, {useContext, useState, useEffect} from "react";
+import React, {useContext, useState, useEffect, useRef} from "react";
 import {HashRouter as Router, Redirect, useHistory} from "react-router-dom";
 import Context from "./Context";
 import Header from "./Header";
@@ -51,6 +51,7 @@ class MyClass {
 }
 
 function LoadNftPage() {
+	let nftArea = useRef();
 	// setClassArr1([
 	// 	new MyClass("background", true, [], [], [], 0, 0, 0, 0, 0),
 	// ]);
@@ -103,6 +104,10 @@ function LoadNftPage() {
 
 	const [tempBg, setTempBg] = useState([]);
 
+	const [layerErr, setLayerErr] = useState(false);
+
+	const [maxSize, setMaxSize] = useState(0);
+
 	useEffect(() => {
 		if (document.location.href.split("?transactionHashes=")[1]) {
 			let href = document.location.origin + document.location.hash;
@@ -124,6 +129,9 @@ function LoadNftPage() {
 				new MyClass("background", true, [], [], [], 0, 0, 0, 0, 0),
 			]);
 		}
+
+		console.log(nftArea);
+		setMaxSize(nftArea.current.offsetWidth);
 	}, []);
 
 	const pinFileToIPFS = async (
@@ -406,6 +414,16 @@ function LoadNftPage() {
 	}
 
 	function setNewLayerName(event) {
+		for (let i = 0; i < classArr1.length; i++) {
+			if (classArr1[i].name == event.target.value) {
+				setErrorModal({
+					hidden: true,
+					message: "Give a unique name",
+				});
+				return;
+			}
+		}
+
 		let tempVal = event.target.value;
 
 		let tempArr = [];
@@ -478,10 +496,15 @@ function LoadNftPage() {
 			return false;
 		}
 
-		if (width > 700 || height > 700) {
+		if (width > maxSize || height > maxSize) {
 			setErrorModal({
 				hidden: true,
-				message: "The size is too large",
+				message:
+					"The size is too large. The maximum size of the nft must not exceed " +
+					maxSize +
+					"px by " +
+					maxSize +
+					"px",
 			});
 			return false;
 		}
@@ -844,19 +867,24 @@ function LoadNftPage() {
 								<input
 									type="text"
 									placeholder="Layer Name"
+									className={layerErr ? "inputErr" : ""}
 									value={newLayer}
 									onChange={(ev) => {
 										setNewLayer(ev.target.value);
 									}}
 								/>
+								<span className={layerErr ? "errMsg" : "hide"}>
+									Enter new layer name
+								</span>
 								<button
 									className="button-4-square"
 									onClick={() => {
 										if (newLayer == "" || newLayer == undefined) {
-											console.log(1);
+											setLayerErr(true);
 											return;
 										} else {
 											setNewLayer("");
+											setLayerErr(false);
 											newClass(newLayer, false, [], 0, 0, 0, 0, 0);
 										}
 									}}
@@ -930,6 +958,7 @@ function LoadNftPage() {
 							</div>
 
 							<div
+								ref={nftArea}
 								className="drop-img"
 								onDrop={(e) => {
 									let event = e;
@@ -1111,7 +1140,7 @@ function LoadNftPage() {
 									<div className="dimensions">
 										<input
 											type="text"
-											placeholder="700"
+											placeholder={maxSize}
 											value={width}
 											className={
 												errorInput == "width"
@@ -1130,7 +1159,7 @@ function LoadNftPage() {
 									<div className="dimensions">
 										<input
 											type="text"
-											placeholder="700"
+											placeholder={maxSize}
 											value={height}
 											className={
 												errorInput == "height"

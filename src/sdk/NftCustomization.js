@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useRef} from "react";
 import {HashRouter as Router, Redirect, useHistory} from "react-router-dom";
 
 import Header from "./Header";
@@ -10,6 +10,8 @@ import {scaleWidth, scaleHeight} from "./scaleConfig.json";
 
 function NftCustomization() {
 	let history = useHistory();
+
+	let nftArea = useRef();
 
 	const dispatch = useDispatch();
 	const connectWallet = useSelector((state) => state.connectWallet);
@@ -32,44 +34,139 @@ function NftCustomization() {
 
 	const [curentImages, setCurentImages] = useState(curImg);
 
+	// const [nftSizeIndex, setNftSizeIndex] = useState(1);
+
+	// const [nftAreaSize, setNftAreaSize] = useState({
+	// 	width: 0,
+	// 	height: 0
+	// });
+
+	// useEffect(()=>{
+	// 	console.log(nftArea.current.offsetWidth);
+	// 	// console.log(nftArea.current.offsetHeight);
+
+	// 	let areaWidth = nftArea.current.offsetWidth;
+
+	// 	let nftWidth = localStorage.getItem("width");
+	// 	let nftHeight = localStorage.getItem("height");
+
+	// 	console.log(nftWidth, areaWidth, nftHeight);
+
+	// 	console.log(nftWidth > nftHeight, nftWidth , nftHeight);
+	// 	console.log(parseInt("1000", 10));
+
+	// 	if(nftWidth > areaWidth || nftHeight > areaWidth){
+
+	// 		if(parseInt(nftWidth, 10) > parseInt(nftHeight, 10)) {
+	// 			let index = nftWidth/areaWidth;
+	// 			let newHeight = nftHeight/index;
+
+	// 			setNftAreaSize({
+	// 				width: areaWidth,
+	// 				height: newHeight
+	// 			});
+
+	// 			setNftSizeIndex(index);
+
+	// 			console.log(index, newHeight);
+	// 			for(let i = 0; i < arr.length; i++) {
+	// 				let tempWidth = arr[i].width;
+	// 				let tempHeight = arr[i].height;
+
+	// 				// console.log(tempWidth, tempHeight);
+
+	// 				let realWidth = tempWidth/index;
+	// 				let realHeight = tempHeight/index;
+
+	// 				console.log(realHeight, realWidth);
+
+	// 				arr[i].width = realWidth;
+	// 				arr[i].height = realHeight;
+	// 			}
+	// 		} else if (parseInt(nftWidth, 10) < parseInt(nftHeight, 10)) {
+	// 			let index = nftHeight/areaWidth;
+	// 			let newWidth = nftWidth/index;
+
+	// 			setNftAreaSize({
+	// 				width: newWidth,
+	// 				height: areaWidth
+	// 			});
+
+	// 			setNftSizeIndex(index);
+
+	// 			console.log(index, newWidth);
+	// 			for(let i = 0; i < arr.length; i++) {
+	// 				let tempWidth = arr[i].width;
+	// 				let tempHeight = arr[i].height;
+
+	// 				// console.log(tempWidth, tempHeight);
+
+	// 				let realWidth = tempWidth/index;
+	// 				let realHeight = tempHeight/index;
+
+	// 				console.log(realHeight, realWidth);
+
+	// 				arr[i].width = realWidth;
+	// 				arr[i].height = realHeight;
+	// 			}
+
+	// 		} else if (parseInt(nftWidth, 10) == parseInt(nftHeight, 10)) {
+	// 			let index = nftHeight/areaWidth;
+
+	// 			setNftAreaSize({
+	// 				width: areaWidth,
+	// 				height: areaWidth
+	// 			});
+
+	// 			setNftSizeIndex(index);
+
+	// 			console.log(index);
+	// 			for(let i = 0; i < arr.length; i++) {
+	// 				let tempWidth = arr[i].width;
+	// 				let tempHeight = arr[i].height;
+
+	// 				// console.log(tempWidth, tempHeight);
+
+	// 				let realWidth = tempWidth/index;
+
+	// 				let realHeight = tempHeight/index;
+
+	// 				console.log(realHeight, realWidth);
+
+	// 				arr[i].width = realWidth;
+	// 				arr[i].height = realHeight;
+	// 			}
+	// 		}
+
+	// 	} else {
+
+	// 		setNftAreaSize({
+	// 				width: nftWidth,
+	// 				height: nftHeight
+	// 			});
+
+	// 		setNftSizeIndex(1);
+	// 		// for(let i = 0; i < arr.length; i++) {
+	// 		// 	let tempWidth = arr[i].width;
+	// 		// 	let tempHeight = arr[i].height;
+
+	// 		// 	let realWidth = (tempWidth/(nftWidth/100))*(localStorage.getItem("width")/100);
+	// 		// 	let realHeight = (tempHeight/(nftHeight/100))*(localStorage.getItem("height")/100);
+
+	// 		// 	console.log(realHeight, realWidth);
+
+	// 		// 	arr[i].width = realWidth;
+	// 		// 	arr[i].height = realHeight;
+	// 		// }
+	// 	}
+
+	// },[]);
+
+	// console.log(nftAreaSize, nftSizeIndex);
+
 	// console.log(document.documentElement.clientHeight);
 
-	// let nftWidth = localStorage.getItem("width");
-	// let nftHeight = localStorage.getItem("height");
-
-	// if(nftWidth > 500 && nftHeight > 500){
-	// 	for(let i = 0; i < arr.length; i++) {
-	// 		let tempWidth = arr[i].width;
-	// 		let tempHeight = arr[i].height;
-
-	// 		console.log(tempWidth, tempHeight);
-
-	// 		let realWidth = (tempWidth/(nftWidth/100))*(scaleWidth/100);
-	// 		let realHeight = (tempHeight/(nftHeight/100))*(scaleHeight/100);
-
-	// 		console.log(realHeight, realWidth);
-
-	// 		arr[i].width = realWidth;
-	// 		arr[i].height = realHeight;
-	// 	}
-	// }
-
-	// if(nftWidth < 500 && nftHeight < 500){
-	// 	for(let i = 0; i < arr.length; i++) {
-	// 		let tempWidth = arr[i].width;
-	// 		let tempHeight = arr[i].height;
-
-	// 		let realWidth = (tempWidth/(nftWidth/100))*(localStorage.getItem("width")/100);
-	// 		let realHeight = (tempHeight/(nftHeight/100))*(localStorage.getItem("height")/100);
-
-	// 		console.log(realHeight, realWidth);
-
-	// 		arr[i].width = realWidth;
-	// 		arr[i].height = realHeight;
-	// 	}
-	// }
-
-	console.log(arr, 1);
+	// console.log(arr, 1);
 
 	const [classArr, setClassArr] = useState(arr);
 
@@ -175,6 +272,7 @@ function NftCustomization() {
 			}
 		}
 		setClassArr(tempArr);
+		// console.log(curentLayer);
 	}
 
 	function setX(item, event) {
@@ -210,27 +308,55 @@ function NftCustomization() {
 	function setZ(item, event) {
 		let tempArr = [];
 
+		console.log(classArr);
+		console.log(item, event);
+
+		let curentIndex;
+		let changeIndex;
+
 		for (let i = 0; i < classArr.length; i++) {
 			let temp = classArr[i];
-			if (temp == item) {
-				if (event == "+") {
-					let newZ = temp.z_index;
-					newZ++;
-					temp.z_index = newZ;
-					tempArr.push(temp);
-				} else if (temp.z_index > 0) {
-					let newZ = temp.z_index;
-					newZ--;
-					temp.z_index = newZ;
-					tempArr.push(temp);
-				} else {
-					tempArr.push(temp);
-				}
-			} else {
-				tempArr.push(temp);
+			if (temp == item && event == "+") {
+				curentIndex = i;
+				changeIndex = i - 1;
+				console.log(i, i - 1);
 			}
+			if (temp == item && event == "-") {
+				curentIndex = i;
+				changeIndex = i + 1;
+				console.log(i, i + 1);
+			}
+			tempArr.push(temp);
 		}
+		[tempArr[curentIndex], tempArr[changeIndex]] = [
+			tempArr[changeIndex],
+			tempArr[curentIndex],
+		];
+		console.log(tempArr);
+		setCurentLayer(changeIndex);
 		setClassArr(tempArr);
+
+		// for (let i = 0; i < classArr.length; i++) {
+		// 	let temp = classArr[i];
+		// 	if (temp == item) {
+		// 		if (event == "+") {
+		// 			let newZ = temp.z_index;
+		// 			newZ++;
+		// 			temp.z_index = newZ;
+		// 			tempArr.push(temp);
+		// 		} else if (temp.z_index > 0) {
+		// 			let newZ = temp.z_index;
+		// 			newZ--;
+		// 			temp.z_index = newZ;
+		// 			tempArr.push(temp);
+		// 		} else {
+		// 			tempArr.push(temp);
+		// 		}
+		// 	} else {
+		// 		tempArr.push(temp);
+		// 	}
+		// }
+		// setClassArr(tempArr);
 	}
 
 	function setWidth(item, event) {}
@@ -695,7 +821,7 @@ function NftCustomization() {
 								position
 							</div>
 
-							<div className="nft-img">
+							<div className="nft-img" ref={nftArea}>
 								<div
 									// className={statusSize == "horizontal" ? "horizontal img" : statusSize == "vertical" ? "vertical img" : statusSize == "square" ? "square img" : "img"}
 									// style={statusSize == ""?{
@@ -704,6 +830,10 @@ function NftCustomization() {
 									// }:null}
 
 									className={"img"}
+									// style={{
+									// 	width: nftAreaSize.width + "px",
+									// 	height: nftAreaSize.height + "px",
+									// }}
 									style={{
 										width: localStorage.getItem("width") + "px",
 										height: localStorage.getItem("height") + "px",
@@ -786,17 +916,25 @@ function NftCustomization() {
 											</div>
 											<div className="inputs">
 												<div
-													className="zIndex"
+													className={
+														curentLayer == 0 ? "zIndex zIndex-dis" : "zIndex"
+													}
 													onClick={() => {
-														setZ(item, "+");
+														curentLayer == 0 ? null : setZ(item, "+");
 													}}
 												>
 													Layer Up
 												</div>
 												<div
-													className="zIndex"
+													className={
+														curentLayer == classArr.length - 1
+															? "zIndex zIndex-dis"
+															: "zIndex"
+													}
 													onClick={() => {
-														setZ(item, "-");
+														curentLayer == classArr.length - 1
+															? null
+															: setZ(item, "-");
 													}}
 												>
 													Layer Down

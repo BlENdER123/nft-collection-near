@@ -122,6 +122,10 @@ function NftCollection() {
 		return "https://cloudflare-ipfs.com/ipfs/" + src;
 	}
 
+	const [owner, setOwner] = useState("");
+
+	const [isFullDescription, setIsFullDescription] = useState(false);
+
 	async function getResizeMany() {
 		let tempArr = [];
 		for (let i = 0; i < classArr.length; i++) {
@@ -234,6 +238,12 @@ function NftCollection() {
 		// console.log(uniq);
 
 		// let classArr;
+
+		try {
+			setOwner(window.walletConnection.getAccountId());
+		} catch {
+			setOwner("Null");
+		}
 
 		let tempCollection = [];
 
@@ -796,7 +806,7 @@ function NftCollection() {
 									{
 										token_id: i.toString(),
 										metadata: {
-											title: collectionName[i],
+											title: deployData.projectName + "#" + i,
 											description: deployData.projectDescription,
 											media: response.data.IpfsHash,
 											copies: 1,
@@ -1183,7 +1193,7 @@ function NftCollection() {
 								<div class="avatar">H</div>
 								<div class="text">
 									<span>Owner</span>
-									Hello World
+									{owner}
 								</div>
 							</div>
 							<div class="subtitle">Collection Name</div>
@@ -1191,8 +1201,19 @@ function NftCollection() {
 								{details.projectName}
 							</div>
 							<div class="subtitle">Description</div>
-							<div class="desc">{details.projectDescription}</div>
-							<div class="show">Show full description </div>
+							<div class="desc">
+								{isFullDescription
+									? details.projectDescription
+									: details.projectDescription.slice(0, 40)}
+							</div>
+							<div
+								className={
+									details.projectDescription.length > 100 ? "show" : "hide"
+								}
+								onClick={() => setIsFullDescription(!isFullDescription)}
+							>
+								Show full description{" "}
+							</div>
 							<div class="price">
 								<div class="subtitle">Mint Price</div>
 								<div class="near">
@@ -1239,7 +1260,10 @@ function NftCollection() {
 							<div class="progress">
 								<div class="title">Collection generation process</div>
 								<div class="bar"></div>
-								<span>100/100</span>
+								<span>
+									{JSON.parse(sessionStorage.getItem("uniqFor")).length}/
+									{JSON.parse(sessionStorage.getItem("uniqFor")).length}
+								</span>
 							</div>
 							<div class="collection">
 								{collection.map((item, index) => {
@@ -1259,7 +1283,9 @@ function NftCollection() {
 												<img src={item} />
 											</div>
 											<div class="nameCol">{details.projectName}</div>
-											<div class="name">{details.projectDescription}</div>
+											<div class="name">
+												{details.projectName}#{index}
+											</div>
 										</div>
 									);
 								})}

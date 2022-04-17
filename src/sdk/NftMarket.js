@@ -591,7 +591,7 @@ function NftMarket() {
 												}}
 												className="element"
 											>
-												<div class="rarity">L</div>
+												{/* <div class="rarity">L</div> */}
 												<div class="img">
 													<img src={item.icon} />
 												</div>

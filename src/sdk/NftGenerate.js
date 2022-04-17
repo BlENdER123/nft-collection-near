@@ -292,6 +292,16 @@ function NftCustomization() {
 	async function randomMany(num) {
 		let imgsLength = [];
 		let combinations = 1;
+
+		console.log(colPrice);
+		if (colPrice == undefined || colPrice == null || colPrice <= 0) {
+			setErrorModal({
+				hidden: true,
+				message: "Set Mint Price",
+			});
+			return;
+		}
+
 		for (let i = 0; i < classArr.length; i++) {
 			imgsLength.push(classArr[i].imgs.length);
 		}

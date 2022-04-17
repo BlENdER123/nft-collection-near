@@ -1150,6 +1150,10 @@ button,
 	border: 1px solid #282a2d;
 	border-radius: 2px;
 }
+.modal-constructor-layers > .price > input::-webkit-outer-spin-button,
+.modal-constructor-layers > .price > input::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+}
 .modal-constructor-layers > .royalty > .title {
 	font-size: 14px;
 	margin-bottom: 10px;
@@ -2531,6 +2535,7 @@ input[type="text"] {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	width: 100%;
 }
 .modal-constructor-position > .nft-img > .img > img {
 	position: absolute;
@@ -2605,6 +2610,9 @@ input[type="text"] {
 .modal-constructor-settings > .project-settings > .setting > div > .inputErr {
 	border: 1px solid #ff3f33;
 }
+.modal-constructor-layers > .layers-list_layer-input > .inputErr {
+	border: 1px solid #ff3f33;
+}
 .modal-constructor-settings > .project-settings > .setting > .errMsg {
 	font-weight: 300;
 	font-size: 14px;
@@ -2620,6 +2628,14 @@ input[type="text"] {
 	position: absolute;
 	bottom: -20px;
 	left: 0;
+}
+.modal-constructor-layers > .layers-list_layer-input > .errMsg {
+	font-weight: 300;
+	font-size: 12px;
+	color: #ff5045;
+	position: absolute;
+	bottom: -4px;
+	left: 10;
 }
 .modal-constructor-settings > .project-settings > .setting > .dimensions {
 	width: 100%;
@@ -2670,6 +2686,13 @@ input[type="text"] {
 	margin-top: 15px;
 	cursor: pointer;
 	margin-bottom: 30px;
+}
+.modal-constructor-settings
+	> .project-settings
+	> .setting
+	> .inputs
+	> .zIndex-dis {
+	opacity: 0.3;
 }
 .modal-constructor-settings > .project-settings > .setting > .inputs > .elem {
 	border: 2px solid #282a2d;
@@ -2847,7 +2870,8 @@ input[type="text"] {
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-	font-size: 20px;
+	font-size: 18px;
+	width: 100%;
 }
 .error-modal > .button-3-square {
 	padding: 2px 8px;
@@ -3062,6 +3086,7 @@ input[type="text"] {
 	margin-bottom: 10px;
 }
 .modal-constructor-param > .show {
+	cursor: pointer;
 	font-size: 16px;
 	color: #ffffff;
 	border-bottom: 1px solid #fff;
@@ -3366,6 +3391,7 @@ input[type="text"] {
 }
 .profile > .container > .nfts > .menu-nft > .menu-bar > span:nth-child(2) {
 	border-right: 1px solid #444444;
+	border-radius: 1px 6px 0px 1px;
 }
 .profile > .container > .nfts > .menu-nft > .menu-bar > span:nth-child(3) {
 	border-radius: 1px 6px 0px 1px;

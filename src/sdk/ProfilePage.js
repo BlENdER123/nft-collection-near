@@ -66,7 +66,7 @@ function ProfilePage() {
 
 	const [openMenu, setOpenMenu] = useState(false);
 
-	const [activeCat, setActiveCat] = useState(0);
+	const [activeCat, setActiveCat] = useState(1);
 
 	const [items, setItems] = useState([0, 0, 0]);
 
@@ -899,23 +899,24 @@ function ProfilePage() {
 							<div class="menu-nft">
 								<div class="menu-bar">
 									<span
-										className={activeCat == 0 ? "active" : ""}
-										onClick={() => setActiveCat(0)}
-									>
-										On Sale
-									</span>
-									<span
 										className={activeCat == 1 ? "active" : ""}
 										onClick={() => setActiveCat(1)}
 									>
 										Collectibles
 									</span>
 									<span
+										className={activeCat == 0 ? "active" : ""}
+										onClick={() => setActiveCat(0)}
+									>
+										On Sale
+									</span>
+
+									{/* <span
 										className={activeCat == 2 ? "active" : ""}
 										onClick={() => setActiveCat(2)}
 									>
 										Created
-									</span>
+									</span> */}
 								</div>
 
 								<button class="btn-main" onClick={reloadNft}>
