@@ -917,16 +917,6 @@ function NftCustomization() {
 											<div className="inputs">
 												<div
 													className={
-														curentLayer == 0 ? "zIndex zIndex-dis" : "zIndex"
-													}
-													onClick={() => {
-														curentLayer == 0 ? null : setZ(item, "+");
-													}}
-												>
-													Layer Up
-												</div>
-												<div
-													className={
 														curentLayer == classArr.length - 1
 															? "zIndex zIndex-dis"
 															: "zIndex"
@@ -935,6 +925,16 @@ function NftCustomization() {
 														curentLayer == classArr.length - 1
 															? null
 															: setZ(item, "-");
+													}}
+												>
+													Layer Up
+												</div>
+												<div
+													className={
+														curentLayer == 0 ? "zIndex zIndex-dis" : "zIndex"
+													}
+													onClick={() => {
+														curentLayer == 0 ? null : setZ(item, "+");
 													}}
 												>
 													Layer Down
