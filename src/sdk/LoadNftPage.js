@@ -27,6 +27,7 @@ class MyClass {
 		x,
 		y,
 		z_index,
+		sizes,
 		width,
 		height,
 		src = [],
@@ -38,6 +39,10 @@ class MyClass {
 		this.rarity = rarity;
 		this.rarityLayer = ["4"];
 		this.names = names;
+		this.sizes = {
+			width: [],
+			height: [],
+		};
 		this.x = x;
 		this.y = y;
 		this.z_index = z_index;
@@ -70,8 +75,8 @@ function LoadNftPage() {
 
 	const [curentLayer, setCurenLayer] = useState(0);
 
-	const [width, setWidth] = useState();
-	const [height, setHeight] = useState();
+	const [width, setWidth] = useState(0);
+	const [height, setHeight] = useState(0);
 
 	const [projectName, setProjectName] = useState("Project Name");
 	const [collectionName, setCollectionName] = useState("No Name");
@@ -138,15 +143,15 @@ function LoadNftPage() {
 		pinataKey,
 		pinataSecretKey,
 		src,
-		width,
-		height,
+		newWidth,
+		newHeight,
 		name,
 	) => {
 		const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
 
 		let data = new FormData();
 
-		console.log(src);
+		// console.log(src);
 		data.append("file", src);
 
 		await axios
@@ -162,7 +167,7 @@ function LoadNftPage() {
 				//handle response here
 				console.log(response.data.IpfsHash);
 
-				console.log(src);
+				// console.log(src);
 
 				let tempArr = [];
 				for (let i = 0; i < classArr1.length; i++) {
@@ -171,15 +176,19 @@ function LoadNftPage() {
 						if (temp.imgs[0] == undefined) {
 							console.log("empty");
 
-							// setWidth(width);
-							changeError("width", width);
-							// setHeight(height);
-							changeError("height", height);
+							// setWidth(newWidth);
+							// // changeError("width", width);
+							// setHeight(newHeight);
+							// changeError("height", height);
 
 							temp.imgs = [];
 							temp.imgs.push(response.data.IpfsHash);
-							temp.width = width;
-							temp.height = height;
+							temp.width = newWidth;
+							temp.height = newHeight;
+							temp.sizes = {
+								width: [newWidth],
+								height: [newHeight],
+							};
 							temp.names = [];
 							temp.rarity = [];
 							temp.rarity.push("4");
@@ -187,13 +196,36 @@ function LoadNftPage() {
 						} else {
 							temp.imgs.push(response.data.IpfsHash);
 							temp.names.push(name);
-							temp.width = width;
-							temp.height = height;
+							temp.width = newWidth;
+
+							temp.height = newHeight;
 							temp.rarity.push("4");
+							console.log(newWidth, newHeight);
+
+							let tempSizesWidth = temp.sizes.width;
+							tempSizesWidth.push(newWidth);
+
+							let tempSizesHeight = temp.sizes.height;
+							tempSizesHeight.push(newHeight);
+
+							temp.sizes = {
+								width: tempSizesWidth,
+								height: tempSizesHeight,
+							};
+
+							console.log(width < newWidth, width, newWidth);
+
+							// if(width < newWidth ) {
+							// 	setWidth(newWidth);
+							// 	console.log(width);
+							// }
+							// if(height < newHeight ) {
+							// 	setHeight(newHeight);
+							// }
 							// setWidth(width);
-							changeError("width", width);
+							// changeError("width", width);
 							// setHeight(height);
-							changeError("height", height);
+							// changeError("height", height);
 							// if ((temp.height == image.height && temp.width == image.width)) {
 							// 	temp.imgs.push(src);
 							// } else {
@@ -207,6 +239,19 @@ function LoadNftPage() {
 					tempArr.push(temp);
 				}
 				console.log(tempArr);
+
+				let maxW = Math.max.apply(null, tempArr[curentLayer].sizes.width);
+				let maxH = Math.max.apply(null, tempArr[curentLayer].sizes.height);
+
+				console.log(width, maxW, width < maxW);
+				if (width < maxW) {
+					setWidth(maxW);
+				}
+				console.log(height, maxH);
+				if (height < maxH) {
+					setHeight(maxH);
+				}
+				// setHeight(Math.max.apply(null, tempArr[curentLayer].sizes.height));
 				setClassArr1(tempArr);
 			})
 			.catch(function (error) {
@@ -332,7 +377,7 @@ function LoadNftPage() {
 		}
 	}
 
-	function download(event) {
+	async function download(event) {
 		for (let i = 0; i < event.target.files.length; i++) {
 			let file = event.target.files[i];
 
@@ -344,21 +389,54 @@ function LoadNftPage() {
 				return;
 			}
 
-			var image = new Image();
-			image.src = URL.createObjectURL(file);
-			image.onload = function () {
-				console.log(image.width, image.height);
+			// var image = new Image();
+			// image.src = URL.createObjectURL(file);
+			// console.log(file, image.width, image.height);
+			// image.onload = async function () {
+			// 	// console.log(file, image.width, image.height);
 
-				let name = file.name.substring(0, file.name.indexOf("."));
+			// 	let name = file.name.substring(0, file.name.indexOf("."));
 
-				pinFileToIPFS(
-					pinataKey,
-					pinataSecretKey,
-					event.target.files[i],
-					image.width,
-					image.height,
-					name,
-				);
+			// 	await pinFileToIPFS(
+			// 		pinataKey,
+			// 		pinataSecretKey,
+			// 		event.target.files[i],
+			// 		image.width,
+			// 		image.height,
+			// 		name,
+			// 	);
+			// };
+
+			var reader = new FileReader();
+			reader.readAsDataURL(file);
+			reader.onload = function (e) {
+				var image = new Image();
+
+				// console.log(e.target.result);
+
+				image.src = e.target.result;
+				image.onload = async function () {
+					var height = this.height;
+					var width = this.width;
+
+					let name = file.name.substring(0, file.name.indexOf("."));
+					await pinFileToIPFS(
+						pinataKey,
+						pinataSecretKey,
+						event.target.files[i],
+						this.width,
+						this.height,
+						name,
+					);
+					// console.log(this);
+					// if ((height >= 1024 || height <= 1100) && (width >= 750 || width <= 800)) {
+					// 	alert("Height and Width must not exceed 1100*800.");
+					// 	return false;
+					// }
+					// alert("Uploaded image has valid Height and Width.");
+					// return true;
+					// return;
+				};
 			};
 		}
 	}
@@ -368,29 +446,67 @@ function LoadNftPage() {
 
 		for (let i = 0; i < classArr1.length; i++) {
 			let temp = classArr1[i];
+
 			let tempArrImg = [];
 			let tempArrNames = [];
-			let tempArrImgSize = [];
+			let tempArrImgSizeW = [];
+			let tempArrImgSizeH = [];
 			if (classArr1[curentLayer].name == classArr1[i].name) {
 				for (let j = 0; j < classArr1[i].imgs.length; j++) {
 					console.log(classArr1[i].imgs.length);
+
+					// if(maxWidth < classArr1[i].width) {
+					// 	maxWidth = classArr1[i].width;
+					// }
+					// if(maxHeight < classArr1[i].height) {
+					// 	maxHeight = classArr1[i].height;
+					// }
 
 					if (classArr1[i].imgs[j] != classArr1[i].imgs[index]) {
 						//console.log(1);
 
 						tempArrImg.push(classArr1[curentLayer].imgs[j]);
 						tempArrNames.push(classArr1[curentLayer].names[j]);
-						//tempArrImgSize.push(sizeImgs[j]);
+						tempArrImgSizeW.push(classArr1[curentLayer].sizes.width[j]);
+						tempArrImgSizeH.push(classArr1[curentLayer].sizes.height[j]);
 					}
 				}
 
 				temp.imgs = tempArrImg;
 				temp.names = tempArrNames;
+				temp.sizes = {
+					width: tempArrImgSizeW,
+					height: tempArrImgSizeH,
+				};
 				//setSizeImgs(tempArrImgSize);
 			}
 
 			tempArr.push(temp);
 		}
+		// for(let i)
+		// setWidth(maxWidth);
+		// setHeight(maxHeight);
+
+		let maxWidth = 0;
+		let maxHeight = 0;
+
+		for (let i = 0; i < tempArr.length; i++) {
+			let newMaxW = Math.max.apply(null, tempArr[i].sizes.width);
+			let newMaxH = Math.max.apply(null, tempArr[i].sizes.height);
+
+			if (maxWidth < newMaxW) {
+				maxWidth = newMaxW;
+			}
+			if (maxHeight < newMaxH) {
+				maxHeight = newMaxH;
+			}
+		}
+		console.log(maxWidth, maxHeight);
+
+		setWidth(maxWidth);
+		setHeight(maxHeight);
+
+		console.log(tempArr);
 		setClassArr1(tempArr);
 	}
 
@@ -496,18 +612,18 @@ function LoadNftPage() {
 			return false;
 		}
 
-		if (width > maxSize || height > maxSize) {
-			setErrorModal({
-				hidden: true,
-				message:
-					"The size is too large. The maximum size of the nft must not exceed " +
-					maxSize +
-					"px by " +
-					maxSize +
-					"px",
-			});
-			return false;
-		}
+		// if (width > maxSize || height > maxSize) {
+		// 	setErrorModal({
+		// 		hidden: true,
+		// 		message:
+		// 			"The size is too large. The maximum size of the nft must not exceed " +
+		// 			maxSize +
+		// 			"px by " +
+		// 			maxSize +
+		// 			"px",
+		// 	});
+		// 	return false;
+		// }
 
 		// if (width/height > 2) {
 		// 	setErrorModal({
@@ -1126,7 +1242,7 @@ function LoadNftPage() {
 									></span>
 								</div>
 								<div className="text">
-									Edit canvas dimensions <br /> Max size: 5 MB
+									Canvas dimensions <br /> Max size: 5 MB
 								</div>
 								<div
 									className={
@@ -1138,7 +1254,8 @@ function LoadNftPage() {
 									<div class="dim-title">Width (px)</div>
 									<div class="dim-title">Height (px)</div>
 									<div className="dimensions">
-										<input
+										<div>{width}</div>
+										{/* <input
 											type="text"
 											placeholder={maxSize}
 											value={width}
@@ -1153,11 +1270,12 @@ function LoadNftPage() {
 										/>
 										<span className={errorInput == "width" ? "errMsg" : "hide"}>
 											Set width
-										</span>
+										</span> */}
 									</div>
 
 									<div className="dimensions">
-										<input
+										<div>{height}</div>
+										{/* <input
 											type="text"
 											placeholder={maxSize}
 											value={height}
@@ -1174,8 +1292,10 @@ function LoadNftPage() {
 											className={errorInput == "height" ? "errMsg" : "hide"}
 										>
 											Set height
-										</span>
+										</span> */}
 									</div>
+									{/* <button onClick={()=>setWidth(width+1)}>test1</button>
+									<button onClick={()=>console.log(width)}>test2</button> */}
 								</div>
 
 								{/* <div className="title">Element Settings</div>

@@ -114,6 +114,10 @@ function NftCollection() {
 	let classArr = JSON.parse(localStorage.getItem("class"));
 	console.log(classArr);
 
+	let realSizes = JSON.parse(localStorage.getItem("realSizes"));
+	let nftAreaSize = JSON.parse(localStorage.getItem("nftAreaSize"));
+	let sizeIndex = JSON.parse(localStorage.getItem("sizeIndex"));
+
 	// let arr = JSON.parse(sessionStorage.getItem("collection"));
 	let arrClass = JSON.parse(localStorage.getItem("class"));
 	// let arrName = JSON.parse(sessionStorage.getItem("collectionName"));
@@ -131,10 +135,16 @@ function NftCollection() {
 		for (let i = 0; i < classArr.length; i++) {
 			let tempArrImg = [];
 			for (let j = 0; j < classArr[i].imgs.length; j++) {
+				// let res = await getResize(
+				// 	classArr[i].imgs[j],
+				// 	classArr[i].width,
+				// 	classArr[i].height,
+				// );
+				console.log(realSizes[i].width[j]);
 				let res = await getResize(
 					classArr[i].imgs[j],
-					classArr[i].width,
-					classArr[i].height,
+					realSizes[i].width[j] * sizeIndex,
+					realSizes[i].height[j] * sizeIndex,
 				);
 				tempArrImg.push(res);
 			}
@@ -213,10 +223,12 @@ function NftCollection() {
 				projectName: details.projectName,
 				collectionName: details.collectionName,
 				projectDescription: details.projectDescription,
-				width: details.width,
-				height: details.height,
+				width: localStorage.getItem("width"),
+				height: localStorage.getItem("height"),
 				classArr: arrClass,
 			};
+
+			console.log(data);
 
 			e.preventDefault();
 			downloadFile({
@@ -1252,7 +1264,10 @@ function NftCollection() {
 										<div></div>
 									</div>
 								) : (
-									<span>Publish NFT`s</span>
+									<span>
+										Mint All NFTs (
+										{JSON.parse(sessionStorage.getItem("uniqFor")).length})
+									</span>
 								)}
 							</div>
 						</div>
@@ -1284,7 +1299,7 @@ function NftCollection() {
 											</div>
 											<div class="nameCol">{details.projectName}</div>
 											<div class="name">
-												{details.projectName}#{index}
+												{details.projectName}&nbsp; #{index + 1}
 											</div>
 										</div>
 									);

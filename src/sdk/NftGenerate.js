@@ -25,6 +25,10 @@ function NftCustomization() {
 		}
 	}, []);
 
+	let realSizes = JSON.parse(localStorage.getItem("realSizes"));
+	let nftAreaSize = JSON.parse(localStorage.getItem("nftAreaSize"));
+	let sizeIndex = JSON.parse(localStorage.getItem("sizeIndex"));
+
 	let history = useHistory();
 
 	const dispatch = useDispatch();
@@ -780,9 +784,13 @@ function NftCustomization() {
 							<div className="nft-img">
 								<div
 									className={contrBg ? "img img-contrast" : "img"}
+									// style={{
+									// 	width: localStorage.getItem("width") + "px",
+									// 	height: localStorage.getItem("height") + "px",
+									// }}
 									style={{
-										width: localStorage.getItem("width") + "px",
-										height: localStorage.getItem("height") + "px",
+										width: nftAreaSize.width + "px",
+										height: nftAreaSize.height + "px",
 									}}
 								>
 									{classArr[0].src?.length > 0
@@ -792,8 +800,13 @@ function NftCustomization() {
 														key={"uniqueId" + index}
 														src={item.src[curentImg[index]]}
 														style={{
-															left: item.x + "px",
-															top: item.y + "px",
+															width:
+																realSizes[index].width[curentImg[index]] + "px",
+															height:
+																realSizes[index].height[curentImg[index]] +
+																"px",
+															left: item.x / sizeIndex + "px",
+															top: item.y / sizeIndex + "px",
 															zIndex: item.z_index,
 														}}
 													/>

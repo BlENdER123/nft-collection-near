@@ -34,139 +34,148 @@ function NftCustomization() {
 
 	const [curentImages, setCurentImages] = useState(curImg);
 
-	// const [nftSizeIndex, setNftSizeIndex] = useState(1);
+	const [nftSizeIndex, setNftSizeIndex] = useState(1);
 
-	// const [nftAreaSize, setNftAreaSize] = useState({
-	// 	width: 0,
-	// 	height: 0
-	// });
+	const [nftAreaSize, setNftAreaSize] = useState({
+		width: 0,
+		height: 0,
+	});
 
-	// useEffect(()=>{
-	// 	console.log(nftArea.current.offsetWidth);
-	// 	// console.log(nftArea.current.offsetHeight);
+	const [newSizesArr, setNewSizesArr] = useState();
 
-	// 	let areaWidth = nftArea.current.offsetWidth;
+	useEffect(() => {
+		console.log(nftArea.current.offsetWidth);
+		// console.log(nftArea.current.offsetHeight);
 
-	// 	let nftWidth = localStorage.getItem("width");
-	// 	let nftHeight = localStorage.getItem("height");
+		let areaWidth = nftArea.current.offsetWidth;
 
-	// 	console.log(nftWidth, areaWidth, nftHeight);
+		let nftWidth = localStorage.getItem("width");
+		let nftHeight = localStorage.getItem("height");
 
-	// 	console.log(nftWidth > nftHeight, nftWidth , nftHeight);
-	// 	console.log(parseInt("1000", 10));
+		console.log(nftWidth, areaWidth, nftHeight);
 
-	// 	if(nftWidth > areaWidth || nftHeight > areaWidth){
+		let realSizes = [];
 
-	// 		if(parseInt(nftWidth, 10) > parseInt(nftHeight, 10)) {
-	// 			let index = nftWidth/areaWidth;
-	// 			let newHeight = nftHeight/index;
+		if (nftWidth > areaWidth || nftHeight > areaWidth) {
+			if (parseInt(nftWidth, 10) > parseInt(nftHeight, 10)) {
+				let index = nftWidth / areaWidth;
+				let newHeight = nftHeight / index;
 
-	// 			setNftAreaSize({
-	// 				width: areaWidth,
-	// 				height: newHeight
-	// 			});
+				setNftAreaSize({
+					width: areaWidth,
+					height: newHeight,
+				});
 
-	// 			setNftSizeIndex(index);
+				setNftSizeIndex(index);
 
-	// 			console.log(index, newHeight);
-	// 			for(let i = 0; i < arr.length; i++) {
-	// 				let tempWidth = arr[i].width;
-	// 				let tempHeight = arr[i].height;
+				console.log(index, newHeight);
+				for (let i = 0; i < arr.length; i++) {
+					realSizes.push({
+						width: [],
+						height: [],
+					});
+					for (let j = 0; j < arr[i].imgs.length; j++) {
+						let tempWidth = arr[i].sizes.width[j];
+						let tempHeight = arr[i].sizes.height[j];
 
-	// 				// console.log(tempWidth, tempHeight);
+						let realWidth = tempWidth / index;
+						let realHeight = tempHeight / index;
 
-	// 				let realWidth = tempWidth/index;
-	// 				let realHeight = tempHeight/index;
+						console.log(realHeight, realWidth);
 
-	// 				console.log(realHeight, realWidth);
+						realSizes[i].width[j] = realWidth;
+						realSizes[i].height[j] = realHeight;
+					}
 
-	// 				arr[i].width = realWidth;
-	// 				arr[i].height = realHeight;
-	// 			}
-	// 		} else if (parseInt(nftWidth, 10) < parseInt(nftHeight, 10)) {
-	// 			let index = nftHeight/areaWidth;
-	// 			let newWidth = nftWidth/index;
+					// console.log(tempWidth, tempHeight);
 
-	// 			setNftAreaSize({
-	// 				width: newWidth,
-	// 				height: areaWidth
-	// 			});
+					// arr[i].width = realWidth;
+					// arr[i].height = realHeight;
+				}
+			} else if (parseInt(nftWidth, 10) < parseInt(nftHeight, 10)) {
+				let index = nftHeight / areaWidth;
+				let newWidth = nftWidth / index;
 
-	// 			setNftSizeIndex(index);
+				setNftAreaSize({
+					width: newWidth,
+					height: areaWidth,
+				});
 
-	// 			console.log(index, newWidth);
-	// 			for(let i = 0; i < arr.length; i++) {
-	// 				let tempWidth = arr[i].width;
-	// 				let tempHeight = arr[i].height;
+				setNftSizeIndex(index);
 
-	// 				// console.log(tempWidth, tempHeight);
+				console.log(index, newWidth);
+				for (let i = 0; i < arr.length; i++) {
+					console.log(arr[i]);
+					let tempWidth = arr[i].width;
+					let tempHeight = arr[i].height;
 
-	// 				let realWidth = tempWidth/index;
-	// 				let realHeight = tempHeight/index;
+					// console.log(tempWidth, tempHeight);
 
-	// 				console.log(realHeight, realWidth);
+					let realWidth = tempWidth / index;
+					let realHeight = tempHeight / index;
 
-	// 				arr[i].width = realWidth;
-	// 				arr[i].height = realHeight;
-	// 			}
+					console.log(realHeight, realWidth);
 
-	// 		} else if (parseInt(nftWidth, 10) == parseInt(nftHeight, 10)) {
-	// 			let index = nftHeight/areaWidth;
+					arr[i].width = realWidth;
+					arr[i].height = realHeight;
+				}
+			} else if (parseInt(nftWidth, 10) == parseInt(nftHeight, 10)) {
+				let index = nftHeight / areaWidth;
 
-	// 			setNftAreaSize({
-	// 				width: areaWidth,
-	// 				height: areaWidth
-	// 			});
+				setNftAreaSize({
+					width: areaWidth,
+					height: areaWidth,
+				});
 
-	// 			setNftSizeIndex(index);
+				setNftSizeIndex(index);
 
-	// 			console.log(index);
-	// 			for(let i = 0; i < arr.length; i++) {
-	// 				let tempWidth = arr[i].width;
-	// 				let tempHeight = arr[i].height;
+				console.log(index);
+				for (let i = 0; i < arr.length; i++) {
+					let tempWidth = arr[i].width;
+					let tempHeight = arr[i].height;
 
-	// 				// console.log(tempWidth, tempHeight);
+					// console.log(tempWidth, tempHeight);
 
-	// 				let realWidth = tempWidth/index;
+					let realWidth = tempWidth / index;
 
-	// 				let realHeight = tempHeight/index;
+					let realHeight = tempHeight / index;
 
-	// 				console.log(realHeight, realWidth);
+					console.log(realHeight, realWidth);
 
-	// 				arr[i].width = realWidth;
-	// 				arr[i].height = realHeight;
-	// 			}
-	// 		}
+					arr[i].width = realWidth;
+					arr[i].height = realHeight;
+				}
+			}
+		} else {
+			setNftAreaSize({
+				width: nftWidth,
+				height: nftHeight,
+			});
 
-	// 	} else {
+			setNftSizeIndex(1);
+			// for(let i = 0; i < arr.length; i++) {
+			// 	let tempWidth = arr[i].width;
+			// 	let tempHeight = arr[i].height;
 
-	// 		setNftAreaSize({
-	// 				width: nftWidth,
-	// 				height: nftHeight
-	// 			});
+			// 	let realWidth = (tempWidth/(nftWidth/100))*(localStorage.getItem("width")/100);
+			// 	let realHeight = (tempHeight/(nftHeight/100))*(localStorage.getItem("height")/100);
 
-	// 		setNftSizeIndex(1);
-	// 		// for(let i = 0; i < arr.length; i++) {
-	// 		// 	let tempWidth = arr[i].width;
-	// 		// 	let tempHeight = arr[i].height;
+			// 	console.log(realHeight, realWidth);
 
-	// 		// 	let realWidth = (tempWidth/(nftWidth/100))*(localStorage.getItem("width")/100);
-	// 		// 	let realHeight = (tempHeight/(nftHeight/100))*(localStorage.getItem("height")/100);
+			// 	arr[i].width = realWidth;
+			// 	arr[i].height = realHeight;
+			// }
+		}
 
-	// 		// 	console.log(realHeight, realWidth);
+		console.log(realSizes);
+		setNewSizesArr(realSizes);
+	}, []);
 
-	// 		// 	arr[i].width = realWidth;
-	// 		// 	arr[i].height = realHeight;
-	// 		// }
-	// 	}
-
-	// },[]);
-
-	// console.log(nftAreaSize, nftSizeIndex);
+	console.log(nftAreaSize, nftSizeIndex);
 
 	// console.log(document.documentElement.clientHeight);
 
-	// console.log(arr, 1);
+	console.log(arr);
 
 	const [classArr, setClassArr] = useState(arr);
 
@@ -332,7 +341,22 @@ function NftCustomization() {
 			tempArr[changeIndex],
 			tempArr[curentIndex],
 		];
+
+		let tempSizeArr = newSizesArr;
+		[tempSizeArr[curentIndex], tempSizeArr[changeIndex]] = [
+			tempSizeArr[changeIndex],
+			tempSizeArr[curentIndex],
+		];
+
+		let tempCurentImages = curentImages;
+		[tempCurentImages[curentIndex], tempCurentImages[changeIndex]] = [
+			tempCurentImages[changeIndex],
+			tempCurentImages[curentIndex],
+		];
+
 		console.log(tempArr);
+		setCurentImages(tempCurentImages);
+		setNewSizesArr(tempSizeArr);
 		setCurentLayer(changeIndex);
 		setClassArr(tempArr);
 
@@ -461,6 +485,9 @@ function NftCustomization() {
 
 		console.log(classArr);
 		localStorage.setItem("class", JSON.stringify(classArr));
+		localStorage.setItem("realSizes", JSON.stringify(newSizesArr));
+		localStorage.setItem("nftAreaSize", JSON.stringify(nftAreaSize));
+		localStorage.setItem("sizeIndex", nftSizeIndex);
 		localStorage.setItem("curentLayer", curentLayer);
 
 		// setRedirect(true);
@@ -523,8 +550,8 @@ function NftCustomization() {
 
 			image.onload = function () {
 				ctx.drawImage(image, 0, 0, width, height);
-				console.log(resolve);
-				console.log(canvas.toDataURL());
+				// console.log(resolve);
+				// console.log(canvas.toDataURL());
 				resolve(canvas.toDataURL("image/png"));
 			};
 
@@ -569,7 +596,7 @@ function NftCustomization() {
 
 		//curImg[curentLayer] = index;
 		setCurentImages(curImg);
-		console.log(curentImages);
+		console.log(curImg);
 	}
 
 	function changeRarity(rarity) {
@@ -830,14 +857,14 @@ function NftCustomization() {
 									// }:null}
 
 									className={"img"}
-									// style={{
-									// 	width: nftAreaSize.width + "px",
-									// 	height: nftAreaSize.height + "px",
-									// }}
 									style={{
-										width: localStorage.getItem("width") + "px",
-										height: localStorage.getItem("height") + "px",
+										width: nftAreaSize.width + "px",
+										height: nftAreaSize.height + "px",
 									}}
+									// style={{
+									// 	width: localStorage.getItem("width") + "px",
+									// 	height: localStorage.getItem("height") + "px",
+									// }}
 								>
 									{/* classArr[0].src?.length > 0 */}
 									{classArr[0].src?.length > 0
@@ -849,10 +876,14 @@ function NftCustomization() {
 														key={"uniqueId" + index}
 														src={item.src[curentImages[index]]}
 														style={{
-															// width: item.width +"px",
-															// height: item.height +"px",
-															left: item.x + "px",
-															top: item.y + "px",
+															width:
+																newSizesArr[index].width[curentImages[index]] +
+																"px",
+															height:
+																newSizesArr[index].height[curentImages[index]] +
+																"px",
+															left: item.x / nftSizeIndex + "px",
+															top: item.y / nftSizeIndex + "px",
 															zIndex: item.z_index,
 														}}
 													/>
@@ -960,14 +991,28 @@ function NftCustomization() {
 												}}
 											></span>
 										</div>
-										<div className="text">Edit element size</div>
+										<div className="text">Element size</div>
 										<div className={accordionHidden[1] ? "hidden" : "setting"}>
 											<div className="inputs">
 												<div className="title-settings">Width (px)</div>
 												<div className="title-settings">Height (px)</div>
 											</div>
 											<div className="inputs">
-												<input
+												<div className="info">
+													{
+														classArr[curentLayer].sizes.width[
+															curentImages[curentLayer]
+														]
+													}
+												</div>
+												<div className="info">
+													{
+														classArr[curentLayer].sizes.height[
+															curentImages[curentLayer]
+														]
+													}
+												</div>
+												{/* <input
 													type="text"
 													placeholder="150"
 													onChange={(event) =>
@@ -980,11 +1025,11 @@ function NftCustomization() {
 													onChange={(event) => {
 														setCurentHeight(event.target.value);
 													}}
-												/>
+												/> */}
 											</div>
 										</div>
 
-										<div
+										{/* <div
 											className={
 												accordionHidden[1] ? "hidden" : "button-1-square"
 											}
@@ -1007,7 +1052,7 @@ function NftCustomization() {
 											}}
 										>
 											Fit into the frame
-										</div>
+										</div> */}
 
 										<div className="title">
 											Elements{" "}
