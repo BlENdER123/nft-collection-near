@@ -77,7 +77,6 @@ window.IDBKeyRange =
 
 // Let us open our database
 // var openRequest = window.indexedDB.open("imgsStore", 1);
-var db;
 
 // openRequest.onerror = event => {
 // 	console.log(event);
@@ -121,6 +120,25 @@ function getData() {
 }
 
 function LoadNftPage() {
+	var db;
+
+	if (!window.indexedDB) {
+		console.log(
+			"Your browser doesn't support a stable version of IndexedDB. Such and such feature will not be available.",
+		);
+	}
+
+	const openRequest = window.indexedDB.open("imgsStore", 1);
+	openRequest.onupgradeneeded = (event) => {
+		// Save the IDBDatabase interface
+		db = event.target.result;
+		console.log(db);
+		db.createObjectStore("imgs", {keyPath: "id", autoIncrement: true});
+
+		// Create an objectStore for this database
+		// var objectStore = db.createObjectStore("name", { keyPath: "myKey" });
+	};
+
 	let nftArea = useRef();
 	// setClassArr1([
 	// 	new MyClass("background", true, [], [], [], 0, 0, 0, 0, 0),
@@ -166,6 +184,7 @@ function LoadNftPage() {
 	const [errorInput, setErrorInput] = useState();
 
 	let projDet;
+	let localClass;
 	let localWidth;
 	let localHeight;
 	// loading project from localStorage
@@ -243,7 +262,9 @@ function LoadNftPage() {
 
 			// console.log(JSON.parse(localStorage.getItem("details")).projName);
 		} else {
-			localClass = [new MyClass("background", true, [], [], [], 0, 0, 0, 0, 0)];
+			setClassArr1([
+				new MyClass("background", true, [], [], [], 0, 0, 0, 0, 0),
+			]);
 			localWidth = 0;
 			localHeight = 0;
 			projDet = {
@@ -251,6 +272,12 @@ function LoadNftPage() {
 				projectName: "No Name",
 				projectDescription: "No Description",
 			};
+
+			setWidth(0);
+			setHeight(0);
+			setCollectionName("No Name");
+			setProjectName("No Name");
+			setProjectDescription("No Description");
 
 			// setClassArr1([
 			// 	new MyClass("background", true, [], [], [], 0, 0, 0, 0, 0),
@@ -312,15 +339,6 @@ function LoadNftPage() {
 
 			// };
 			// This event is only implemented in recent browsers
-			// openRequest.onupgradeneeded = event => {
-			// 	// Save the IDBDatabase interface
-			// 	db = event.target.result;
-			// 	console.log(db);
-			// 	db.createObjectStore("imgs", { keyPath: "id" , autoIncrement: true});
-
-			// 	// Create an objectStore for this database
-			// 	// var objectStore = db.createObjectStore("name", { keyPath: "myKey" });
-			// };
 
 			// console.log(URL.createObjectURL(file));
 
@@ -673,6 +691,7 @@ function LoadNftPage() {
 				const store = event.target.result
 					.transaction("imgs", "readwrite")
 					.objectStore("imgs");
+
 				store.add(file);
 
 				let lastId;
