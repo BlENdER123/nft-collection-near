@@ -1,12 +1,19 @@
 import React, {useState, useEffect, useRef} from "react";
 import {HashRouter as Router, Redirect, useHistory} from "react-router-dom";
+import {Rnd} from "react-rnd";
 
 import Header from "./Header";
 import Footer from "./Footer";
 
 import {useDispatch, useSelector} from "react-redux";
 
-import {scaleWidth, scaleHeight} from "./scaleConfig.json";
+Object.defineProperty(window, "indexedDB", {
+	value:
+		window.indexedDB ||
+		window.mozIndexedDB ||
+		window.webkitIndexedDB ||
+		window.msIndexedDB,
+});
 
 function NftCustomization() {
 	let history = useHistory();
@@ -44,8 +51,8 @@ function NftCustomization() {
 	const [newSizesArr, setNewSizesArr] = useState();
 
 	useEffect(() => {
+		// image scaling and area
 		console.log(nftArea.current.offsetWidth);
-		// console.log(nftArea.current.offsetHeight);
 
 		let areaWidth = nftArea.current.offsetWidth;
 
@@ -55,8 +62,9 @@ function NftCustomization() {
 		console.log(nftWidth, areaWidth, nftHeight);
 
 		let realSizes = [];
-
+		console.log("useEff");
 		if (nftWidth > areaWidth || nftHeight > areaWidth) {
+			console.log("if1");
 			if (parseInt(nftWidth, 10) > parseInt(nftHeight, 10)) {
 				let index = nftWidth / areaWidth;
 				let newHeight = nftHeight / index;
@@ -105,19 +113,24 @@ function NftCustomization() {
 
 				console.log(index, newWidth);
 				for (let i = 0; i < arr.length; i++) {
-					console.log(arr[i]);
-					let tempWidth = arr[i].width;
-					let tempHeight = arr[i].height;
+					realSizes.push({
+						width: [],
+						height: [],
+					});
+					for (let j = 0; j < arr[i].imgs.length; j++) {
+						let tempWidth = arr[i].sizes.width[j];
+						let tempHeight = arr[i].sizes.height[j];
 
-					// console.log(tempWidth, tempHeight);
+						// console.log(tempWidth, tempHeight);
 
-					let realWidth = tempWidth / index;
-					let realHeight = tempHeight / index;
+						let realWidth = tempWidth / index;
+						let realHeight = tempHeight / index;
 
-					console.log(realHeight, realWidth);
+						console.log(realHeight, realWidth);
 
-					arr[i].width = realWidth;
-					arr[i].height = realHeight;
+						realSizes[i].width[j] = realWidth;
+						realSizes[i].height[j] = realHeight;
+					}
 				}
 			} else if (parseInt(nftWidth, 10) == parseInt(nftHeight, 10)) {
 				let index = nftHeight / areaWidth;
@@ -131,28 +144,55 @@ function NftCustomization() {
 
 				console.log(index);
 				for (let i = 0; i < arr.length; i++) {
-					let tempWidth = arr[i].width;
-					let tempHeight = arr[i].height;
+					realSizes.push({
+						width: [],
+						height: [],
+					});
+					for (let j = 0; j < arr[i].imgs.length; j++) {
+						let tempWidth = arr[i].sizes.width[j];
+						let tempHeight = arr[i].sizes.height[j];
 
-					// console.log(tempWidth, tempHeight);
+						// console.log(tempWidth, tempHeight);
 
-					let realWidth = tempWidth / index;
+						let realWidth = tempWidth / index;
+						let realHeight = tempHeight / index;
 
-					let realHeight = tempHeight / index;
+						console.log(realHeight, realWidth);
 
-					console.log(realHeight, realWidth);
-
-					arr[i].width = realWidth;
-					arr[i].height = realHeight;
+						realSizes[i].width[j] = realWidth;
+						realSizes[i].height[j] = realHeight;
+					}
 				}
 			}
 		} else {
+			console.log("if2");
 			setNftAreaSize({
 				width: nftWidth,
 				height: nftHeight,
 			});
 
 			setNftSizeIndex(1);
+
+			for (let i = 0; i < arr.length; i++) {
+				realSizes.push({
+					width: [],
+					height: [],
+				});
+				for (let j = 0; j < arr[i].imgs.length; j++) {
+					let tempWidth = arr[i].sizes.width[j];
+					let tempHeight = arr[i].sizes.height[j];
+
+					// console.log(tempWidth, tempHeight);
+
+					let realWidth = tempWidth;
+					let realHeight = tempHeight;
+
+					console.log(realHeight, realWidth);
+
+					realSizes[i].width[j] = realWidth;
+					realSizes[i].height[j] = realHeight;
+				}
+			}
 			// for(let i = 0; i < arr.length; i++) {
 			// 	let tempWidth = arr[i].width;
 			// 	let tempHeight = arr[i].height;
@@ -178,6 +218,43 @@ function NftCustomization() {
 	console.log(arr);
 
 	const [classArr, setClassArr] = useState(arr);
+
+	let localClass = arr;
+	// loading project from localStorage
+
+	var openRequest = window.indexedDB.open("imgsStore", 1);
+	localClass = JSON.parse(localStorage.getItem("class"));
+	openRequest.onsuccess = async (event) => {
+		console.log(event);
+
+		let db = event.target.result;
+
+		let store = db.transaction("imgs").objectStore("imgs");
+
+		for (let i = 0; i < localClass.length; i++) {
+			for (let j = 0; j < localClass[i].imgs.length; j++) {
+				store.get(localClass[i].imgs[j]).onsuccess = (event) => {
+					console.log(event.target.result);
+					localClass[i].url[j] = URL.createObjectURL(event.target.result);
+				};
+			}
+		}
+
+		console.log(localClass);
+
+		// setTimeout(()=>{
+		// 	setClassArr1(localClass);
+		// }, 1000);
+	};
+
+	useEffect(() => {
+		copySrc();
+		setTimeout(() => {
+			console.log("useEff 3");
+			setClassArr(localClass);
+			console.log(localClass);
+		}, 1000);
+	}, []);
 
 	// let statusSize = "";
 
@@ -222,17 +299,13 @@ function NftCustomization() {
 		setActivePosition({x: 0, y: 0});
 	};
 
-	const Drag = (e, index) => {
-		if (e.clientX === 0 && e.clientY === 0) return;
-		const deltaX = activePosition.x - e.clientX;
-		const deltaY = activePosition.y - e.clientY;
-		//console.log(deltaX, deltaY);
+	const Drag = (x, y, index) => {
 		let tempArr = [];
 		for (let i = 0; i < classArr.length; i++) {
 			let temp = classArr[i];
 			if (i == index) {
-				temp.x = -deltaX;
-				temp.y = -deltaY;
+				temp.x = x;
+				temp.y = y;
 				tempArr.push(temp);
 			} else {
 				tempArr.push(temp);
@@ -485,6 +558,7 @@ function NftCustomization() {
 
 		console.log(classArr);
 		localStorage.setItem("class", JSON.stringify(classArr));
+		console.log(newSizesArr);
 		localStorage.setItem("realSizes", JSON.stringify(newSizesArr));
 		localStorage.setItem("nftAreaSize", JSON.stringify(nftAreaSize));
 		localStorage.setItem("sizeIndex", nftSizeIndex);
@@ -867,31 +941,50 @@ function NftCustomization() {
 									// }}
 								>
 									{/* classArr[0].src?.length > 0 */}
-									{classArr[0].src?.length > 0
+									{classArr[0].url?.length > 0
 										? classArr.map((item, index) => {
 												return (
-													<img
-														onDragStart={dragStart}
-														onDrag={(e) => Drag(e, index)}
-														key={"uniqueId" + index}
-														src={item.src[curentImages[index]]}
+													<Rnd
 														style={{
-															width:
-																newSizesArr[index].width[curentImages[index]] +
-																"px",
-															height:
-																newSizesArr[index].height[curentImages[index]] +
-																"px",
-															left: item.x / nftSizeIndex + "px",
-															top: item.y / nftSizeIndex + "px",
-															zIndex: item.z_index,
+															// ...style,
+															zIndex: index,
+															// background: "#ccc",
+															opacity: item.active ? "1" : "0.8",
 														}}
-													/>
+														key={`rnd${index}`}
+														scale={0.5}
+														onDrag={(e, data) =>
+															Drag(data.x.toFixed(), data.y.toFixed(), index)
+														}
+													>
+														<img
+															onClick={() => setActive(item)}
+															onDragStart={(e) => setActive(item)}
+															onDrag={(e) => Drag(e, index)}
+															key={"uniqueId" + index}
+															src={classArr[index].url[curentImages[index]]}
+															style={{
+																width: newSizesArr
+																	? newSizesArr[index].width[
+																			curentImages[index]
+																	  ] + "px"
+																	: "0px",
+																height: newSizesArr
+																	? newSizesArr[index].height[
+																			curentImages[index]
+																	  ] + "px"
+																	: "0px",
+																left: item.x / nftSizeIndex + "px",
+																top: item.y / nftSizeIndex + "px",
+																zIndex: item.z_index,
+															}}
+														/>
+													</Rnd>
 												);
 										  })
 										: copySrc()}
 									<div
-										className={classArr[0].src?.length > 0 ? "hide" : "loader"}
+										className={classArr[0].url?.length > 0 ? "hide" : "loader"}
 									>
 										<div></div>
 										<div></div>
@@ -1079,7 +1172,7 @@ function NftCustomization() {
 															}
 															onClick={() => setImgActive(index)}
 														>
-															<img src={getSrc(item)}></img>
+															<img src={classArr[curentLayer].url[index]}></img>
 														</div>
 													);
 												})}

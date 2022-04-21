@@ -89,11 +89,6 @@ function WelcomeNftPage() {
 								<Link to="video">
 									<button className="button-2">How it work</button>
 								</Link>
-								{/* <button onClick={()=>{
-									let temp = aes.decryptText(sessionStorage.getItem("seedHash"), "5555");
-									console.log(temp);
-
-								}}>test</button> */}
 							</div>
 						</div>
 					</div>

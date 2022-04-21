@@ -7,6 +7,14 @@ import Footer from "./Footer";
 
 import {useDispatch, useSelector} from "react-redux";
 
+Object.defineProperty(window, "indexedDB", {
+	value:
+		window.indexedDB ||
+		window.mozIndexedDB ||
+		window.webkitIndexedDB ||
+		window.msIndexedDB,
+});
+
 const axios = require("axios");
 //const fs = require('fs');
 const FormData = require("form-data");
@@ -37,6 +45,44 @@ function NftCustomization() {
 	let arr = JSON.parse(localStorage.getItem("class"));
 
 	const [classArr, setClassArr] = useState(arr);
+
+	const [errorInput, setErrorInput] = useState();
+
+	let localClass = arr;
+
+	var openRequest = window.indexedDB.open("imgsStore", 1);
+	localClass = JSON.parse(localStorage.getItem("class"));
+	openRequest.onsuccess = async (event) => {
+		console.log(event);
+
+		let db = event.target.result;
+
+		let store = db.transaction("imgs").objectStore("imgs");
+
+		for (let i = 0; i < localClass.length; i++) {
+			for (let j = 0; j < localClass[i].imgs.length; j++) {
+				store.get(localClass[i].imgs[j]).onsuccess = (event) => {
+					console.log(event.target.result);
+					localClass[i].url[j] = URL.createObjectURL(event.target.result);
+				};
+			}
+		}
+
+		console.log(localClass);
+
+		// setTimeout(()=>{
+		// 	setClassArr1(localClass);
+		// }, 1000);
+	};
+
+	useEffect(() => {
+		copySrc();
+		setTimeout(() => {
+			console.log("useEff 3");
+			setClassArr(localClass);
+			console.log(localClass);
+		}, 1000);
+	}, []);
 
 	const [contrBg, setContrBg] = useState(false);
 
@@ -299,10 +345,12 @@ function NftCustomization() {
 
 		console.log(colPrice);
 		if (colPrice == undefined || colPrice == null || colPrice <= 0) {
-			setErrorModal({
-				hidden: true,
-				message: "Set Mint Price",
-			});
+			// setErrorModal({
+			// 	hidden: true,
+			// 	message: "Set Mint Price",
+			// });
+			// changeError("colPrice", event.target.value)
+			setErrorInput("colPrice");
 			return;
 		}
 
@@ -456,11 +504,11 @@ function NftCustomization() {
 
 		// console.log(tempCollection);
 
-		sessionStorage.setItem("colPrice", colPrice);
-		sessionStorage.setItem("royalty", royalty);
-		sessionStorage.setItem("uniqFor", JSON.stringify(uniqFor));
-		// sessionStorage.setItem("collection", JSON.stringify(tempCollection));
-		sessionStorage.setItem("collectionName", JSON.stringify(collectionName));
+		localStorage.setItem("colPrice", colPrice);
+		localStorage.setItem("royalty", royalty);
+		localStorage.setItem("uniqFor", JSON.stringify(uniqFor));
+		//localionStorage.setItem("collection", JSON.stringify(tempCollection));
+		localStorage.setItem("collectionName", JSON.stringify(collectionName));
 
 		// setRedirect(true);
 		history.push("/nft-collection");
@@ -498,6 +546,18 @@ function NftCustomization() {
 
 		setCollectionName(tempName);
 		console.log(tempName);
+	}
+
+	function changeError(input, value) {
+		if (value == "" || value <= 0 || value == undefined || value == null) {
+			setErrorInput(input);
+			setColPrice(0);
+		} else {
+			if (input == "colPrice") {
+				setErrorInput("");
+				setColPrice(value);
+			}
+		}
 	}
 
 	function logData() {
@@ -667,8 +727,14 @@ function NftCustomization() {
 									placeholder="100.0000"
 									type="number"
 									min="0"
-									onChange={(event) => setColPrice(event.target.value)}
+									className={errorInput == "colPrice" ? "inputErr" : ""}
+									onChange={(event) =>
+										changeError("colPrice", event.target.value)
+									}
 								/>
+								<span className={errorInput == "colPrice" ? "errMsg" : "hide"}>
+									Set Price
+								</span>
 							</div>
 							<div style={{margin: "40px 0px 10px 0px"}} className="title">
 								Resale Royalty{" "}
@@ -793,12 +859,12 @@ function NftCustomization() {
 										height: nftAreaSize.height + "px",
 									}}
 								>
-									{classArr[0].src?.length > 0
+									{classArr[0].url?.length > 0
 										? classArr.map((item, index) => {
 												return (
 													<img
 														key={"uniqueId" + index}
-														src={item.src[curentImg[index]]}
+														src={item.url[curentImg[index]]}
 														style={{
 															width:
 																realSizes[index].width[curentImg[index]] + "px",

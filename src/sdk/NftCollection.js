@@ -8,72 +8,6 @@ import {signerKeys, TonClient, signerNone} from "@tonclient/core";
 
 import mergeImages from "merge-images";
 
-// import radIco from "./img/radiance.ico";
-
-// const fileBuffer = Buffer.from("./main.wasm", 'base64');
-
-// console.log(fileBuffer);
-// console.log(1);
-
-// function readFile() {
-// 	const reader = new FileReader();
-// 	reader.readAsDataURL("./main.wasm");
-// 	reader.onload = function () {
-// 		const fileBuffer = Buffer.from(reader.result, 'base64');
-// 		console.log(fileBuffer);
-// 	};
-// 	reader.onerror = function (error) {
-// 		console.log('Error: ', error);
-// 	  };
-// }
-// readFile();
-
-// import fs from 'fs'
-
-// import wasmFile from "./nearWasm/factorial.wasm";
-
-// wasmFile().then(instance => {
-// 	const factorial = instance.instance.exports._Z4facti;
-
-// 	console.log(factorial(1)); // 1
-// 	console.log(factorial(2)); // 2
-// 	console.log(factorial(3)); // 6
-// });
-
-// wasmFile().then();
-
-// const wasmFile = require("./nearWasm/main.wasm");
-
-// import * as wasmFile from "nft_simple";
-// const wasmFile = require("wasm-package-near");
-
-// const fs = require("fs");
-
-// console.log(fs.readFileSync(wasmFile));
-
-// console.log(wasmFile);
-// console.log(1);
-
-// wasmFile.then((data)=>{
-// 	console.log(data);
-// 	console.log(1);
-
-// });
-
-//contracts
-// import {DeployerColectionContract} from "./collection contracts/nftour/src/build/DeployerColectionContract.js";
-// import {NftRootContract} from "./collection contracts/nftour/src/build/NftRootContract.js";
-// import {CollectionRoot} from "./collection contracts/nftour/src/build/NftRootContract.js";
-// import {StorageContract} from "./collection contracts/nftour/src/build/StorageContract.js";
-import {DEXRootContract} from "./test net contracts/DEXRoot.js";
-
-import {DEXClientContract} from "./test net contracts/DEXClient.js";
-import {Collections, InsertEmoticon} from "@material-ui/icons";
-
-import {DataContract} from "./collection contracts/DataContract.js";
-import {NFTMarketContract} from "./collection contracts/NftMarketContract.js";
-import {NftRootColectionContract} from "./collection contracts/NftRootColectionContract.js";
-
 import * as JSZIP from "jszip";
 
 import Header from "./Header";
@@ -100,19 +34,41 @@ const pidCrypt = require("pidcrypt");
 require("pidcrypt/aes_cbc");
 const aes = new pidCrypt.AES.CBC();
 
-// function base64ToHex(str) {
-// 	const raw = atob(str);
-// 	let result = "";
-// 	for (let i = 0; i < raw.length; i++) {
-// 		const hex = raw.charCodeAt(i).toString(16);
-// 		result += hex.length === 2 ? hex : "0" + hex;
-// 	}
-// 	return result.toUpperCase();
-// }
+Object.defineProperty(window, "indexedDB", {
+	value:
+		window.indexedDB ||
+		window.mozIndexedDB ||
+		window.webkitIndexedDB ||
+		window.msIndexedDB,
+});
 
 function NftCollection() {
 	let classArr = JSON.parse(localStorage.getItem("class"));
 	console.log(classArr);
+
+	// let localClass = arr;
+	// loading project from localStorage
+
+	var openRequest = window.indexedDB.open("imgsStore", 1);
+	// localClass = JSON.parse(localStorage.getItem("class"))
+	openRequest.onsuccess = async (event) => {
+		console.log(event);
+
+		let db = event.target.result;
+
+		let store = db.transaction("imgs").objectStore("imgs");
+
+		for (let i = 0; i < classArr.length; i++) {
+			for (let j = 0; j < classArr[i].imgs.length; j++) {
+				store.get(classArr[i].imgs[j]).onsuccess = (event) => {
+					console.log(event.target.result);
+					classArr[i].url[j] = URL.createObjectURL(event.target.result);
+				};
+			}
+		}
+
+		console.log(classArr);
+	};
 
 	let realSizes = JSON.parse(localStorage.getItem("realSizes"));
 	let nftAreaSize = JSON.parse(localStorage.getItem("nftAreaSize"));
@@ -142,10 +98,12 @@ function NftCollection() {
 				// );
 				console.log(realSizes[i].width[j]);
 				let res = await getResize(
-					classArr[i].imgs[j],
+					// classArr[i].imgs[j],
+					classArr[i].url[j],
 					realSizes[i].width[j] * sizeIndex,
 					realSizes[i].height[j] * sizeIndex,
 				);
+				console.log(res);
 				tempArrImg.push(res);
 			}
 			tempArr.push(tempArrImg);
@@ -158,12 +116,16 @@ function NftCollection() {
 	function getResize(img, width, height) {
 		return new Promise((resolve, reject) => {
 			var image = new Image();
-			image.src = getSrc(img);
-			console.log(getSrc(img));
+			console.log(img);
+			image.src = img;
+			// image.src = getSrc(img);
+			// console.log(getSrc(img));
 
 			var canvas = document.createElement("canvas");
 			canvas.width = width;
 			canvas.height = height;
+
+			console.log(canvas);
 
 			var ctx = canvas.getContext("2d");
 			// ctx.drawImage(image, 0, 0, width, height);
@@ -172,8 +134,13 @@ function NftCollection() {
 
 			image.setAttribute("crossorigin", "anonymous");
 
+			resolve(img);
+
 			image.onload = function () {
+				console.log(1);
+				console.log(image);
 				ctx.drawImage(image, 0, 0, width, height);
+
 				resolve(canvas.toDataURL("image/png"));
 			};
 
@@ -240,13 +207,14 @@ function NftCollection() {
 	};
 
 	useEffect(async () => {
+		console.log("useEff1");
 		const {providers} = require("near-api-js");
 
 		const provider = new providers.JsonRpcProvider(
 			"https://archival-rpc.testnet.near.org",
 		);
 
-		let uniqFor = JSON.parse(sessionStorage.getItem("uniqFor"));
+		let uniqFor = JSON.parse(localStorage.getItem("uniqFor"));
 		// console.log(uniq);
 
 		// let classArr;
@@ -259,165 +227,169 @@ function NftCollection() {
 
 		let tempCollection = [];
 
-		const asyncFunction = async function () {
-			return await getResizeMany();
-		};
-		asyncFunction().then(async (res) => {
-			let tempArr = [];
-			console.log(res);
-			console.log(classArr.length);
-			for (let i = 0; i < classArr.length; i++) {
-				let temp = classArr[i];
-				temp.src = res[i];
-				tempArr.push(temp);
-			}
-			console.log(tempArr);
-			classArr = tempArr;
-
-			console.log(classArr);
-
-			for (let i = 0; i < uniqFor.length; i++) {
-				let tempCur = uniqFor[i].split(",");
-				// console.log(tempCur);
-				//alertM("Saved!");
-				let mergeArr = [];
-
-				let indexArr = [];
-
+		setTimeout(() => {
+			const asyncFunction = async function () {
+				return await getResizeMany();
+			};
+			asyncFunction().then(async (res) => {
+				let tempArr = [];
+				console.log(res);
+				console.log(classArr.length);
 				for (let i = 0; i < classArr.length; i++) {
-					for (let j = 0; j < classArr[i].imgs.length; j++) {
-						if (classArr[i].imgs[j] == classArr[i].imgs[tempCur[i]]) {
-							mergeArr.push({
-								src: classArr[i].src[j],
-								x: classArr[i].x,
-								y: classArr[i].y,
-							});
-							indexArr.push(classArr[i].z_index);
+					let temp = classArr[i];
+					temp.src = res[i];
+					tempArr.push(temp);
+				}
+				console.log(tempArr);
+				classArr = tempArr;
+
+				console.log(classArr);
+
+				for (let i = 0; i < uniqFor.length; i++) {
+					let tempCur = uniqFor[i].split(",");
+					// console.log(tempCur);
+					//alertM("Saved!");
+					let mergeArr = [];
+
+					let indexArr = [];
+
+					for (let i = 0; i < classArr.length; i++) {
+						for (let j = 0; j < classArr[i].imgs.length; j++) {
+							if (classArr[i].imgs[j] == classArr[i].imgs[tempCur[i]]) {
+								mergeArr.push({
+									src: classArr[i].url[j],
+									x: classArr[i].x,
+									y: classArr[i].y,
+								});
+								indexArr.push(classArr[i].z_index);
+							}
 						}
 					}
-				}
 
-				for (let i = 0; i < indexArr.length; i++) {
-					for (let j = 0; j < indexArr.length; j++) {
-						if (indexArr[j] > indexArr[j + 1]) {
-							let temp = indexArr[j];
-							let temp1 = mergeArr[j];
-							indexArr[j] = indexArr[j + 1];
-							mergeArr[j] = mergeArr[j + 1];
-							indexArr[j + 1] = temp;
-							mergeArr[j + 1] = temp1;
+					for (let i = 0; i < indexArr.length; i++) {
+						for (let j = 0; j < indexArr.length; j++) {
+							if (indexArr[j] > indexArr[j + 1]) {
+								let temp = indexArr[j];
+								let temp1 = mergeArr[j];
+								indexArr[j] = indexArr[j + 1];
+								mergeArr[j] = mergeArr[j + 1];
+								indexArr[j + 1] = temp;
+								mergeArr[j + 1] = temp1;
+							}
 						}
 					}
+
+					console.log(indexArr);
+					console.log(mergeArr);
+
+					await mergeImages(mergeArr, {
+						width: localStorage.getItem("width"),
+						height: localStorage.getItem("height"),
+					}).then((b64) => tempCollection.push(b64));
 				}
 
-				console.log(indexArr);
-				console.log(mergeArr);
+				console.log(tempCollection);
 
-				await mergeImages(mergeArr, {
-					width: localStorage.getItem("width"),
-					height: localStorage.getItem("height"),
-				}).then((b64) => tempCollection.push(b64));
-			}
+				setCollection(tempCollection);
 
-			console.log(tempCollection);
+				let hashTrans = document.location.search.split(
+					"?transactionHashes=",
+				)[1];
+				// let hashTrans = "H1Wh3Kf96NWE56HwGLnajVtQGB55rsXAgTTopHdWX72N";
+				if (hashTrans != undefined) {
+					console.log(hashTrans);
+					async function hashLog() {
+						const result = await provider.txStatus(
+							hashTrans,
+							window.walletConnection.getAccountId(),
+						);
 
-			setCollection(tempCollection);
+						// const transDet = await connectNear();
 
-			let hashTrans = document.location.search.split("?transactionHashes=")[1];
-			// let hashTrans = "H1Wh3Kf96NWE56HwGLnajVtQGB55rsXAgTTopHdWX72N";
-			if (hashTrans != undefined) {
-				console.log(hashTrans);
-				async function hashLog() {
-					const result = await provider.txStatus(
-						hashTrans,
-						window.walletConnection.getAccountId(),
-					);
+						// console.log(provider);
 
-					// const transDet = await connectNear();
+						// const response = await provider.txStatus(
+						// 	hashTrans,
+						// 	window.walletConnection.getAccountId()
+						// );
 
-					// console.log(provider);
+						if (result.status.Failure == undefined) {
+							console.log(result);
+							let event;
+							let token_id;
+							try {
+								event = JSON.parse(
+									result.receipts_outcome[0].outcome.logs[0].split(
+										"EVENT_JSON:",
+									)[1],
+								).event;
+								token_id = JSON.parse(
+									result.receipts_outcome[0].outcome.logs[0].split(
+										"EVENT_JSON:",
+									)[1],
+								).token_ids[0];
+							} catch {
+								event = result.transaction.actions[0].FunctionCall.method_name;
+							}
 
-					// const response = await provider.txStatus(
-					// 	hashTrans,
-					// 	window.walletConnection.getAccountId()
-					// );
+							console.log(event);
 
-					if (result.status.Failure == undefined) {
-						console.log(result);
-						let event;
-						let token_id;
-						try {
-							event = JSON.parse(
-								result.receipts_outcome[0].outcome.logs[0].split(
-									"EVENT_JSON:",
-								)[1],
-							).event;
-							token_id = JSON.parse(
-								result.receipts_outcome[0].outcome.logs[0].split(
-									"EVENT_JSON:",
-								)[1],
-							).token_ids[0];
-						} catch {
-							event = result.transaction.actions[0].FunctionCall.method_name;
-						}
-
-						console.log(event);
-
-						if (event == "deploy_contract_code") {
-							setActiveButtons([false, true, false]);
-							console.log(1);
+							if (event == "deploy_contract_code") {
+								setActiveButtons([false, true, false]);
+								console.log(1);
+								return;
+							}
+							if (event == "new") {
+								setActiveButtons([false, false, true]);
+								console.log(1);
+								setErrorModal({
+									hidden: true,
+									message:
+										"Collection successfully created, go to profile to view",
+									img: "",
+								});
+								return;
+							}
+							if (event == "nft_mint" && token_id + 1 != collection.length) {
+								setActiveButtons([false, false, true]);
+								console.log("dep");
+								return;
+							}
+							if (event == "nft_mint") {
+								setActiveButtons([false, false, false]);
+								console.log("complete");
+								return;
+							}
+						} else {
+							console.log("error");
+							// if(event=="new") {
+							// 	setActiveButtons([false,true,false]);
+							// 	return;
+							// }
 							return;
 						}
-						if (event == "new") {
-							setActiveButtons([false, false, true]);
-							console.log(1);
-							setErrorModal({
-								hidden: true,
-								message:
-									"Collection successfully created, go to profile to view",
-								img: "",
-							});
-							return;
-						}
-						if (event == "nft_mint" && token_id + 1 != collection.length) {
-							setActiveButtons([false, false, true]);
-							console.log("dep");
-							return;
-						}
-						if (event == "nft_mint") {
-							setActiveButtons([false, false, false]);
-							console.log("complete");
-							return;
-						}
-					} else {
-						console.log("error");
-						// if(event=="new") {
-						// 	setActiveButtons([false,true,false]);
-						// 	return;
-						// }
-						return;
 					}
+					hashLog();
+				} else {
+					console.log("No trans");
+					setActiveButtons([true, false, false]);
+					console.log("dep");
+					return;
 				}
-				hashLog();
-			} else {
-				console.log("No trans");
-				setActiveButtons([true, false, false]);
-				console.log("dep");
-				return;
-			}
-		});
+			});
+		}, 1000);
 
 		// console.log(classArr);
 	}, []);
 
-	let arr = JSON.parse(sessionStorage.getItem("collection"));
-	let arrName = JSON.parse(sessionStorage.getItem("collectionName"));
+	let arr = JSON.parse(localStorage.getItem("collection"));
+	let arrName = JSON.parse(localStorage.getItem("collectionName"));
 
-	let details = JSON.parse(sessionStorage.getItem("details"));
+	let details = JSON.parse(localStorage.getItem("details"));
 	let price;
 
 	try {
-		price = JSON.parse(sessionStorage.getItem("colPrice"));
+		price = JSON.parse(localStorage.getItem("colPrice"));
 	} catch {
 		price = "0";
 	}
@@ -501,7 +473,7 @@ function NftCollection() {
 		};
 		const near = await connect(config);
 
-		let deployData = JSON.parse(sessionStorage.getItem("details"));
+		let deployData = JSON.parse(localStorage.getItem("details"));
 		console.log(deployData);
 
 		const account = await near.account(walletConnection.getAccountId());
@@ -759,7 +731,7 @@ function NftCollection() {
 
 		console.log(nearAPI.utils.key_pair.PublicKey.fromString(pubKey));
 
-		let deployData = JSON.parse(sessionStorage.getItem("details"));
+		let deployData = JSON.parse(localStorage.getItem("details"));
 
 		let actionsTrans = [];
 
@@ -926,7 +898,7 @@ function NftCollection() {
 
 		sessionStorage.setItem("curentAction", "deploy");
 
-		console.log(sessionStorage.getItem("collection"));
+		// console.log(sessionStorage.getItem("collection"));
 
 		contractRoot
 			.deploy_contract_code(
@@ -976,7 +948,7 @@ function NftCollection() {
 		sessionStorage.setItem("curentAction", "init");
 		//?transactionHashes=Eo49vvUqQZ9NwC8abasWYzcsyaMLHHHcUdsVXYS9ZH9L
 
-		let deployData = JSON.parse(sessionStorage.getItem("details"));
+		let deployData = JSON.parse(localStorage.getItem("details"));
 
 		contractCollection
 			.new({
@@ -1021,7 +993,7 @@ function NftCollection() {
 			sessionStorage.setItem("curentAction", "deploingNft");
 		}
 
-		let deployData = JSON.parse(sessionStorage.getItem("details"));
+		let deployData = JSON.parse(localStorage.getItem("details"));
 
 		// console.log(nft[1]+1, collection.length);
 
@@ -1220,7 +1192,7 @@ function NftCollection() {
 							</div>
 							<div
 								className={
-									details.projectDescription.length > 100 ? "show" : "hide"
+									details.projectDescription.length > 40 ? "show" : "hide"
 								}
 								onClick={() => setIsFullDescription(!isFullDescription)}
 							>
@@ -1266,7 +1238,7 @@ function NftCollection() {
 								) : (
 									<span>
 										Mint All NFTs (
-										{JSON.parse(sessionStorage.getItem("uniqFor")).length})
+										{JSON.parse(localStorage.getItem("uniqFor")).length})
 									</span>
 								)}
 							</div>
@@ -1276,12 +1248,13 @@ function NftCollection() {
 								<div class="title">Collection generation process</div>
 								<div class="bar"></div>
 								<span>
-									{JSON.parse(sessionStorage.getItem("uniqFor")).length}/
-									{JSON.parse(sessionStorage.getItem("uniqFor")).length}
+									{JSON.parse(localStorage.getItem("uniqFor")).length}/
+									{JSON.parse(localStorage.getItem("uniqFor")).length}
 								</span>
 							</div>
 							<div class="collection">
 								{collection.map((item, index) => {
+									console.log(collection, "123");
 									return (
 										<div
 											key={"uniqueId" + index}

@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import {HashRouter as Router, useParams} from "react-router-dom";
+import {HashRouter as Router, useParams, useHistory} from "react-router-dom";
 
 import {Account} from "@tonclient/appkit";
 import {libWeb} from "@tonclient/lib-web";
@@ -11,15 +11,6 @@ import {signerKeys, TonClient, signerNone} from "@tonclient/core";
 // import {NftRootContract} from "./collection contracts/nftour/src/build/NftRootContract.js";
 // import {CollectionRoot} from "./collection contracts/nftour/src/build/NftRootContract.js";
 // import {StorageContract} from "./collection contracts/nftour/src/build/StorageContract.js";
-import {DEXRootContract} from "./test net contracts/DEXRoot.js";
-
-import {DEXClientContract} from "./test net contracts/DEXClient.js";
-import {Collections, InsertEmoticon} from "@material-ui/icons";
-
-import {DataContract} from "./collection contracts/DataContract.js";
-import {NFTMarketContract} from "./collection contracts/NftMarketContract.js";
-import {NftRootColectionContract} from "./collection contracts/NftRootColectionContract.js";
-import {OfferContract} from "./collection contracts/OfferContract.js";
 
 import Header from "./Header";
 import Footer from "./Footer";
@@ -69,6 +60,7 @@ function base64ToHex(str) {
 }
 
 function NftMarketNft() {
+	let history = useHistory();
 	const dispatch = useDispatch();
 	const connectWallet = useSelector((state) => state.connectWallet);
 	const params = useParams();
@@ -76,6 +68,8 @@ function NftMarketNft() {
 	let addrCol = params.address.split("token")[0];
 	let token_id = params.address.split("token")[1];
 	console.log(addrCol, token_id);
+	const [isFullDescription, setIsFullDescription] = useState(false);
+
 	// let arr = JSON.parse(localStorage.getItem("collection"));
 
 	// const [collection, setCollection] = useState(arr);
@@ -93,6 +87,9 @@ function NftMarketNft() {
 		img: null,
 		owner: "No Owner",
 		price: 0,
+		width: 0,
+		height: 0,
+		size: 0,
 	});
 
 	const [errorModal, setErrorModal] = useState({
@@ -183,16 +180,33 @@ function NftMarketNft() {
 				mediaUrl = info.media;
 			}
 
+			let img = new Image();
+			img.src = mediaUrl;
+
+			img.onload = async function () {
+				let tempW = this.width;
+				let tempH = this.height;
+				// console.log(this.size);
+				await fetch(mediaUrl).then((r) => {
+					r.blob().then((res) => {
+						console.log(res);
+						setNftInfo({
+							name: info.title,
+							desc: info.description,
+							// desc: "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
+							img: mediaUrl,
+							owner: data.owner_id,
+							price: tempPrice / 1000000000000000000000000,
+							width: tempW,
+							height: tempH,
+							size: res.size / 1024 / 1024,
+						});
+					});
+				});
+			};
+
 			console.log(mediaUrl);
 			console.log(data);
-
-			setNftInfo({
-				name: info.title,
-				desc: info.description,
-				img: mediaUrl,
-				owner: data.owner_id,
-				price: tempPrice / 1000000000000000000000000,
-			});
 		});
 	}
 
@@ -324,11 +338,17 @@ function NftMarketNft() {
 				<Header activeCat={2}></Header>
 
 				<div class="container auction-sale">
+					<div className="back" onClick={() => history.goBack()}>
+						{/* <button ></button> */}
+					</div>
 					<div class="img">
 						<div class="img">
 							<img src={nftInfo.img} />
 						</div>
-						<div class="text">3200 x 3200 px.IMAGE(3.21MB)</div>
+						<div class="text">
+							{nftInfo.width} x {nftInfo.height} px.IMAGE(
+							{nftInfo.size.toFixed(2)}MB)
+						</div>
 						<div class="text">
 							<div class="title">Contract Address</div>
 							{addrCol}
@@ -339,7 +359,7 @@ function NftMarketNft() {
 						</div>
 					</div>
 					<div class="content">
-						<div class="title-col">{nftInfo.desc}</div>
+						<div class="title-col">Collection Name</div>
 						<div class="title-nft">
 							{nftInfo.name}
 							<span className="share">
@@ -364,12 +384,14 @@ function NftMarketNft() {
 						</div>
 						<div class="desc">
 							<div class="title">Description</div>
-							Tattooed Kitty Gang (“TKG”) is a collection of 666 badass kitty
-							gangsters, with symbol of tattoos, living in the Proud Kitty Gang
-							(“PKG”) metaverse. Each TKG is an 1/1 ID as gangster member & all
-							the joint rights.
+							{isFullDescription ? nftInfo.desc : nftInfo.desc.slice(0, 40)}
 							<br />
-							<div className="show">Show full description </div>
+							<div
+								className={nftInfo.desc.length > 40 ? "show" : "hide"}
+								onClick={() => setIsFullDescription(!isFullDescription)}
+							>
+								Show full description{" "}
+							</div>
 						</div>
 						<div class="price">
 							<div class="title">Price</div>

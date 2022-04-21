@@ -306,7 +306,7 @@ function NftSingle() {
 
 		console.log(nearAPI.utils.key_pair.PublicKey.fromString(pubKey));
 
-		let deployData = JSON.parse(sessionStorage.getItem("details"));
+		let deployData = JSON.parse(localStorage.getItem("details"));
 
 		let actionsTrans = [];
 
@@ -878,7 +878,7 @@ function NftSingle() {
 			const pinataSecretKey =
 				"7b53c4d13eeaf7063ac5513d4c97c4f530ce7e660f0c147ab5d6aee6da9a08b9";
 
-			let deployData = JSON.parse(sessionStorage.getItem("details"));
+			let deployData = JSON.parse(localStorage.getItem("details"));
 
 			for (let i = 0; i < collection.length; i++) {
 				const url = collection[i];

@@ -621,7 +621,7 @@ function ProfilePage() {
 
 		// 	console.log(nearAPI.utils.key_pair.PublicKey.fromString(pubKey));
 
-		// 	let deployData = JSON.parse(sessionStorage.getItem("details"));
+		// 	let deployData = JSON.parse(localStorage.getItem("details"));
 
 		// 	let actionsTrans = [];
 

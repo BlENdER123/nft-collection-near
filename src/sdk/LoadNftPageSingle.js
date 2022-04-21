@@ -563,7 +563,7 @@ function LoadNftPageSingle() {
 		localStorage.setItem("width", width);
 		localStorage.setItem("height", height);
 		localStorage.setItem("curentLayer", curentLayer);
-		sessionStorage.setItem(
+		localStorage.setItem(
 			"details",
 			JSON.stringify({
 				projectName: projectName,
