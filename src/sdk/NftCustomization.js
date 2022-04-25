@@ -779,10 +779,11 @@ function NftCustomization() {
 								<div
 									class="step step3"
 									onClick={() => {
-										let res = logData();
-										if (res) {
-											history.push("/nft-generate");
-										}
+										// let res = logData();
+										// if (res) {
+										// 	history.push("/nft-generate");
+										// }
+										logData();
 									}}
 								>
 									<div class="img"></div>

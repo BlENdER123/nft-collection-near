@@ -27,7 +27,7 @@ let nftArr = [];
 
 function NftCustomization() {
 	useEffect(() => {
-		if (document.location.href.split("?transactionHashes=")[1]) {
+		if (document.location.href.split("transactionHashes=")[1]) {
 			let href = document.location.origin + document.location.hash;
 			document.location.href = href;
 		}

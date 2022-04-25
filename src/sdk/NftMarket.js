@@ -585,7 +585,7 @@ function NftMarket() {
 													history.push(
 														"/nft-market-nft/" +
 															item.addrNftCol +
-															"token" +
+															"!token!" +
 															item.token_id,
 													);
 												}}

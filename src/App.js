@@ -34,6 +34,7 @@ import NftMarket from "./sdk/NftMarket";
 import NftMarketPack from "./sdk/NftMarketPack";
 import NftMarketAuction from "./sdk/NftMarketAuction";
 import NftMarketNft from "./sdk/NftMarketNft";
+import PackPage from "./sdk/PackPage";
 
 import {Buffer} from "buffer";
 global.Buffer = Buffer;
@@ -102,7 +103,12 @@ function App() {
 							path="/nft-market-nft/:address"
 							component={NftMarketNft}
 						></Route>
-						<Route exact path="/nft-details" component={NftDetails}></Route>
+						<Route exact path="/pack/:address" component={PackPage}></Route>
+						<Route
+							exact
+							path="/nft-details/:address"
+							component={NftDetails}
+						></Route>
 						<Route exact path="/how" component={HowPage}></Route>
 						{/* <Route exact path="/open-pack" component={OpenPack}></Route> */}
 						{/* <Route exact path="/login" component={LoginPage}></Route> */}

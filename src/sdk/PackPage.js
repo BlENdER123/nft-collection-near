@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import {HashRouter as Router, useHistory} from "react-router-dom";
+import {HashRouter as Router, useHistory, useParams} from "react-router-dom";
 
 import {Account} from "@tonclient/appkit";
 import {libWeb} from "@tonclient/lib-web";
@@ -48,12 +48,15 @@ Object.defineProperty(window, "indexedDB", {
 		window.msIndexedDB,
 });
 
-function NftCollection() {
+function PackPage() {
 	let classArr = JSON.parse(localStorage.getItem("class"));
 	console.log(classArr);
 
 	// let localClass = arr;
 	// loading project from localStorage
+
+	const params = useParams();
+	let addrCol = params.address;
 
 	if (
 		localStorage.getItem("nft-collection-step") == null ||
@@ -364,7 +367,7 @@ function NftCollection() {
 				let hashTrans = document.location.search.split("transactionHashes=")[1];
 				// let hashTrans = "H1Wh3Kf96NWE56HwGLnajVtQGB55rsXAgTTopHdWX72N";
 				if (hashTrans != undefined) {
-					console.log(hashTrans, "HASHTRANS");
+					console.log(hashTrans);
 					async function hashLog() {
 						const result = await provider.txStatus(
 							hashTrans,
@@ -407,14 +410,14 @@ function NftCollection() {
 								return;
 							}
 							if (event == "new") {
-								setActiveButtons([false, false, true]);
+								setActiveButtons([false, true, true]);
 								console.log(1);
-								// setErrorModal({
-								// 	hidden: true,
-								// 	message:
-								// 		"Collection successfully created, go to profile to view",
-								// 	img: "",
-								// });
+								setErrorModal({
+									hidden: true,
+									message:
+										"Collection successfully created, go to profile to view",
+									img: "",
+								});
 								return;
 							}
 							if (event == "nft_mint" && token_id + 1 != collection.length) {
@@ -1052,7 +1055,9 @@ function NftCollection() {
 	}
 
 	async function mint_nft(amount) {
-		let addr = sessionStorage.getItem("addrCol");
+		// let addr = sessionStorage.getItem("addrCol");
+
+		let addr = addrCol;
 
 		const acc = await near.account(addr);
 
@@ -1380,20 +1385,12 @@ function NftCollection() {
 						<div class="modal-constructor modal-constructor-back">
 							<button
 								onClick={() => {
-									if (curentCollectionStep > 1) {
-										localStorage.setItem(
-											"nft-collection-step",
-											curentCollectionStep - 1,
-										);
-										setCurentCollectionStep(curentCollectionStep - 1);
-									} else {
-										history.push("/nft-generate");
-									}
+									history.goBack();
 								}}
 							></button>
 						</div>
 						<div class="modal-constructor modal-constructor-param">
-							{curentCollectionStep == 1 ? (
+							{false ? (
 								<>
 									<div class="title">Publish collection into blockchain</div>
 									<div class="desc">
@@ -1441,11 +1438,40 @@ function NftCollection() {
 									</div>
 								</>
 							) : null}
-							{curentCollectionStep == 2 ? (
+							{true ? (
 								<>
-									<div class="title">Mint some NFTs</div>
+									<div class="title">Collection Name</div>
 									<div class="desc">
-										Enter amount of starting NFTs to mint for yourself
+										NFT art creator’s main goal is to invent, and using NFTour
+										artists
+									</div>
+
+									<div style={{margin: "0px 0px 40px 0px"}} class="owner">
+										<div class="avatar">H</div>
+										<div class="text">
+											<span>Author</span>
+											{/* {owner} */}
+											Hellow World
+										</div>
+									</div>
+
+									<div class="desc">
+										<div class="title">Description</div>
+										Description
+										<div class="hide">Show full description </div>
+									</div>
+
+									<div style={{margin: "0px 0px 40px 0px"}} class="price">
+										<div class="subtitle">Mint Price</div>
+										<div class="near">
+											<span></span> <div class="price">10 NEAR</div>
+										</div>
+									</div>
+
+									<div style={{margin: "0px 0px 40px 0px"}} class="progress">
+										<div class="title">Minted</div>
+										<div class="bar"></div>
+										<span>34/100</span>
 									</div>
 
 									<div class="mint">
@@ -1489,17 +1515,10 @@ function NftCollection() {
 										Estimated fee ~ 8.00 NEAR (17,0070 USD)
 									</div>
 
-									<div
-										style={{opacity: "1", margin: "0px 0px 20px 0px"}}
-										class="desc"
-									>
-										You can choose not to mint NFTs of the collection. Minting
-										will be available later on the Collection Page at
-										Marketplace.
-									</div>
-
-									<button
-										className={"button-1-square button-arrow"}
+									{/* <button
+										className={
+											"button-1-square button-arrow"
+										}
 										onClick={() => {
 											localStorage.setItem("nft-collection-step", 3);
 											setCurentCollectionStep(3);
@@ -1508,10 +1527,10 @@ function NftCollection() {
 										// onClick={activeButtons[0] ? deployColectionNear : null}
 									>
 										Next
-									</button>
+									</button> */}
 								</>
 							) : null}
-							{curentCollectionStep == 3 ? (
+							{false ? (
 								<>
 									<div class="title">Open sales</div>
 									<div class="desc">
@@ -1544,101 +1563,8 @@ function NftCollection() {
 							) : null}
 						</div>
 						<div class="modal-constructor modal-constructor-collection">
-							<div class="steps steps-univ">
-								<div
-									// class="step step1 active"
-									className={
-										curentCollectionStep == 1
-											? "step step1 active"
-											: "step step1"
-									}
-									onClick={() => {
-										localStorage.setItem("nft-collection-step", 1);
-										setCurentCollectionStep(1);
-									}}
-								>
-									<div class="img"></div>
-									<div class="text">
-										<div class="name">Step 1</div>
-										<div class="desc">Publish collection</div>
-									</div>
-								</div>
-								<div class="line"></div>
-								<div
-									className={
-										curentCollectionStep == 2
-											? "step step2 active"
-											: "step step2"
-									}
-									onClick={() => {
-										localStorage.setItem("nft-collection-step", 2);
-										setCurentCollectionStep(2);
-									}}
-								>
-									<div class="img"></div>
-									<div class="text">
-										<div class="name">Step 2</div>
-										<div class="desc">Mint some NFTs</div>
-									</div>
-								</div>
-								<div class="line"></div>
-								<div
-									className={
-										curentCollectionStep == 3
-											? "step step3 active"
-											: "step step3"
-									}
-									onClick={() => {
-										localStorage.setItem("nft-collection-step", 3);
-										setCurentCollectionStep(3);
-									}}
-								>
-									<div class="img"></div>
-									<div class="text">
-										<div class="name">Step 3</div>
-										<div class="desc">Open sales</div>
-									</div>
-								</div>
-							</div>
-
-							<div class="collection-info">
-								<div class="info-1">
-									<div class="title">Collection Name</div>
-									<div class="text">{details.projectName}</div>
-									<div class="title">Description</div>
-									<div class="text">{details.projectDescription}</div>
-								</div>
-								<div class="info-2">
-									<div class="owner">
-										<div class="avatar">H</div>
-										<div class="text">
-											<span>Owner</span>
-											{owner}
-										</div>
-									</div>
-									<div class="price">
-										<div class="subtitle">Mint Price</div>
-										<div class="near">
-											<span></span> <div class="price">{price} NEAR</div>
-										</div>
-									</div>
-								</div>
-							</div>
-
-							<div class="button-4-square" onClick={exportToJson}>
-								<span></span>Save project
-							</div>
-
-							<div class="progress">
-								<div class="title">Collection generation process</div>
-								<div class="bar"></div>
-								<span>
-									{JSON.parse(localStorage.getItem("uniqFor")).length}/
-									{JSON.parse(localStorage.getItem("uniqFor")).length}
-								</span>
-							</div>
 							<div class="collection">
-								{collection.map((item, index) => {
+								{/* {collection.map((item, index) => {
 									console.log(collection, "123");
 									return (
 										<div
@@ -1661,114 +1587,35 @@ function NftCollection() {
 											</div>
 										</div>
 									);
-								})}
+								})} */}
 
-								{/* <div class="element">
-									<div class="img"></div>
-									<div class="nameCol">Untitled Coolection #1239239</div>
-									<div class="name">Roboto #2103</div>
-								</div> */}
+								<div className="element">
+									<div class="img">
+										<img src={""} />
+									</div>
+									<div class="nameCol">Collection Name</div>
+									<div class="name">NFT Name&nbsp; #0</div>
+								</div>
+
+								<div className="element">
+									<div class="img">
+										<img src={""} />
+									</div>
+									<div class="nameCol">Collection Name</div>
+									<div class="name">NFT Name&nbsp; #1</div>
+								</div>
+
+								<div className="element">
+									<div class="img">
+										<img src={""} />
+									</div>
+									<div class="nameCol">Collection Name</div>
+									<div class="name">NFT Name&nbsp; #2</div>
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-
-				{/* <div className="collection">
-					<div
-						className={errorModal.hidden === true ? "error-modal-img" : "hide"}
-					>
-						<button className="close" onClick={closeError}>
-							<span></span>
-							<span></span>
-						</button>
-						{errorModal.img ? <img src={errorModal.img}></img> : null}
-
-						<div className="message">{errorModal.message}</div>
-					</div>
-
-					<div className="title">Your Collection</div>
-					<div className="text">
-						NFT art creator’s main goal is to invent, and using NFTour artists
-					</div>
-
-
-					<div
-						className={
-							activeButtons[0]
-								? "button-1-square"
-								: "button-1-square button-1-square-disabled"
-						}
-						onClick={activeButtons[0] ? deployColectionNear : null}
-					>
-						Deploy Collection
-					</div>
-
-					
-
-					<div
-						className={
-							activeButtons[1]
-								? "button-1-square"
-								: "button-1-square button-1-square-disabled"
-						}
-						onClick={activeButtons[1] ? multTrans : null}
-					>
-						{loaderMult ? (
-							<div className="loader">
-								<div></div>
-								<div></div>
-								<div></div>
-							</div>
-						) : (
-							<span>Deploy NFT`s</span>
-						)}
-					</div>
-
-					
-
-					<div className="button-3-square" onClick={saveZip}>
-						Save As
-					</div>
-
-					<div className="nft-avatar">
-						<input
-							type="file"
-							id="input_avatar"
-							accept=".png,.jpg,.jpeg"
-							onChange={test}
-						/>
-
-						<div className="nft-img">
-							<img src={avatar} />
-							<label htmlFor="input_avatar" className="input-avatar-btn">
-								<span>1</span>
-							</label>
-						</div>
-
-						<div className="title">Collection avatar</div>
-					</div>
-
-					<div className="nft-collection">
-						{collection.map((item, index) => {
-							return (
-								<div
-									key={"uniqueId"+index}
-									className="nft-element"
-									onClick={() =>
-										setErrorModal({
-											hidden: true,
-											message: "",
-											img: item,
-										})
-									}
-								>
-									<img src={item} />
-									<div className="title">{collectionName[index]}</div>
-								</div>
-							);
-						})}
-					</div>
-				</div> */}
 
 				<Footer></Footer>
 			</div>
@@ -1776,4 +1623,4 @@ function NftCollection() {
 	);
 }
 
-export default NftCollection;
+export default PackPage;

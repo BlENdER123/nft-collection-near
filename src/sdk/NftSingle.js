@@ -143,7 +143,7 @@ function NftSingle() {
 			"https://archival-rpc.testnet.near.org",
 		);
 
-		let hashTrans = document.location.search.split("?transactionHashes=")[1];
+		let hashTrans = document.location.search.split("transactionHashes=")[1];
 		// let hashTrans = "H1Wh3Kf96NWE56HwGLnajVtQGB55rsXAgTTopHdWX72N";
 		if (hashTrans != undefined) {
 			console.log(hashTrans);

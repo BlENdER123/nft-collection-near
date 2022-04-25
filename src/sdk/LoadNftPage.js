@@ -254,6 +254,15 @@ function LoadNftPage() {
 			// setWidth(localStorage.getItem("width"));
 			// setHeight(localStorage.getItem("height"));
 
+			let tempActiveLayer = 0;
+
+			for (let i = 0; i < localClass.length; i++) {
+				if (localClass[i].active) {
+					tempActiveLayer = i;
+				}
+			}
+			setCurenLayer(tempActiveLayer);
+
 			localWidth = localStorage.getItem("width");
 			localHeight = localStorage.getItem("height");
 
@@ -300,7 +309,7 @@ function LoadNftPage() {
 
 	useEffect(async () => {
 		//deleting previous transactions
-		if (document.location.href.split("?transactionHashes=")[1]) {
+		if (document.location.href.split("transactionHashes=")[1]) {
 			let href = document.location.origin + document.location.hash;
 			document.location.href = href;
 		}
@@ -1517,6 +1526,7 @@ function LoadNftPage() {
 								<div className="imgs-list">
 									{classArr1.length > 0 &&
 										classArr1[curentLayer].imgs.map((item, index) => {
+											console.log(classArr1, curentLayer);
 											// console.log("WTFF", JSON.parse(JSON.stringify(classArr1)))
 											// console.log("WTF1",classArr1)
 											// console.log("WTF2",classArr1[curentLayer].url[index])

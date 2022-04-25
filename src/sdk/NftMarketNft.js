@@ -65,8 +65,8 @@ function NftMarketNft() {
 	const connectWallet = useSelector((state) => state.connectWallet);
 	const params = useParams();
 	console.log(params);
-	let addrCol = params.address.split("token")[0];
-	let token_id = params.address.split("token")[1];
+	let addrCol = params.address.split("!token!")[0];
+	let token_id = params.address.split("!token!")[1];
 	console.log(addrCol, token_id);
 	const [isFullDescription, setIsFullDescription] = useState(false);
 
@@ -359,7 +359,12 @@ function NftMarketNft() {
 						</div>
 					</div>
 					<div class="content">
-						<div class="title-col">Collection Name</div>
+						<div
+							class="title-col"
+							onClick={() => history.push("/pack/" + addrCol)}
+						>
+							Collection Name (static)
+						</div>
 						<div class="title-nft">
 							{nftInfo.name}
 							<span className="share">

@@ -45,7 +45,7 @@ const aes = new pidCrypt.AES.CBC();
 
 function ProfilePage() {
 	useEffect(() => {
-		if (document.location.href.split("?transactionHashes=")[1]) {
+		if (document.location.href.split("transactionHashes=")[1]) {
 			let href = document.location.origin + document.location.hash;
 			document.location.href = href;
 		}
@@ -919,9 +919,9 @@ function ProfilePage() {
 									</span> */}
 								</div>
 
-								<button class="btn-main" onClick={reloadNft}>
+								{/* <button class="btn-main" onClick={reloadNft}>
 									Reload
-								</button>
+								</button> */}
 
 								{/* <button onClick={()=>{
 									
@@ -949,20 +949,30 @@ function ProfilePage() {
 								) : (
 									nftSale.map((i) => {
 										return (
-											<div class="nft">
+											<div
+												class="nft"
+												onClick={() => {
+													history.push(
+														"/nft-details/" +
+															i.addrCol +
+															"#token#" +
+															i.token_id,
+													);
+												}}
+											>
 												<div class="nft-image">
 													<img src={i.image} />
 												</div>
 												<div class="nft-content">
 													<div class="name">{i.name}</div>
 													<div class="name-nft">{i.name}</div>
-													<a href="#/nft-details">View Details</a>
-													<button
+													{/* <a href="#/nft-details">View Details</a> */}
+													{/* <button
 														class="btn-main"
 														onClick={() => removeSale(i)}
 													>
 														Remove from sale
-													</button>
+													</button> */}
 												</div>
 											</div>
 										);
@@ -972,7 +982,7 @@ function ProfilePage() {
 							<div
 								className={activeCat == 1 ? "nft-category collect-nft" : "hide"}
 							>
-								<div className="deposit">
+								{/* <div className="deposit">
 									Your deposit is enough to store {depositSale.deposit} nft{" "}
 									<br />
 									You are currently selling {depositSale.sale} nft
@@ -990,14 +1000,24 @@ function ProfilePage() {
 									<button className="button-1-square" onClick={withdraw}>
 										Withdraw
 									</button>
-								</div>
+								</div> */}
 
 								{nftCol[0].image == "Null" ? (
 									<div class="null-nft">No NFT`s</div>
 								) : (
 									nftCol.map((i) => {
 										return (
-											<div class="nft">
+											<div
+												class="nft"
+												onClick={() => {
+													history.push(
+														"/nft-details/" +
+															i.addrCol +
+															"!token!" +
+															i.token_id,
+													);
+												}}
+											>
 												<div class="nft-image">
 													<img
 														src={i.image} // "https://gateway.pinata.cloud/ipfs/"
@@ -1006,8 +1026,8 @@ function ProfilePage() {
 												<div class="nft-content">
 													<div class="name">{i.name}</div>
 													<div class="name-nft">{i.name}</div>
-													<a href="#/nft-details">View Details</a>
-													{i.onSale ? (
+													{/* <a href="#/nft-details">View Details</a> */}
+													{/* {i.onSale ? (
 														<div class="onSale">On Sale</div>
 													) : (
 														<button
@@ -1026,7 +1046,7 @@ function ProfilePage() {
 														>
 															Sale
 														</button>
-													)}
+													)} */}
 												</div>
 											</div>
 										);
