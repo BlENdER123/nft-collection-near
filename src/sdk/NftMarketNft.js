@@ -311,7 +311,7 @@ function NftMarketNft() {
 	}
 
 	async function buyNft() {
-		await ContractMarket.offer(
+		const result = await ContractMarket.offer(
 			{
 				nft_contract_id: addrCol,
 				token_id: token_id,
@@ -319,6 +319,8 @@ function NftMarketNft() {
 			"300000000000000",
 			parseNearAmount(nftInfo.price.toString()),
 		);
+
+		console.log(result);
 	}
 
 	return (
@@ -405,7 +407,14 @@ function NftMarketNft() {
 								{nftInfo.price.toFixed(3)} NEAR
 							</div>
 							<div class="buttons">
-								<div class="button button-1-square" onClick={buyNft}>
+								<div
+									className={
+										nftInfo.owner == window.accountId
+											? "hide"
+											: "button button-1-square"
+									}
+									onClick={buyNft}
+								>
 									Buy now
 								</div>
 							</div>

@@ -23,7 +23,12 @@ import {NFTStorage} from "nft.storage";
 // const NFT_STORAGE_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGEwMTJGQWNhM0E5ZWQ0ZEI5MGY2ZmMzZUZFQTc1ZjBBMzZBNmE5MWUiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY1MDY2ODgzNjI1OCwibmFtZSI6Ik1hcmtldCJ9.sWJK68Mh8EIHUYusyqoB19mkAsP_KcwnBd7jqq7BZuU'
 // const client = new NFTStorage({ token: NFT_STORAGE_TOKEN });
 
-const {contractNft, nearConfig, contractRootNft} = require("./config.json");
+const {
+	contractNft,
+	nearConfig,
+	contractRootNft,
+	marketNft,
+} = require("./config.json");
 const {parseNearAmount} = require("near-api-js/lib/utils/format");
 
 const {connect, keyStores, WalletConnection} = nearAPI;
@@ -31,8 +36,6 @@ const {connect, keyStores, WalletConnection} = nearAPI;
 const keyStore = new keyStores.BrowserLocalStorageKeyStore();
 
 const sha256 = require("js-sha256");
-
-// console.log(config);
 
 const axios = require("axios");
 
@@ -50,7 +53,6 @@ Object.defineProperty(window, "indexedDB", {
 
 function NftCollection() {
 	let classArr = JSON.parse(localStorage.getItem("class"));
-	console.log(classArr);
 
 	// let localClass = arr;
 	// loading project from localStorage
@@ -69,11 +71,15 @@ function NftCollection() {
 
 	const [amountMintNft, setAmountMintNft] = useState(1);
 
+	const [depositSale, setDepositSale] = useState({
+		deposit: 0,
+		sale: 0,
+		avail: false,
+	});
+
 	var openRequest = window.indexedDB.open("imgsStore", 1);
 	// localClass = JSON.parse(localStorage.getItem("class"))
 	openRequest.onsuccess = async (event) => {
-		console.log(event);
-
 		let db = event.target.result;
 
 		let store = db.transaction("imgs").objectStore("imgs");
@@ -81,13 +87,10 @@ function NftCollection() {
 		for (let i = 0; i < classArr.length; i++) {
 			for (let j = 0; j < classArr[i].imgs.length; j++) {
 				store.get(classArr[i].imgs[j]).onsuccess = (event) => {
-					console.log(event.target.result);
 					classArr[i].url[j] = URL.createObjectURL(event.target.result);
 				};
 			}
 		}
-
-		console.log(classArr);
 	};
 
 	let realSizes = JSON.parse(localStorage.getItem("realSizes"));
@@ -116,8 +119,6 @@ function NftCollection() {
 
 		const files = await filesToFileList(collection);
 
-		//console.log("newnew file", files);
-
 		const directoryHashCID = await nft.storeDirectory(files);
 		console.log("NFTStorage CID Directory Hash", directoryHashCID);
 		// return await directoryHashCID;
@@ -143,7 +144,6 @@ function NftCollection() {
 		const mime = arr[0].match(/:(.*?);/)[1];
 		const fileExtension = mime.split("/");
 
-		//console.log("mime", fileExtension);
 		return await fetch(dataurl)
 			.then((res) => {
 				return res.blob();
@@ -165,58 +165,44 @@ function NftCollection() {
 				// 	classArr[i].width,
 				// 	classArr[i].height,
 				// );
-				console.log(realSizes[i].width[j]);
 				let res = await getResize(
 					// classArr[i].imgs[j],
 					classArr[i].url[j],
 					realSizes[i].width[j] * sizeIndex,
 					realSizes[i].height[j] * sizeIndex,
 				);
-				console.log(res);
 				tempArrImg.push(res);
 			}
 			tempArr.push(tempArrImg);
 		}
 
-		console.log(tempArr);
 		return tempArr;
 	}
 
 	function getResize(img, width, height) {
 		return new Promise((resolve, reject) => {
 			var image = new Image();
-			console.log(img);
 			image.src = img;
 			// image.src = getSrc(img);
-			// console.log(getSrc(img));
 
 			var canvas = document.createElement("canvas");
 			canvas.width = width;
 			canvas.height = height;
 
-			console.log(canvas);
-
 			var ctx = canvas.getContext("2d");
 			// ctx.drawImage(image, 0, 0, width, height);
-
-			// console.log(canvas);
 
 			image.setAttribute("crossorigin", "anonymous");
 
 			resolve(img);
 
 			image.onload = function () {
-				console.log(1);
-				console.log(image);
 				ctx.drawImage(image, 0, 0, width, height);
 
 				resolve(canvas.toDataURL("image/png"));
 			};
 
-			//console.log(canvas.toDataURL("image/png"));
-
 			// var dataURL = canvas.toDataURL("image/png");
-			// console.log(dataURL);
 			// return dataURL;
 		});
 	}
@@ -227,7 +213,6 @@ function NftCollection() {
 
 	// useEffect(()=>{
 	// 	let uniq = JSON.parse(sessionStorage.getItem("uniqFor"));
-	// 	console.log(uniq);
 	// },[]);
 
 	const downloadFile = ({data, fileName, fileType}) => {
@@ -264,8 +249,6 @@ function NftCollection() {
 				classArr: arrClass,
 			};
 
-			console.log(data);
-
 			e.preventDefault();
 			downloadFile({
 				data: JSON.stringify(data),
@@ -276,6 +259,110 @@ function NftCollection() {
 	};
 
 	useEffect(async () => {
+		console.log("UseEffect minted");
+
+		if (
+			sessionStorage.getItem("addrCol") !== undefined &&
+			sessionStorage.getItem("addrCol") !== null &&
+			sessionStorage.getItem("addrCol") !== ""
+		) {
+			let addr = sessionStorage.getItem("addrCol");
+
+			window.tempContract = await new nearAPI.Contract(
+				window.walletConnection.account(),
+				addr,
+				{
+					// View methods are read-only – they don't modify the state, but usually return some value
+					viewMethods: [
+						"nft_tokens",
+						"nft_supply_for_owner",
+						"nft_tokens_for_owner",
+						"nft_token",
+					],
+					// Change methods can modify the state, but you don't receive the returned value when called
+					// changeMethods: ["new"],
+					// Sender is the account ID to initialize transactions.
+					// getAccountId() will return empty string if user is still unauthorized
+					sender: window.walletConnection.getAccountId(),
+				},
+			);
+
+			// tempContract.nft_tokens({
+			// 	from_index: "0",
+			// 	limit: 50
+			// }).then((data)=>{
+			// 	console.log(data);
+			// });
+
+			tempContract
+				.nft_tokens_for_owner({
+					account_id: window.walletConnection.getAccountId(),
+				})
+				.then((data) => {
+					console.log(data);
+					let tempCollectionMinted = [];
+
+					for (let i = 0; i < data.length; i++) {
+						tempCollectionMinted.push({
+							img: "https://cloudflare-ipfs.com/ipfs/" + data[i].metadata.media,
+							name: data[i].metadata.title,
+							desc: data[i].metadata.description,
+							token_id: data[i].token_id,
+						});
+					}
+
+					console.log(tempCollectionMinted);
+
+					setCollectionMinted(tempCollectionMinted);
+				});
+		}
+
+		window.contractMarket = await new nearAPI.Contract(
+			window.walletConnection.account(),
+			marketNft,
+			{
+				// View methods are read-only – they don't modify the state, but usually return some value
+				viewMethods: ["get_sales_by_owner_id", "storage_balance_of"],
+				// Change methods can modify the state, but you don't receive the returned value when called
+				// Sender is the account ID to initialize transactions.
+				// getAccountId() will return empty string if user is still unauthorized
+				sender: window.walletConnection.getAccountId(),
+			},
+		);
+
+		contractMarket
+			.get_sales_by_owner_id({
+				account_id: window.walletConnection.getAccountId(),
+				from_index: "0",
+				limit: 100,
+			})
+			.then(async (sales) => {
+				contractMarket
+					.storage_balance_of({
+						account_id: window.walletConnection.getAccountId(),
+					})
+					.then((data) => {
+						if (sales.length < data / 10000000000000000000000) {
+							console.log(sales);
+							console.log(sales.length, data / 10000000000000000000000);
+							setDepositSale({
+								deposit: data / 10000000000000000000000,
+								sale: sales.length,
+								avail: true,
+							});
+						} else {
+							console.log(sales.length, data / 10000000000000000000000);
+							setDepositSale({
+								deposit: data / 10000000000000000000000,
+								sale: sales.length,
+								avail: false,
+							});
+						}
+					});
+			});
+	}, [collectionMinted]);
+
+	useEffect(async () => {
 		console.log("useEff1");
 		const {providers} = require("near-api-js");
 
@@ -284,7 +371,6 @@ function NftCollection() {
 		);
 
 		let uniqFor = JSON.parse(localStorage.getItem("uniqFor"));
-		// console.log(uniq);
 
 		// let classArr;
 
@@ -292,6 +378,82 @@ function NftCollection() {
 			setOwner(window.walletConnection.getAccountId());
 		} catch {
 			setOwner("Null");
+		}
+
+		let hashTrans = document.location.search.split("transactionHashes=")[1];
+		// let hashTrans = "H1Wh3Kf96NWE56HwGLnajVtQGB55rsXAgTTopHdWX72N";
+		if (hashTrans != undefined) {
+			console.log(hashTrans, "HASHTRANS");
+			async function hashLog() {
+				const result = await provider.txStatus(
+					hashTrans,
+					window.walletConnection.getAccountId(),
+				);
+
+				// const transDet = await connectNear();
+
+				// const response = await provider.txStatus(
+				// 	hashTrans,
+				// 	window.walletConnection.getAccountId()
+				// );
+
+				if (result.status.Failure == undefined) {
+					let event;
+					let token_id;
+					try {
+						event = JSON.parse(
+							result.receipts_outcome[0].outcome.logs[0].split(
+								"EVENT_JSON:",
+							)[1],
+						).event;
+						token_id = JSON.parse(
+							result.receipts_outcome[0].outcome.logs[0].split(
+								"EVENT_JSON:",
+							)[1],
+						).token_ids[0];
+					} catch {
+						event = result.transaction.actions[0].FunctionCall.method_name;
+					}
+
+					console.log(event);
+
+					if (event == "deploy_contract_code") {
+						setActiveButtons([false, true, false]);
+						return;
+					}
+					if (event == "new") {
+						setActiveButtons([false, false, true]);
+						// setErrorModal({
+						// 	hidden: true,
+						// 	message:
+						// 		"Collection successfully created, go to profile to view",
+						// 	img: "",
+						// });
+						setCurentCollectionStep(2);
+						localStorage.setItem("nft-collection-step", 2);
+						return;
+					}
+					if (event == "nft_mint" && token_id + 1 != collection.length) {
+						setActiveButtons([false, false, true]);
+						return;
+					}
+					if (event == "nft_mint") {
+						setActiveButtons([false, false, false]);
+						return;
+					}
+				} else {
+					// if(event=="new") {
+					// 	setActiveButtons([false,true,false]);
+					// 	return;
+					// }
+					return;
+				}
+			}
+			hashLog();
+		} else {
+			console.log("No transaction");
+			setActiveButtons([true, false, false]);
+			return;
 		}
 
 		let tempCollection = [];
@@ -302,21 +464,16 @@ function NftCollection() {
 			};
 			asyncFunction().then(async (res) => {
 				let tempArr = [];
-				console.log(res);
-				console.log(classArr.length);
 				for (let i = 0; i < classArr.length; i++) {
 					let temp = classArr[i];
 					temp.src = res[i];
 					tempArr.push(temp);
 				}
-				console.log(tempArr);
 				classArr = tempArr;
-
-				console.log(classArr);
 
 				for (let i = 0; i < uniqFor.length; i++) {
 					let tempCur = uniqFor[i].split(",");
-					// console.log(tempCur);
+					// (tempCur);
 					//alertM("Saved!");
 					let mergeArr = [];
 
@@ -348,105 +505,15 @@ function NftCollection() {
 						}
 					}
 
-					console.log(indexArr);
-					console.log(mergeArr);
-
 					await mergeImages(mergeArr, {
 						width: localStorage.getItem("width"),
 						height: localStorage.getItem("height"),
 					}).then((b64) => tempCollection.push(b64));
 				}
 
-				console.log(tempCollection);
-
 				setCollection(tempCollection);
-
-				let hashTrans = document.location.search.split("transactionHashes=")[1];
-				// let hashTrans = "H1Wh3Kf96NWE56HwGLnajVtQGB55rsXAgTTopHdWX72N";
-				if (hashTrans != undefined) {
-					console.log(hashTrans, "HASHTRANS");
-					async function hashLog() {
-						const result = await provider.txStatus(
-							hashTrans,
-							window.walletConnection.getAccountId(),
-						);
-
-						// const transDet = await connectNear();
-
-						// console.log(provider);
-
-						// const response = await provider.txStatus(
-						// 	hashTrans,
-						// 	window.walletConnection.getAccountId()
-						// );
-
-						if (result.status.Failure == undefined) {
-							console.log(result);
-							let event;
-							let token_id;
-							try {
-								event = JSON.parse(
-									result.receipts_outcome[0].outcome.logs[0].split(
-										"EVENT_JSON:",
-									)[1],
-								).event;
-								token_id = JSON.parse(
-									result.receipts_outcome[0].outcome.logs[0].split(
-										"EVENT_JSON:",
-									)[1],
-								).token_ids[0];
-							} catch {
-								event = result.transaction.actions[0].FunctionCall.method_name;
-							}
-
-							console.log(event);
-
-							if (event == "deploy_contract_code") {
-								setActiveButtons([false, true, false]);
-								console.log(1);
-								return;
-							}
-							if (event == "new") {
-								setActiveButtons([false, false, true]);
-								console.log(1);
-								// setErrorModal({
-								// 	hidden: true,
-								// 	message:
-								// 		"Collection successfully created, go to profile to view",
-								// 	img: "",
-								// });
-								return;
-							}
-							if (event == "nft_mint" && token_id + 1 != collection.length) {
-								setActiveButtons([false, false, true]);
-								console.log("dep");
-								return;
-							}
-							if (event == "nft_mint") {
-								setActiveButtons([false, false, false]);
-								console.log("complete");
-								return;
-							}
-						} else {
-							console.log("error");
-							// if(event=="new") {
-							// 	setActiveButtons([false,true,false]);
-							// 	return;
-							// }
-							return;
-						}
-					}
-					hashLog();
-				} else {
-					console.log("No transaction");
-					setActiveButtons([true, false, false]);
-					console.log("dep");
-					return;
-				}
 			});
 		}, 1000);
-
-		// console.log(classArr);
 	}, []);
 
 	let arr = JSON.parse(localStorage.getItem("collection"));
@@ -477,9 +544,8 @@ function NftCollection() {
 		price = "0";
 	}
 
-	console.log(arrName);
-
 	const [collection, setCollection] = useState([]);
+	const [collectionMinted, setCollectionMinted] = useState([]);
 	const [collectionName, setCollectionName] = useState(arrName);
 
 	const [errorModal, setErrorModal] = useState({
@@ -531,7 +597,6 @@ function NftCollection() {
 
 	if (!nearInit) {
 		window.nearInitPromise = connectNear().then(() => {
-			console.log(1);
 			setNearInit(true);
 		});
 	}
@@ -557,27 +622,18 @@ function NftCollection() {
 		const near = await connect(config);
 
 		let deployData = JSON.parse(localStorage.getItem("details"));
-		console.log(deployData);
 
 		const account = await near.account(walletConnection.getAccountId());
 
-		console.log(account);
-		console.log(walletConnection.isSignedIn());
-
 		const bal = await account.getAccountBalance();
-
-		console.log(bal);
 
 		// const res = await account.sendMoney(
 		// 	"radiance.testnet", // receiver account
 		// 	"100000000000000000000000" // amount in yoctoNEAR
 		//   );
 
-		// console.log(res);
-
 		// const response = await account.deployContract(fileBuffer);
 
-		// console.log(response);
 		// contract
 		// 	.new({
 		// 		owner_id: window.walletConnection.getAccountId(),
@@ -592,7 +648,6 @@ function NftCollection() {
 		// 		},
 		// 	})
 		// 	.then(async (data) => {
-		// 		console.log(data);
 
 		// 		for (let i = 0; i < collection.length; i++) {
 		// 			const url = collection[i];
@@ -617,7 +672,6 @@ function NftCollection() {
 		// 							},
 		// 						})
 		// 						.then(async function (response) {
-		// 							console.log(response.data.IpfsHash);
 
 		// 							contract
 		// 								.nft_mint(
@@ -636,7 +690,6 @@ function NftCollection() {
 		// 									"7490000000000000000000",
 		// 								)
 		// 								.then((data) => {
-		// 									console.log(data);
 		// 								});
 
 		// 						})
@@ -665,7 +718,6 @@ function NftCollection() {
 		// save avatar to IPFS
 
 		// if (avatar == undefined || avatar == "") {
-		// 	console.log("Enter avatar");
 		// 	return;
 		// }
 
@@ -690,7 +742,6 @@ function NftCollection() {
 		// 				},
 		// 			})
 		// 			.then(async function (response) {
-		// 				console.log(response.data.IpfsHash);
 		// 				//deploy Collection
 		// 				try {
 		// 					const {body} = await client.abi.encode_message_body({
@@ -714,9 +765,7 @@ function NftCollection() {
 		// 						flags: 3,
 		// 						payload: body,
 		// 					});
-		// 					console.log(res);
 		// 				} catch (e) {
-		// 					console.log(e);
 		// 				}
 		// 			})
 		// 			.catch(function (error) {
@@ -724,20 +773,14 @@ function NftCollection() {
 		// 			});
 		// 	});
 
-		// console.log(1);
-
 		// let idLastCol;
 
 		// try {
 		// 	const response = await acc.runLocal("getInfo", {});
 		// 	let value0 = response;
 		// 	idLastCol = response.decoded.output.countColections - 1;
-		// 	console.log("value0", value0);
 		// } catch (e) {
-		// 	console.log("catch E", e);
 		// }
-
-		// console.log(idLastCol);
 
 		// let nftRoot;
 
@@ -748,12 +791,8 @@ function NftCollection() {
 		// 	});
 		// 	let value0 = response;
 		// 	nftRoot = response.decoded.output.addrNftRoot;
-		// 	console.log("value0", value0);
 		// } catch (e) {
-		// 	console.log("catch E", e);
 		// }
-
-		// console.log(nftRoot);
 
 		// const acc1 = new Account(NftRootColectionContract, {
 		// 	address: nftRoot,
@@ -764,12 +803,174 @@ function NftCollection() {
 		// save imgs to IPFS
 	}
 
+	async function depositAll() {
+		window.contractMarket = await new nearAPI.Contract(
+			window.walletConnection.account(),
+			marketNft,
+			{
+				// View methods are read-only – they don't modify the state, but usually return some value
+				viewMethods: ["storage_minimum_balance", "storage_balance_of"],
+				// Change methods can modify the state, but you don't receive the returned value when called
+				changeMethods: ["storage_deposit"],
+				// Sender is the account ID to initialize transactions.
+				// getAccountId() will return empty string if user is still unauthorized
+				sender: window.walletConnection.getAccountId(),
+			},
+		);
+
+		// contractMarket.storage_balance_of({account_id: window.walletConnection.getAccountId()}).then((data)=> {
+		// 	console.log(data);
+		// })
+
+		contractMarket
+			.storage_minimum_balance()
+			.then(async (data) => {
+				console.log(collectionMinted.length);
+
+				let deposit = data * collectionMinted.length;
+				console.log(
+					deposit.toLocaleString("fullwide", {useGrouping: false}).toString(),
+				);
+
+				contractMarket
+					.storage_deposit(
+						{},
+						"30000000000000",
+						deposit.toLocaleString("fullwide", {useGrouping: false}).toString(),
+					)
+					.catch((err) => {
+						console.log(err);
+					});
+			})
+			.catch(() => {
+				alert("Connect Wallet");
+			});
+	}
+
+	async function saleAllNft() {
+		// const acc = await near.account(addr);
+
+		let pubKey = JSON.parse(keyStore.localStorage.undefined_wallet_auth_key)
+			.allKeys[0];
+
+		let status = await near.connection.provider.status();
+
+		const accessKey = await near.connection.provider.query(
+			`access_key/${window.walletConnection.getAccountId()}/${pubKey.toString()}`,
+			"",
+		);
+
+		const nonce = ++accessKey.nonce;
+
+		const recentBlockHash = nearAPI.utils.serialize.base_decode(
+			accessKey.block_hash,
+		);
+
+		let deployData = JSON.parse(localStorage.getItem("details"));
+
+		let actionsTrans = [];
+
+		for (let i = 0; i < collectionMinted.length; i++) {
+			actionsTrans.push(
+				nearAPI.transactions.functionCall(
+					"nft_approve",
+					{
+						token_id: collectionMinted[i].token_id,
+						account_id: marketNft,
+						msg: JSON.stringify({
+							sale_conditions: parseNearAmount("1"),
+						}),
+					},
+					"30000000000000",
+					parseNearAmount("0.01"),
+				),
+			);
+		}
+
+		const transaction = nearAPI.transactions.createTransaction(
+			walletConnection.getAccountId(),
+			nearAPI.utils.key_pair.PublicKey.fromString(pubKey),
+			sessionStorage.getItem("addrCol"),
+			nonce,
+			actionsTrans,
+			recentBlockHash,
+		);
+
+		try {
+			const result = await walletConnection.requestSignTransactions([
+				transaction,
+			]);
+		} catch {
+			setErrorModal({
+				hidden: true,
+				message: "Connect Wallet",
+				img: "",
+			});
+		}
+
+		// window.contractSale = await new nearAPI.Contract(
+		// 	window.walletConnection.account(),
+		// 	nft.addrCol,
+		// 	{
+		// 		// View methods are read-only – they don't modify the state, but usually return some value
+		// 		// viewMethods: ['get_num'],
+		// 		// Change methods can modify the state, but you don't receive the returned value when called
+		// 		changeMethods: ["nft_approve"],
+		// 		// Sender is the account ID to initialize transactions.
+		// 		// getAccountId() will return empty string if user is still unauthorized
+		// 		sender: window.walletConnection.getAccountId(),
+		// 	},
+		// );
+
+		// window.contractMarket = await new nearAPI.Contract(
+		// 	window.walletConnection.account(),
+		// 	marketNft,
+		// 	{
+		// 		// View methods are read-only – they don't modify the state, but usually return some value
+		// 		viewMethods: [
+		// 			"storage_minimum_balance",
+		// 			"get_sale",
+		// 			"get_sales_by_owner_id",
+		// 		],
+		// 		// Change methods can modify the state, but you don't receive the returned value when called
+		// 		changeMethods: ["storage_deposit"],
+		// 		// Sender is the account ID to initialize transactions.
+		// 		// getAccountId() will return empty string if user is still unauthorized
+		// 		sender: window.walletConnection.getAccountId(),
+		// 	},
+		// );
+
+		// contractMarket
+		// 	.get_sales_by_owner_id({
+		// 		account_id: window.walletConnection.getAccountId(),
+		// 		from_index: "0",
+		// 		limit: 50,
+		// 	})
+		// 	.then((data) => {
+		// 		console.log(data);
+		// 	});
+
+		// contractSale
+		// 	.nft_approve(
+		// 		{
+		// 			token_id: nft.token_id,
+		// 			account_id: marketNft,
+		// 			msg: JSON.stringify({
+		// 				sale_conditions: parseNearAmount(salePrice),
+		// 			}),
+		// 		},
+		// 		"30000000000000",
+		// 		parseNearAmount("0.01"),
+		// 	)
+		// 	.catch((err) => {
+		// 		alert("Connect Wallet");
+		// 	});
+	}
+
 	async function multTrans() {
 		setActiveButtons([false, false, false]);
 
 		setLoaderMult(true);
-
-		console.log(1);
 
 		let addr = sessionStorage.getItem("addrCol");
 
@@ -777,20 +978,13 @@ function NftCollection() {
 
 		let hash_folder = uploadToNFTStore();
 
-		console.log(hash_folder);
-
 		hash_folder.then(async (res) => {
-			console.log(res);
-
 			const acc = await near.account(addr);
 
 			let pubKey = JSON.parse(keyStore.localStorage.undefined_wallet_auth_key)
 				.allKeys[0];
 
-			console.log(near);
-
 			let status = await near.connection.provider.status();
-			console.log(status);
 
 			const accessKey = await near.connection.provider.query(
 				`access_key/${window.walletConnection.getAccountId()}/${pubKey.toString()}`,
@@ -799,15 +993,9 @@ function NftCollection() {
 
 			const nonce = ++accessKey.nonce;
 
-			console.log(nonce, accessKey);
-
 			const recentBlockHash = nearAPI.utils.serialize.base_decode(
 				accessKey.block_hash,
 			);
-
-			console.log(recentBlockHash);
-
-			console.log(nearAPI.utils.key_pair.PublicKey.fromString(pubKey));
 
 			let deployData = JSON.parse(localStorage.getItem("details"));
 
@@ -851,8 +1039,6 @@ function NftCollection() {
 				),
 			);
 
-			console.log(actionsTrans);
-
 			const transaction = nearAPI.transactions.createTransaction(
 				walletConnection.getAccountId(),
 				nearAPI.utils.key_pair.PublicKey.fromString(pubKey),
@@ -862,14 +1048,10 @@ function NftCollection() {
 				recentBlockHash,
 			);
 
-			console.log(transaction);
-
 			try {
 				const result = await walletConnection.requestSignTransactions([
 					transaction,
 				]);
-
-				console.log(result);
 			} catch {
 				setErrorModal({
 					hidden: true,
@@ -932,7 +1114,6 @@ function NftCollection() {
 		// 					},
 		// 				})
 		// 				.then(async function (response) {
-		// 					console.log(response.data.IpfsHash);
 
 		// 					actionsTrans.push(
 		// 						nearAPI.transactions.functionCall(
@@ -968,7 +1149,6 @@ function NftCollection() {
 		// 					// 		"7490000000000000000000",
 		// 					// 	)
 		// 					// 	.then((data) => {
-		// 					// 		console.log(data);
 		// 					// 	});
 		// 				})
 		// 				.catch(function (error) {
@@ -976,8 +1156,6 @@ function NftCollection() {
 		// 				});
 		// 		});
 		// }
-
-		// console.log(nearAPI.sha256("123"));
 
 		// const serTx = nearAPI.utils.serialize.serialize(
 		// 	nearAPI.transactions.SCHEMA,
@@ -989,10 +1167,8 @@ function NftCollection() {
 		// const signature = keyPair.sign(serializedTxHash);
 
 		// const bytes = transaction.encode();
-		// console.log(bytes);
 
 		// const msg = new Uint8Array(sha256.sha256.array(bytes));
-		// console.log(msg);
 
 		// const signature = await signer.signMessage(msg,window.walletConnection.getAccountId(), "default");
 
@@ -1000,15 +1176,9 @@ function NftCollection() {
 		// 	transaction,
 		// 	signature: new Signature(signature.signature),
 		// })
-
-		// console.log(signedTx);
-
-		// console.log(nearAPI.transactions.createTransaction);
 	}
 
 	async function deployColectionNear() {
-		console.log(1);
-
 		let length = 20;
 		let result = "";
 		let characters = "abcdefghijklmnopqrstuvwxyz0123456789";
@@ -1016,13 +1186,10 @@ function NftCollection() {
 		for (var i = 0; i < length; i++) {
 			result += characters.charAt(Math.floor(Math.random() * charactersLength));
 		}
-		console.log(result + contractRootNft);
 
 		sessionStorage.setItem("addrCol", result + "." + contractRootNft);
 
 		sessionStorage.setItem("curentAction", "deploy");
-
-		// console.log(sessionStorage.getItem("collection"));
 
 		contractRoot
 			.deploy_contract_code(
@@ -1054,98 +1221,116 @@ function NftCollection() {
 	async function mint_nft(amount) {
 		let addr = sessionStorage.getItem("addrCol");
 
-		const acc = await near.account(addr);
-
-		let pubKey = JSON.parse(keyStore.localStorage.undefined_wallet_auth_key)
-			.allKeys[0];
-
-		console.log(near);
-
-		let status = await near.connection.provider.status();
-		console.log(status);
-
-		const accessKey = await near.connection.provider.query(
-			`access_key/${window.walletConnection.getAccountId()}/${pubKey.toString()}`,
-			"",
+		window.tempContract = await new nearAPI.Contract(
+			window.walletConnection.account(),
+			addr,
+			{
+				// View methods are read-only – they don't modify the state, but usually return some value
+				viewMethods: ["nft_mint_price", "nft_remaining_count"],
+				// Change methods can modify the state, but you don't receive the returned value when called
+				// changeMethods: ["new"],
+				// Sender is the account ID to initialize transactions.
+				// getAccountId() will return empty string if user is still unauthorized
+				sender: window.walletConnection.getAccountId(),
+			},
 		);
 
-		const nonce = ++accessKey.nonce;
+		tempContract.nft_mint_price({}).then(async (mintPrice) => {
+			console.log(mintPrice);
+			const acc = await near.account(addr);
 
-		console.log(nonce, accessKey);
+			let pubKey = JSON.parse(keyStore.localStorage.undefined_wallet_auth_key)
+				.allKeys[0];
 
-		const recentBlockHash = nearAPI.utils.serialize.base_decode(
-			accessKey.block_hash,
-		);
+			let status = await near.connection.provider.status();
 
-		console.log(recentBlockHash);
+			const accessKey = await near.connection.provider.query(
+				`access_key/${window.walletConnection.getAccountId()}/${pubKey.toString()}`,
+				"",
+			);
 
-		console.log(nearAPI.utils.key_pair.PublicKey.fromString(pubKey));
+			const nonce = ++accessKey.nonce;
 
-		let deployData = JSON.parse(localStorage.getItem("details"));
+			const recentBlockHash = nearAPI.utils.serialize.base_decode(
+				accessKey.block_hash,
+			);
 
-		let actionsTrans = [];
+			let deployData = JSON.parse(localStorage.getItem("details"));
 
-		for (let i = 0; i < amount; i++) {
-			let length = 7;
-			let result = "";
-			let characters = "abcdefghijklmnopqrstuvwxyz0123456789";
-			let charactersLength = characters.length;
+			let actionsTrans = [];
 
-			let tempGas = "300000000000000" / amount;
+			// console.log(mintPrice,parseNearAmount(2));
 
-			// if(i==amount) {
-			// 	tempGas = "300000000000000";
-			// }
+			// console.log(parseNearAmount(2)+1);
 
-			for (let j = 0; j < length; j++) {
-				result += characters.charAt(
-					Math.floor(Math.random() * charactersLength),
+			let endPrice = parseInt(mintPrice) + parseInt(parseNearAmount("0.1")); // TODO Не расчитывается колчиество газа для совершение транзакции
+
+			console.log(
+				endPrice.toLocaleString("fullwide", {useGrouping: false}).toString(),
+			);
+
+			for (let i = 0; i < amount; i++) {
+				let length = 7;
+				let result = "";
+				let characters = "abcdefghijklmnopqrstuvwxyz0123456789";
+				let charactersLength = characters.length;
+
+				let tempGas = "300000000000000" / amount;
+
+				// if(i==amount) {
+				// 	tempGas = "300000000000000";
+				// }
+
+				for (let j = 0; j < length; j++) {
+					result += characters.charAt(
+						Math.floor(Math.random() * charactersLength),
+					);
+				}
+
+				actionsTrans.push(
+					nearAPI.transactions.functionCall(
+						"nft_mint",
+						{
+							token_id: "token-" + result,
+							receiver_id: walletConnection.getAccountId(),
+						},
+						tempGas,
+						endPrice
+							.toLocaleString("fullwide", {useGrouping: false})
+							.toString(),
+					),
 				);
 			}
 
-			actionsTrans.push(
-				nearAPI.transactions.functionCall(
-					"nft_mint",
-					{
-						token_id: "token-" + result,
-						receiver_id: walletConnection.getAccountId(),
-					},
-					tempGas,
-					parseNearAmount("2"),
-				),
+			const transaction = nearAPI.transactions.createTransaction(
+				walletConnection.getAccountId(),
+				nearAPI.utils.key_pair.PublicKey.fromString(pubKey),
+				addr,
+				nonce,
+				actionsTrans,
+				recentBlockHash,
 			);
-		}
 
-		console.log(actionsTrans);
+			try {
+				const result = await walletConnection.requestSignTransactions([
+					transaction,
+				]);
+			} catch (err) {
+				setErrorModal({
+					hidden: true,
+					message: "Connect Wallet",
+					img: "",
+				});
+				console.log(err);
+			}
+		});
 
-		const transaction = nearAPI.transactions.createTransaction(
-			walletConnection.getAccountId(),
-			nearAPI.utils.key_pair.PublicKey.fromString(pubKey),
-			addr,
-			nonce,
-			actionsTrans,
-			recentBlockHash,
-		);
-
-		console.log(transaction);
-
-		try {
-			const result = await walletConnection.requestSignTransactions([
-				transaction,
-			]);
-
-			console.log(result);
-		} catch {
-			setErrorModal({
-				hidden: true,
-				message: "Connect Wallet",
-				img: "",
-			});
-		}
+		tempContract.nft_remaining_count({}).then((data) => {
+			console.log(data);
+		});
 	}
 
 	async function initCollection() {
-		console.log(2);
 		let addr = sessionStorage.getItem("addrCol");
 
 		window.contractCollection = await new nearAPI.Contract(
@@ -1186,8 +1371,6 @@ function NftCollection() {
 	}
 
 	async function deployNft(nft) {
-		console.log(nft);
-
 		let addr = sessionStorage.getItem("addrCol");
 
 		window.contractCollection = await new nearAPI.Contract(
@@ -1211,8 +1394,6 @@ function NftCollection() {
 		}
 
 		let deployData = JSON.parse(localStorage.getItem("details"));
-
-		// console.log(nft[1]+1, collection.length);
 
 		const pinataKey = "0a2ed9f679a6c395f311";
 		const pinataSecretKey =
@@ -1240,8 +1421,6 @@ function NftCollection() {
 						},
 					})
 					.then(async function (response) {
-						console.log(response.data.IpfsHash);
-
 						contractCollection
 							.nft_mint(
 								{
@@ -1268,7 +1447,6 @@ function NftCollection() {
 	}
 
 	function closeError() {
-		console.log(1);
 		setErrorModal({
 			hidden: false,
 			message: "",
@@ -1281,28 +1459,22 @@ function NftCollection() {
 		// var img = zip.folder("images");
 
 		for (let i = 0; i < collection.length; i++) {
-			console.log(collectionName[i]);
 			const url = collection[i];
 			await fetch(url)
 				.then((res) => res.blob())
 				.then((blob) => {
 					const file = new File([blob], "File name", {type: "image/png"});
 
-					console.log(file);
-
 					zip.file(collectionName[i] + ".png", file, {base64: true});
 
 					// let data = new FormData();
 
 					// data.append("file", file);
-
-					// console.log(data);
 				});
 		}
 
 		zip.generateAsync({type: "blob"}).then(function (content) {
 			// see FileSaver.js
-			console.log(URL.createObjectURL(content));
 
 			var link = document.createElement("a");
 
@@ -1312,8 +1484,6 @@ function NftCollection() {
 
 			link.href = URL.createObjectURL(content);
 			link.download = "collection.zip";
-
-			console.log(link.click());
 
 			link.click();
 			return false;
@@ -1341,7 +1511,6 @@ function NftCollection() {
 
 	function close() {
 		dispatch({type: "closeConnect"});
-		console.log(connectWallet);
 	}
 
 	return (
@@ -1411,7 +1580,7 @@ function NftCollection() {
 										style={{margin: "0px 0px 10px 0px"}}
 										onClick={activeButtons[0] ? deployColectionNear : null}
 									>
-										Publish Collection
+										I. Initialize Collection
 									</button>
 
 									<button
@@ -1430,7 +1599,7 @@ function NftCollection() {
 											</div>
 										) : (
 											<span>
-												Deploy All NFTs (
+												II. Publish Collection (
 												{JSON.parse(localStorage.getItem("uniqFor")).length})
 											</span>
 										)}
@@ -1518,11 +1687,30 @@ function NftCollection() {
 										Put all your new NFTs on sale at Marketplace
 									</div>
 
-									<button className="button-3-square">
+									<button
+										onClick={saleAllNft}
+										className={depositSale.avail ? "button-3-square" : "hide"}
+									>
 										Sale <span>(1 NFT’s)</span>{" "}
 									</button>
-									<div style={{textAlign: "center"}} class="desc">
+									<div
+										style={{textAlign: "center"}}
+										className={depositSale.avail ? "desc" : "hide"}
+									>
 										Estimated fee ~ 8.00 NEAR (17,0070 USD)
+									</div>
+
+									<button
+										onClick={depositAll}
+										className={depositSale.avail ? "hide" : "button-1-square"}
+									>
+										Deposit Funds <span>(3.00 NEAR)</span>{" "}
+									</button>
+									<div
+										style={{textAlign: "center"}}
+										className={depositSale.avail ? "hide" : "desc"}
+									>
+										No enough funds to sale: 3.00 NEAR
 									</div>
 
 									<div
@@ -1637,9 +1825,10 @@ function NftCollection() {
 									{JSON.parse(localStorage.getItem("uniqFor")).length}
 								</span>
 							</div>
-							<div class="collection">
+							<div
+								className={curentCollectionStep == 1 ? "collection" : "hide"}
+							>
 								{collection.map((item, index) => {
-									console.log(collection, "123");
 									return (
 										<div
 											key={"uniqueId" + index}
@@ -1662,12 +1851,30 @@ function NftCollection() {
 										</div>
 									);
 								})}
+							</div>
 
-								{/* <div class="element">
-									<div class="img"></div>
-									<div class="nameCol">Untitled Coolection #1239239</div>
-									<div class="name">Roboto #2103</div>
-								</div> */}
+							<div className={curentCollectionStep > 1 ? "collection" : "hide"}>
+								{collectionMinted.map((item, index) => {
+									return (
+										<div
+											key={"uniqueId" + index}
+											className="element"
+											// onClick={() =>
+											// 	setErrorModal({
+											// 		hidden: true,
+											// 		message: "",
+											// 		img: item,
+											// 	})
+											// }
+										>
+											<div class="img">
+												<img src={item.img} />
+											</div>
+											<div class="nameCol">{item.desc}</div>
+											<div class="name">{item.name}</div>
+										</div>
+									);
+								})}
 							</div>
 						</div>
 					</div>

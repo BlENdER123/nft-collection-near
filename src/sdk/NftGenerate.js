@@ -31,6 +31,13 @@ function NftCustomization() {
 			let href = document.location.origin + document.location.hash;
 			document.location.href = href;
 		}
+		if (
+			localStorage.getItem("colPrice") !== undefined &&
+			localStorage.getItem("colPrice") !== null
+		) {
+			setColPrice(localStorage.getItem("colPrice"));
+			// console.log(colPrice, localStorage.getItem("colPrice"));
+		}
 	}, []);
 
 	let realSizes = JSON.parse(localStorage.getItem("realSizes"));
@@ -344,7 +351,7 @@ function NftCustomization() {
 		let combinations = 1;
 
 		console.log(colPrice);
-		if (colPrice == undefined || colPrice == null || colPrice <= 0) {
+		if (colPrice == undefined || colPrice == null || colPrice < 0) {
 			// setErrorModal({
 			// 	hidden: true,
 			// 	message: "Set Mint Price",
@@ -549,7 +556,7 @@ function NftCustomization() {
 	}
 
 	function changeError(input, value) {
-		if (value == "" || value <= 0 || value == undefined || value == null) {
+		if (value == "" || value < 0 || value == undefined || value == null) {
 			setErrorInput(input);
 			setColPrice(0);
 		} else {
@@ -728,6 +735,7 @@ function NftCustomization() {
 									type="number"
 									min="0"
 									className={errorInput == "colPrice" ? "inputErr" : ""}
+									value={colPrice}
 									onChange={(event) =>
 										changeError("colPrice", event.target.value)
 									}

@@ -1568,7 +1568,8 @@ function LoadNftPage() {
 									<span className="input__file-icon-wrapper"></span>
 									<span className="input__file-text">Browse Image</span>
 									<span className="input__file-text2">
-										(image/png, image/jpg, image/jpeg)
+										(image/png, image/jpg, image/jpeg) <br />
+										You can select multiple images at once
 									</span>
 								</label>
 								{/* <input className="text" type="file" onChange={(ev) => download(ev.target)}/> */}

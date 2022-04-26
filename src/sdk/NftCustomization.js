@@ -1030,12 +1030,14 @@ function NftCustomization() {
 												<input
 													type="text"
 													placeholder="X:50"
+													value={item.x}
 													onChange={(event) => setX(item, event)}
 												/>
 
 												<input
 													type="text"
 													placeholder="Y:50"
+													value={item.y}
 													onChange={(event) => setY(item, event)}
 												/>
 											</div>
@@ -1052,7 +1054,7 @@ function NftCustomization() {
 															: setZ(item, "-");
 													}}
 												>
-													Layer Up
+													Move to Front
 												</div>
 												<div
 													className={
@@ -1062,7 +1064,7 @@ function NftCustomization() {
 														curentLayer == 0 ? null : setZ(item, "+");
 													}}
 												>
-													Layer Down
+													Move to Back
 												</div>
 											</div>
 											{/* <div className="setting">
