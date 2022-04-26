@@ -194,7 +194,7 @@ function NftCollection() {
 
 			image.setAttribute("crossorigin", "anonymous");
 
-			resolve(img);
+			// ?resolve(img);
 
 			image.onload = function () {
 				ctx.drawImage(image, 0, 0, width, height);
@@ -359,6 +359,9 @@ function NftCollection() {
 							});
 						}
 					});
+			})
+			.catch((err) => {
+				console.log("err");
 			});
 	}, [collectionMinted]);
 
@@ -419,9 +422,8 @@ function NftCollection() {
 
 					if (event == "deploy_contract_code") {
 						setActiveButtons([false, true, false]);
-						return;
-					}
-					if (event == "new") {
+						// return;
+					} else if (event == "new") {
 						setActiveButtons([false, false, true]);
 						// setErrorModal({
 						// 	hidden: true,
@@ -431,29 +433,27 @@ function NftCollection() {
 						// });
 						setCurentCollectionStep(2);
 						localStorage.setItem("nft-collection-step", 2);
-						return;
-					}
-					if (event == "nft_mint" && token_id + 1 != collection.length) {
+						// return;
+					} else if (event == "nft_mint" && token_id + 1 != collection.length) {
 						setActiveButtons([false, false, true]);
-						return;
-					}
-					if (event == "nft_mint") {
+						// return;
+					} else if (event == "nft_mint") {
 						setActiveButtons([false, false, false]);
-						return;
+						// return;
 					}
 				} else {
 					// if(event=="new") {
 					// 	setActiveButtons([false,true,false]);
 					// 	return;
 					// }
-					return;
+					// return;
 				}
 			}
 			hashLog();
 		} else {
 			console.log("No transaction");
 			setActiveButtons([true, false, false]);
-			return;
+			// return;
 		}
 
 		let tempCollection = [];
