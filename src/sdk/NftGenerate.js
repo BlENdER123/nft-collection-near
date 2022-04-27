@@ -928,7 +928,12 @@ function NftCustomization() {
 						</div>
 
 						<div className="modal-constructor modal-constructor-elements">
-							<div className="import opacity">Import Project</div>
+							{/* <div className="import opacity">Import Project</div> */}
+							<div class="import-buttons">
+								<div class="new"></div>
+								<div class="import"></div>
+								<div class="save"></div>
+							</div>
 							<div className="title">
 								Elements{" "}
 								<span

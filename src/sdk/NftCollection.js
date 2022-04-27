@@ -840,10 +840,11 @@ function NftCollection() {
 					)
 					.catch((err) => {
 						console.log(err);
+						walletAccount.requestSignIn("", "Title");
 					});
 			})
 			.catch(() => {
-				alert("Connect Wallet");
+				walletAccount.requestSignIn("", "Title");
 			});
 	}
 
@@ -901,11 +902,7 @@ function NftCollection() {
 				transaction,
 			]);
 		} catch {
-			setErrorModal({
-				hidden: true,
-				message: "Connect Wallet",
-				img: "",
-			});
+			walletAccount.requestSignIn("", "Title");
 		}
 
 		// window.contractSale = await new nearAPI.Contract(
@@ -1200,11 +1197,13 @@ function NftCollection() {
 				"7490000000000000000000000",
 			)
 			.catch((err) => {
-				setErrorModal({
-					hidden: true,
-					message: "Connect Wallet",
-					img: "",
-				});
+				// setErrorModal({
+				// 	hidden: true,
+				// 	message: "Connect Wallet",
+				// 	img: "",
+				// });
+				console.log(err);
+				walletAccount.requestSignIn("", "Title");
 			});
 
 		// let functionCallResult = await walletConnection.account().functionCall({
@@ -1235,99 +1234,107 @@ function NftCollection() {
 			},
 		);
 
-		tempContract.nft_mint_price({}).then(async (mintPrice) => {
-			console.log(mintPrice);
-			const acc = await near.account(addr);
+		tempContract
+			.nft_mint_price({})
+			.then(async (mintPrice) => {
+				console.log(mintPrice);
+				const acc = await near.account(addr);
 
-			let pubKey = JSON.parse(keyStore.localStorage.undefined_wallet_auth_key)
-				.allKeys[0];
+				let pubKey = JSON.parse(keyStore.localStorage.undefined_wallet_auth_key)
+					.allKeys[0];
 
-			let status = await near.connection.provider.status();
+				let status = await near.connection.provider.status();
 
-			const accessKey = await near.connection.provider.query(
-				`access_key/${window.walletConnection.getAccountId()}/${pubKey.toString()}`,
-				"",
-			);
+				const accessKey = await near.connection.provider.query(
+					`access_key/${window.walletConnection.getAccountId()}/${pubKey.toString()}`,
+					"",
+				);
 
-			const nonce = ++accessKey.nonce;
+				const nonce = ++accessKey.nonce;
 
-			const recentBlockHash = nearAPI.utils.serialize.base_decode(
-				accessKey.block_hash,
-			);
+				const recentBlockHash = nearAPI.utils.serialize.base_decode(
+					accessKey.block_hash,
+				);
 
-			let deployData = JSON.parse(localStorage.getItem("details"));
+				let deployData = JSON.parse(localStorage.getItem("details"));
 
-			let actionsTrans = [];
+				let actionsTrans = [];
 
-			// console.log(mintPrice,parseNearAmount(2));
+				// console.log(mintPrice,parseNearAmount(2));
 
-			// console.log(parseNearAmount(2)+1);
+				// console.log(parseNearAmount(2)+1);
 
-			let endPrice = parseInt(mintPrice) + parseInt(parseNearAmount("0.1")); // TODO Не расчитывается колчиество газа для совершение транзакции
+				let endPrice = parseInt(mintPrice) + parseInt(parseNearAmount("0.1")); // TODO Не расчитывается колчиество газа для совершение транзакции
 
-			console.log(
-				endPrice.toLocaleString("fullwide", {useGrouping: false}).toString(),
-			);
+				console.log(
+					endPrice.toLocaleString("fullwide", {useGrouping: false}).toString(),
+				);
 
-			for (let i = 0; i < amount; i++) {
-				let length = 7;
-				let result = "";
-				let characters = "abcdefghijklmnopqrstuvwxyz0123456789";
-				let charactersLength = characters.length;
+				for (let i = 0; i < amount; i++) {
+					let length = 7;
+					let result = "";
+					let characters = "abcdefghijklmnopqrstuvwxyz0123456789";
+					let charactersLength = characters.length;
 
-				let tempGas = "300000000000000" / amount;
+					let tempGas = "300000000000000" / amount;
 
-				// if(i==amount) {
-				// 	tempGas = "300000000000000";
-				// }
+					// if(i==amount) {
+					// 	tempGas = "300000000000000";
+					// }
 
-				for (let j = 0; j < length; j++) {
-					result += characters.charAt(
-						Math.floor(Math.random() * charactersLength),
+					for (let j = 0; j < length; j++) {
+						result += characters.charAt(
+							Math.floor(Math.random() * charactersLength),
+						);
+					}
+
+					actionsTrans.push(
+						nearAPI.transactions.functionCall(
+							"nft_mint",
+							{
+								token_id: "token-" + result,
+								receiver_id: walletConnection.getAccountId(),
+							},
+							tempGas,
+							endPrice
+								.toLocaleString("fullwide", {useGrouping: false})
+								.toString(),
+						),
 					);
 				}
 
-				actionsTrans.push(
-					nearAPI.transactions.functionCall(
-						"nft_mint",
-						{
-							token_id: "token-" + result,
-							receiver_id: walletConnection.getAccountId(),
-						},
-						tempGas,
-						endPrice
-							.toLocaleString("fullwide", {useGrouping: false})
-							.toString(),
-					),
+				const transaction = nearAPI.transactions.createTransaction(
+					walletConnection.getAccountId(),
+					nearAPI.utils.key_pair.PublicKey.fromString(pubKey),
+					addr,
+					nonce,
+					actionsTrans,
+					recentBlockHash,
 				);
-			}
 
-			const transaction = nearAPI.transactions.createTransaction(
-				walletConnection.getAccountId(),
-				nearAPI.utils.key_pair.PublicKey.fromString(pubKey),
-				addr,
-				nonce,
-				actionsTrans,
-				recentBlockHash,
-			);
+				try {
+					const result = await walletConnection.requestSignTransactions([
+						transaction,
+					]);
+				} catch (err) {
+					// setErrorModal({
+					// 	hidden: true,
+					// 	message: "Connect Wallet",
+					// 	img: "",
+					// });
+					console.log(err);
 
-			try {
-				const result = await walletConnection.requestSignTransactions([
-					transaction,
-				]);
-			} catch (err) {
-				setErrorModal({
-					hidden: true,
-					message: "Connect Wallet",
-					img: "",
-				});
+					walletAccount.requestSignIn("", "Title");
+				}
+			})
+			.catch((err) => {
 				console.log(err);
-			}
-		});
+				walletAccount.requestSignIn("", "Title");
+			});
 
-		tempContract.nft_remaining_count({}).then((data) => {
-			console.log(data);
-		});
+		// tempContract.nft_remaining_count({}).then((data) => {
+		// 	console.log(data);
+		// });
 	}
 
 	async function initCollection() {

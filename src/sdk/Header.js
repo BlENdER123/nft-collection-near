@@ -238,6 +238,9 @@ function Header({activeCat}) {
 									<button onClick={test123}>view1</button> */}
 								</div>
 							)}
+							<span style={{position: "absolute", top: "0px", left: "0px"}}>
+								V27.04/00:00
+							</span>
 						</div>
 
 						<div className="pages">

@@ -1602,7 +1602,14 @@ function LoadNftPage() {
 
 						<div className="modal-constructor modal-constructor-settings">
 							{/* <div className="import">Import Project</div> */}
-							<Box className="import" type="button" component="label">
+
+							<div class="import-buttons">
+								<div class="new"></div>
+								<div class="import"></div>
+								<div class="save"></div>
+							</div>
+
+							{/* <Box className="import" type="button" component="label">
 								Import Project
 								<input
 									type="file"
@@ -1610,7 +1617,7 @@ function LoadNftPage() {
 									hidden
 									onChange={handleFile}
 								/>
-							</Box>
+							</Box>  */}
 							<div className="project-settings">
 								<div className="title">
 									Project details{" "}

@@ -1982,20 +1982,46 @@ button,
 	color: #ffffff;
 	opacity: 0.7;
 }
-.modal-constructor .import {
-	background: #01824c;
-	color: #fff;
-	border-radius: 2px;
-	font-weight: 700;
-	font-size: 16px;
-	width: 100%;
-	padding: 16px 10px;
-	background-image: url("./sdk/img/Download_circle_light.png");
-	background-size: 28px 28px;
-	background-position: bottom 50% right 15px;
+// .modal-constructor .import {
+// 	background: #01824c;
+// 	color: #fff;
+// 	border-radius: 2px;
+// 	font-weight: 700;
+// 	font-size: 16px;
+// 	width: 100%;
+// 	padding: 16px 10px;
+// 	background-image: url("./sdk/img/Download_circle_light.png");
+// 	background-size: 28px 28px;
+// 	background-position: bottom 50% right 15px;
+// 	background-repeat: no-repeat;
+// 	margin-bottom: 28px;
+// 	cursor: pointer;
+// }
+.modal-constructor .import-buttons {
+	margin-bottom: 30px;
+}
+.modal-constructor .import-buttons > div {
+	width: 56px;
+	height: 56px;
+	display: inline-block;
+	margin-right: 15px;
+	background: #6333ff;
 	background-repeat: no-repeat;
-	margin-bottom: 28px;
+	background-position: center;
 	cursor: pointer;
+	border-radius: 2px;
+}
+.modal-constructor .import-buttons > .new {
+	background-image: url("./sdk/img/Folder_add_light.png");
+}
+.modal-constructor .import-buttons > .import {
+	background-image: url("./sdk/img/Folder_open_light.png");
+}
+.modal-constructor .import-buttons > .save {
+	background: #01824c;
+	background-image: url("./sdk/img/Save_light.png");
+	background-repeat: no-repeat;
+	background-position: center;
 }
 .modal-constructor .opacity {
 	opacity: 0;
@@ -3995,6 +4021,30 @@ input[type="text"] {
 	}
 }
 
+@media (max-width: 1650px) {
+	.steps-univ > .step {
+		display: none;
+	}
+	.steps-univ > .line {
+		display: none;
+	}
+	.steps-univ > .active {
+		display: flex;
+	}
+}
+
+@media (max-width: 1350px) {
+	.steps > .step {
+		display: none;
+	}
+	.steps > .line {
+		display: none;
+	}
+	.steps > .active {
+		display: flex;
+	}
+}
+
 @media (max-width: 1300px) {
 	.modal-constructor-settings
 		> .project-settings
@@ -4014,16 +4064,6 @@ input[type="text"] {
 		background-position: center top;
 		height: auto;
 		background-size: 90%;
-	}
-
-	.steps > .step {
-		display: none;
-	}
-	.steps > .line {
-		display: none;
-	}
-	.steps > .active {
-		display: flex;
 	}
 
 	.modal-constructor-market > .grid {
@@ -4056,6 +4096,9 @@ input[type="text"] {
 	}
 
 	.mobile-steps {
+		display: flex !important;
+	}
+	.steps-univ {
 		display: flex !important;
 	}
 	.steps {

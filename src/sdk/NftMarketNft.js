@@ -150,6 +150,7 @@ function NftMarketNft() {
 					"nft_supply_for_owner",
 					"nft_tokens_for_owner",
 					"nft_token",
+					"nft_metadata",
 				],
 				// Change methods can modify the state, but you don't receive the returned value when called
 				// changeMethods: ["new"],
@@ -190,16 +191,20 @@ function NftMarketNft() {
 				await fetch(mediaUrl).then((r) => {
 					r.blob().then((res) => {
 						console.log(res);
-						setNftInfo({
-							name: info.title,
-							desc: info.description,
-							// desc: "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
-							img: mediaUrl,
-							owner: data.owner_id,
-							price: tempPrice / 1000000000000000000000000,
-							width: tempW,
-							height: tempH,
-							size: res.size / 1024 / 1024,
+						ContractCol.nft_metadata({}).then((metadata) => {
+							console.log(metadata);
+							setNftInfo({
+								name: info.title,
+								desc: info.description,
+								// desc: "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
+								img: mediaUrl,
+								owner: data.owner_id,
+								price: tempPrice / 1000000000000000000000000,
+								width: tempW,
+								height: tempH,
+								size: res.size / 1024 / 1024,
+								nameCollection: metadata.name,
+							});
 						});
 					});
 				});
@@ -311,16 +316,17 @@ function NftMarketNft() {
 	}
 
 	async function buyNft() {
-		const result = await ContractMarket.offer(
+		await ContractMarket.offer(
 			{
 				nft_contract_id: addrCol,
 				token_id: token_id,
 			},
 			"300000000000000",
 			parseNearAmount(nftInfo.price.toString()),
-		);
-
-		console.log(result);
+		).catch((err) => {
+			console.log(err);
+			walletAccount.requestSignIn("", "Title");
+		});
 	}
 
 	return (
@@ -340,7 +346,7 @@ function NftMarketNft() {
 				<Header activeCat={2}></Header>
 
 				<div class="container auction-sale">
-					<div className="back" onClick={() => history.goBack()}>
+					<div className="back" onClick={() => history.push("/nft-market")}>
 						{/* <button ></button> */}
 					</div>
 					<div class="img">
@@ -365,14 +371,14 @@ function NftMarketNft() {
 							class="title-col"
 							onClick={() => history.push("/pack/" + addrCol)}
 						>
-							Collection Name (static)
+							{nftInfo.nameCollection}
 						</div>
 						<div class="title-nft">
 							{nftInfo.name}
-							<span className="share">
+							{/* <span className="share">
 								<div class="img"></div>
 								Share
-							</span>
+							</span> */}
 						</div>
 						<div class="users">
 							<div class="user">
