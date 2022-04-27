@@ -239,7 +239,7 @@ function Header({activeCat}) {
 								</div>
 							)}
 							<span style={{position: "absolute", top: "0px", left: "0px"}}>
-								V27.04/00:00
+								V27.04/10:30
 							</span>
 						</div>
 
