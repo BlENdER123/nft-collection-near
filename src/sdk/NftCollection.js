@@ -808,6 +808,14 @@ function NftCollection() {
 	}
 
 	async function depositAll() {
+		// if (addr == null || addr == undefined) {
+		// 	return;
+		// }
+
+		if (collectionMinted.length < 1) {
+			return;
+		}
+
 		window.contractMarket = await new nearAPI.Contract(
 			window.walletConnection.account(),
 			marketNft,
@@ -854,6 +862,17 @@ function NftCollection() {
 
 	async function saleAllNft() {
 		// const acc = await near.account(addr);
+
+		if (
+			sessionStorage.getItem("addrCol") == null ||
+			sessionStorage.getItem("addrCol") == undefined
+		) {
+			return;
+		}
+
+		if (collectionMinted.length < 1) {
+			return;
+		}
 
 		let pubKey = JSON.parse(keyStore.localStorage.undefined_wallet_auth_key)
 			.allKeys[0];
@@ -1229,7 +1248,7 @@ function NftCollection() {
 
 	async function mint_nft(amount) {
 		let addr = sessionStorage.getItem("addrCol");
-
+		// let addr = "kadqjgcyjio4tdqdtene.dev-1649955546633-94708956977447";
 		if (addr == null || addr == undefined) {
 			return;
 		}
@@ -1278,11 +1297,16 @@ function NftCollection() {
 
 				// console.log(parseNearAmount(2)+1);
 
-				let endPrice = parseInt(mintPrice) + parseInt(parseNearAmount("0.1")); // TODO Не расчитывается колчиество газа для совершение транзакции
+				let endPrice = mintPrice + parseInt(parseNearAmount("0.1")); // TODO Не расчитывается колчиество газа для совершение транзакции
+
+				// console.log(parseInt(mintPrice),parseInt(parseNearAmount("0.1")));
 
 				console.log(
 					endPrice.toLocaleString("fullwide", {useGrouping: false}).toString(),
 				);
+				console.log(parseNearAmount("1,1"));
+
+				// return;
 
 				for (let i = 0; i < amount; i++) {
 					let length = 7;

@@ -246,89 +246,158 @@ function NftMarketNft() {
 					body: JSON.stringify({
 						query: `
 						{
-							todoItems(filter: {receipt_predecessor_account_id: { eq: "${addrCol}"}   }) {
+							nftDtos(filter: {emitted_by_contract_account_id: { eq: "${addrCol}"}, token_id: {eq: "${token_id}"} }) {
 							pageInfo {
-							hasNextPage
-							hasPreviousPage
-							startCursor
-							endCursor
+							  hasNextPage
+							  hasPreviousPage
+							  startCursor
+							  endCursor
 							}
 							edges {
-							node {
-								receipt_id
-								index_in_action_receipt
-								action_kind
-								args        
-								receipt_receiver_account_id
-								receipt_included_in_block_timestamp
+							  node {
+							  emitted_for_receipt_id
+							  emitted_at_block_timestamp
+							  emitted_in_shard_id
+							  emitted_index_of_event_entry_in_shard
+							  event_kind
+							  token_id
+							  token_old_owner_account_id
+							  token_new_owner_account_id
+							  token_authorized_account_id
+							  event_memo 
+							  }
+							  cursor
 							}
-							cursor
-							}
+						  }
 						}
-						}
+						
 						`,
 					}),
 				})
 					.then((data) => {
 						return data.json();
 					})
-					.then((data) => {
-						// console.log(data);
+					.then(async (data) => {
+						console.log(data);
 
-						let dataHistory = data.data.todoItems.edges;
+						let dataHistory = data.data.nftDtos.edges;
 
 						let tempHistory = [];
 
-						console.log(
-							(
-								dataHistory[1].node.args.deposit / 1000000000000000000000000
-							).toFixed(2) * price.near.usd,
-						);
+						// console.log(
+						// 	(
+						// 		dataHistory[1].node.args.deposit / 1000000000000000000000000
+						// 	).toFixed(2) * price.near.usd,
+						// );
 
-						for (let i = 0; i < 5; i++) {
+						for (let i = 0; i < dataHistory.length; i++) {
 							// console.log(dataHistory[i].node.receipt_included_in_block_timestamp);
-							// let newStamp = Date.parse(dataHistory[i].node.receipt_included_in_block_timestamp);
+							let newStamp =
+								dataHistory[i].node.emitted_at_block_timestamp / 1000000;
 							// console.log(newStamp);
-							// let tempDate = new Date(newStamp);
+							let tempDate = new Date(newStamp);
 							// console.log(tempDate);
 
 							// var timestamp = 1651036573478731249
 							// var date = new Date(timestamp);
-							// console.log("Date: "+date.getDate()+
-							// "/"+(date.getMonth()+1)+
-							// "/"+date.getFullYear())
+
 							// console.log(dataHistory[i].node.args, dataHistory[i].node.args.method_name);
-							if (dataHistory[i].node.args.method_name == undefined) {
-								tempHistory.push({
-									owner: dataHistory[i].node.receipt_receiver_account_id,
-									method_name: "deposit",
-									time: 0,
-									price: (
-										dataHistory[i].node.args.deposit / 1000000000000000000000000
-									).toFixed(2),
-									price_fiat: (
-										(
-											dataHistory[i].node.args.deposit /
+
+							// console.log(tempDate.getHours().toString().length);
+
+							let dateString = `${tempDate.getDate()}/${
+								tempDate.getMonth() + 1
+							}/${tempDate.getFullYear()} ${
+								tempDate.getHours().toString().length > 1
+									? tempDate.getHours()
+									: "0" + tempDate.getHours()
+							}:${
+								tempDate.getMinutes().toString().length > 1
+									? tempDate.getMinutes()
+									: "0" + tempDate.getMinutes()
+							}`;
+
+							// console.log(dateString);
+
+							await fetch("https://gq2.cryptan.site/graphql", {
+								method: "post",
+								headers: {
+									"Content-Type": "application/json; charset=utf-8",
+									Connection: "keep-alive",
+								},
+								body: JSON.stringify({
+									query: `
+									{
+										todoItem(id: "${dataHistory[i].node.emitted_for_receipt_id}"  ) {
+										   receipt_receiver_account_id
+											index_in_action_receipt
+											action_kind
+											args        
+											receipt_receiver_account_id
+											receipt_included_in_block_timestamp
+											receipt_predecessor_account_id
+									}
+									}
+									
+									`,
+								}),
+							})
+								.then((data) => {
+									return data.json();
+								})
+								.then((data_id) => {
+									console.log(data_id.data.todoItem.args.deposit);
+
+									tempHistory.push({
+										owner: dataHistory[i].node.token_new_owner_account_id,
+										method_name: dataHistory[i].node.event_kind,
+										time: dateString,
+										// price: 0,
+										// price_fiat: 0,
+										price: (
+											data_id.data.todoItem.args.deposit /
 											1000000000000000000000000
-										).toFixed(2) * price.near.usd
-									).toFixed(2),
+										).toFixed(2),
+										price_fiat: (
+											(
+												data_id.data.todoItem.args.deposit /
+												1000000000000000000000000
+											).toFixed(2) * price.near.usd
+										).toFixed(2),
+									});
 								});
-							} else {
-								tempHistory.push({
-									owner: dataHistory[i].node.receipt_receiver_account_id,
-									method_name: dataHistory[i].node.args.method_name,
-									time: 0,
-									price: (
-										dataHistory[i].node.args.deposit / 1000000000000000000000000
-									).toFixed(2),
-									price_fiat: (
-										(
-											dataHistory[i].node.args.deposit /
-											1000000000000000000000000
-										).toFixed(2) * price.near.usd
-									).toFixed(2),
-								});
-							}
+
+							// if (dataHistory[i].node.args.method_name == undefined) {
+							// 	tempHistory.push({
+							// 		owner: dataHistory[i].node.receipt_receiver_account_id,
+							// 		method_name: "deposit",
+							// 		time: 0,
+							// 		price: (
+							// 			dataHistory[i].node.args.deposit / 1000000000000000000000000
+							// 		).toFixed(2),
+							// 		price_fiat: (
+							// 			(
+							// 				dataHistory[i].node.args.deposit /
+							// 				1000000000000000000000000
+							// 			).toFixed(2) * price.near.usd
+							// 		).toFixed(2),
+							// 	});
+							// } else {
+							// 	tempHistory.push({
+							// 		owner: dataHistory[i].node.receipt_receiver_account_id,
+							// 		method_name: dataHistory[i].node.args.method_name,
+							// 		time: 0,
+							// 		price: (
+							// 			dataHistory[i].node.args.deposit / 1000000000000000000000000
+							// 		).toFixed(2),
+							// 		price_fiat: (
+							// 			(
+							// 				dataHistory[i].node.args.deposit /
+							// 				1000000000000000000000000
+							// 			).toFixed(2) * price.near.usd
+							// 		).toFixed(2),
+							// 	});
+							// }
 						}
 
 						console.log(tempHistory);
@@ -599,7 +668,7 @@ function NftMarketNft() {
 												{item.owner} <span>{item.method_name}</span>
 											</div>
 											<div class="price">{item.price} NEAR</div>
-											<div class="date">{item.time} hours ago</div>
+											<div class="date">{item.time}</div>
 											<div class="price-rub">≈ $ {item.price_fiat}</div>
 										</div>
 									);

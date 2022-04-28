@@ -73,6 +73,8 @@ function PackPage() {
 
 	const [amountMintNft, setAmountMintNft] = useState(1);
 
+	const [mintPrice, setMintPrice] = useState("0");
+
 	var openRequest = window.indexedDB.open("imgsStore", 1);
 	// localClass = JSON.parse(localStorage.getItem("class"))
 	openRequest.onsuccess = async (event) => {
@@ -103,6 +105,8 @@ function PackPage() {
 					"nft_tokens_for_owner",
 					"nft_token",
 					"nft_metadata",
+					"nft_mint_price",
+					"nft_remaining_count",
 				],
 				// Change methods can modify the state, but you don't receive the returned value when called
 				// changeMethods: ["new"],
@@ -112,10 +116,15 @@ function PackPage() {
 			},
 		);
 
-		tempContract.nft_metadata({}).then((data) => {
-			console.log(data);
-			setCollectionName(data.name);
-		});
+		tempContract
+			.nft_metadata({})
+			.then((data) => {
+				console.log(data);
+				setCollectionName(data.name);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
 
 		// tempContract.nft_tokens({
 		// 	from_index: "0",
@@ -123,6 +132,15 @@ function PackPage() {
 		// }).then((data)=>{
 		// 	console.log(data);
 		// });
+		tempContract.nft_mint_price({}).then((data) => {
+			console.log(data);
+			let endPrice = (data + parseInt(parseNearAmount("0.1")))
+				.toLocaleString("fullwide", {useGrouping: false})
+				.toString();
+
+			// console.log(endPrice);
+			setMintPrice(endPrice);
+		});
 
 		tempContract
 			.nft_tokens({
@@ -1099,7 +1117,7 @@ function PackPage() {
 						receiver_id: walletConnection.getAccountId(),
 					},
 					tempGas,
-					parseNearAmount("2"),
+					mintPrice,
 				),
 			);
 		}
@@ -1371,16 +1389,19 @@ function PackPage() {
 								</div>
 							</div>
 
-							<div class="desc">
+							{/* <div class="desc">
 								<div class="title">Description</div>
 								Description
 								<div class="hide">Show full description </div>
-							</div>
+							</div> */}
 
 							<div style={{margin: "0px 0px 40px 0px"}} class="price">
 								<div class="subtitle">Mint Price</div>
 								<div class="near">
-									<span></span> <div class="price">10 NEAR</div>
+									<span></span>{" "}
+									<div class="price">
+										{(mintPrice / 1000000000000000000000000).toFixed(1)} NEAR
+									</div>
 								</div>
 							</div>
 
@@ -1425,10 +1446,18 @@ function PackPage() {
 									mint_nft(amountMintNft);
 								}}
 							>
-								Mint <span>(8.00 NEAR)</span>{" "}
+								Mint{" "}
+								<span>
+									(
+									{(
+										(amountMintNft * mintPrice) /
+										1000000000000000000000000
+									).toFixed(1)}{" "}
+									NEAR)
+								</span>{" "}
 							</button>
 							<div style={{textAlign: "center"}} class="desc">
-								Estimated fee ~ 8.00 NEAR (17,0070 USD)
+								Estimated fee ~ 0.1 NEAR
 							</div>
 
 							{/* <button

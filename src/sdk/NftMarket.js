@@ -50,17 +50,38 @@ async function getClientKeys(phrase) {
 	return test;
 }
 
-function NftMarket() {
+function NftMarket(props) {
 	let history = useHistory();
 
 	const dispatch = useDispatch();
+	const [collections, setCollections] = useState([]);
 	const connectWallet = useSelector((state) => state.connectWallet);
+	useEffect(() => {
+		console.log("collectionscollections", collections);
+		if (!props.collections) return;
+		setCollections(props.collections);
+	}, [props.collections]);
 
 	const [connectWal, setConnect] = useState(false);
 
 	const [mintNftData, setMintNftData] = useState({
 		hidden: true,
 	});
+
+	const [filter, setFilter] = useState({text: "", type: "name"});
+	const [typeOfSort, setTypeOfSort] = useState("");
+
+	function handleSearch(e) {
+		setFilter({type: e.target.id, text: e.currentTarget.value});
+	}
+
+	function handleSort(e) {
+		if (e.target.classList.value !== "checkbox active") {
+			setTypeOfSort(e.target.id);
+		} else {
+			setTypeOfSort("");
+		}
+	}
 
 	const [redirect, setRedirect] = useState(false);
 
@@ -73,7 +94,7 @@ function NftMarket() {
 	const zeroAddress =
 		"0:0000000000000000000000000000000000000000000000000000000000000000";
 
-	let [collections, setCollections] = useState([]);
+	// let [collections, setCollections] = useState([]);
 
 	async function getCollections() {
 		window.near = await nearAPI.connect({
@@ -447,7 +468,12 @@ function NftMarket() {
 							</div>
 							<div className="text"></div>
 							<div className={accordionHidden[0] ? "hide" : "search"}>
-								<input className="input" placeholder="Enter ID for search" />
+								<input
+									className="input"
+									id={"name"}
+									placeholder="Enter ID for search"
+									onChange={(e) => handleSearch(e)}
+								/>
 							</div>
 
 							<div className="title">
@@ -463,61 +489,29 @@ function NftMarket() {
 							<div className={accordionHidden[1] ? "hide" : "filter"}>
 								<div>
 									<button
+										id={"ASC"}
 										onClick={(ev) => {
+											handleSort(ev);
 											console.log(ev.target.classList.toggle("active"));
 										}}
 										className="checkbox"
-									></button>{" "}
-									Sort by ID
-								</div>
-								<div>
-									<button
-										onClick={(ev) => {
-											console.log(ev.target.classList.toggle("active"));
-										}}
-										className="checkbox"
-									></button>{" "}
-									Sort by rank
-								</div>
-								<div>
-									<button
-										onClick={(ev) => {
-											console.log(ev.target.classList.toggle("active"));
-										}}
-										className="checkbox"
-									></button>{" "}
-									Sort by price quality (ASC)
-								</div>
-								<div>
-									<button
-										onClick={(ev) => {
-											console.log(ev.target.classList.toggle("active"));
-										}}
-										className="checkbox"
-									></button>{" "}
-									Sort by price quality (DESC)
-								</div>
-								<div>
-									<button
-										onClick={(ev) => {
-											console.log(ev.target.classList.toggle("active"));
-										}}
-										className="checkbox"
-									></button>{" "}
+									/>{" "}
 									Sort by price (ASC)
 								</div>
 								<div>
 									<button
+										id={"DESC"}
 										onClick={(ev) => {
+											handleSort(ev);
 											console.log(ev.target.classList.toggle("active"));
 										}}
 										className="checkbox"
-									></button>{" "}
+									/>{" "}
 									Sort by price (DESC)
 								</div>
 							</div>
 
-							<div className="title">
+							{/* <div className="title">
 								Attributes Filter{" "}
 								<span
 									className={accordionHidden[2] ? "hidden" : ""}
@@ -582,86 +576,64 @@ function NftMarket() {
 									></button>{" "}
 									Sort by price (DESC)
 								</div>
-							</div>
+							</div> */}
 						</div>
 						<div class="modal-constructor modal-constructor-market">
 							<div className="grid">
-								{collections.length > 0 ? (
-									collections.map((item, index) => {
-										return (
-											<div
-												onClick={() => {
-													// console.log(item);
-													history.push(
-														"/nft-market-nft/" +
-															item.addrNftCol +
-															"!token!" +
-															item.token_id,
-													);
-												}}
-												className="element"
-											>
-												{/* <div class="rarity">L</div> */}
-												<div class="img">
-													<img src={item.icon} />
-												</div>
-												<div class="nameCol">{item.nameCollection}</div>
-												<div class="name">{item.name.substring(0, 40)}</div>
-												<div class="subtitle">Price</div>
-												<div class="price">
-													<span></span> {item.price.toFixed(3)} NEAR
-												</div>
-											</div>
-											// <div key={"uniqueId"+index} className="collection">
-
-											// 	<div className="img">
-											// 		<img src={item.icon} />
-											// 	</div>
-											// 	<div className="content">
-											// 		<div className="name">{item.name.substring(0, 40)}</div>
-											// 		<div className="description">
-											// 			<span>Description:</span>
-											// 			{item.desc.substring(0, 50)}
-											// 		</div>
-											// 		<div className="description">
-											// 			<span>Price:</span>
-											// 			{item.price.toFixed(3)} NEAR
-											// 		</div>
-											// 		{/* <div className="rank">
-											// 			<span>Rank:</span>100
-											// 		</div>
-											// 		<div className="price">
-											// 			<span>Price:</span>149000.00
-											// 		</div>
-											// 		<div className="price-quality">
-											// 			<span>Price quality:</span>50%
-											// 		</div> */}
-											// 		<div
-											// 			className="button-1-square"
-											// 			// onClick={() => setMintNftData({hidden: false})}
-											// 			onClick={() => buyNft(item)}
-											// 		>
-											// 			Buy
-											// 		</div>
-											// 	</div>
-											// </div>
-										);
-									})
-								) : (
-									// <button className="button-1-square" onClick={getCollections}>
-									// 	Load Collections
-									// </button>
-
-									<div className={loader ? "hide" : ""}>No NFT`s</div>
-								)}
-
-								{loader ? (
+								{props.loader ? (
 									<div className="loader">
 										<div></div>
 										<div></div>
 										<div></div>
 									</div>
-								) : null}
+								) : (
+									collections
+										.sort((a, b) => {
+											console.log("typeOfSort", typeOfSort);
+											if (!typeOfSort) {
+												return a.index - b.index;
+											}
+											if (typeOfSort === "ASC") {
+												return b.price - a.price;
+											} else {
+												return a.price - b.price;
+											}
+										})
+										.filter((item) =>
+											item[filter.type]
+												.toLowerCase()
+												.includes(filter.text.toLowerCase()),
+										)
+										.map((item, index) => {
+											return (
+												<div
+													onClick={() => {
+														// console.log(item);
+														history.push(
+															"/nft-market-nft/" +
+																item.addrNftCol +
+																"!token!" +
+																item.token_id,
+														);
+													}}
+													className="element"
+												>
+													{/* <div class="rarity">L</div> */}
+													<div class="img">
+														<img src={item.icon} />
+													</div>
+													<div class="nameCol">
+														{item.name.substring(0, 40)}
+													</div>
+													<div class="name">{item.desc.substring(0, 20)}</div>
+													<div class="subtitle">Price</div>
+													<div class="price">
+														<span></span> {item.price.toFixed(3)} NEAR
+													</div>
+												</div>
+											);
+										})
+								)}
 
 								{/* <div className="element">
 									<div class="rarity">L</div>
