@@ -36,6 +36,8 @@
 		"core-js": "^3.12.1",
 		"dayjs": "^1.10.7",
 		"env": "0.0.2",
+		"fabric": "^5.2.1",
+		"fabricjs-react": "^1.0.8",
 		"freeton": "^0.6.0",
 		"fs": "0.0.1-security",
 		"hex2ascii": "0.0.3",
