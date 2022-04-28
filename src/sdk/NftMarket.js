@@ -254,6 +254,7 @@ function NftMarket() {
 						"nft_supply_for_owner",
 						"nft_tokens_for_owner",
 						"nft_token",
+						"nft_metadata",
 					],
 					// Change methods can modify the state, but you don't receive the returned value when called
 					// changeMethods: ["new"],
@@ -293,13 +294,18 @@ function NftMarket() {
 						info.description = "No Description";
 					}
 
-					tempCols.push({
-						name: info.title,
-						desc: info.description,
-						icon: mediaUrl,
-						addrNftCol: sales[i].nft_contract_id,
-						token_id: sales[i].token_id,
-						price: sales[i].sale_conditions / 1000000000000000000000000,
+					tempContract.nft_metadata({}).then((metadata) => {
+						console.log(metadata.name);
+
+						tempCols.push({
+							name: info.title,
+							desc: info.description,
+							nameCollection: metadata.name,
+							icon: mediaUrl,
+							addrNftCol: sales[i].nft_contract_id,
+							token_id: sales[i].token_id,
+							price: sales[i].sale_conditions / 1000000000000000000000000,
+						});
 					});
 
 					// tempCol.push({
@@ -320,6 +326,10 @@ function NftMarket() {
 
 	useEffect(() => {
 		getCollections();
+		if (document.location.href.split("transactionHashes=")[1]) {
+			let href = document.location.origin + document.location.hash;
+			document.location.href = href;
+		}
 	}, []);
 
 	function openCollection(collection) {
@@ -595,8 +605,8 @@ function NftMarket() {
 												<div class="img">
 													<img src={item.icon} />
 												</div>
-												<div class="nameCol">{item.name.substring(0, 40)}</div>
-												<div class="name">{item.desc.substring(0, 20)}</div>
+												<div class="nameCol">{item.nameCollection}</div>
+												<div class="name">{item.name.substring(0, 40)}</div>
 												<div class="subtitle">Price</div>
 												<div class="price">
 													<span></span> {item.price.toFixed(3)} NEAR

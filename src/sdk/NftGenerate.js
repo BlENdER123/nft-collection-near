@@ -558,7 +558,7 @@ function NftCustomization() {
 	function changeError(input, value) {
 		if (value == "" || value < 0 || value == undefined || value == null) {
 			setErrorInput(input);
-			setColPrice(0);
+			setColPrice(value);
 		} else {
 			if (input == "colPrice") {
 				setErrorInput("");

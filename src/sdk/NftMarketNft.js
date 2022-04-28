@@ -97,6 +97,16 @@ function NftMarketNft() {
 		message: "",
 	});
 
+	const [nftHistory, setNftHistory] = useState([
+		{
+			owner: "Null",
+			method_name: "Null",
+			time: "Null",
+			price: "Null",
+			price_fiat: "Null",
+		},
+	]);
+
 	// let dexrootAddr = "0:65988b6da6392ce4d9ce1f79b5386e842c33b4161a2bbe76bdae170db711da31";
 
 	let dexrootAddr =
@@ -213,10 +223,130 @@ function NftMarketNft() {
 			console.log(mediaUrl);
 			console.log(data);
 		});
+
+		await fetch("https://helper.testnet.near.org/fiat", {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json; charset=utf-8",
+				Connection: "keep-alive",
+			},
+		})
+			.then((data) => {
+				return data.json();
+			})
+			.then(async (price) => {
+				console.log(price.near.usd);
+
+				await fetch("https://gq2.cryptan.site/graphql", {
+					method: "post",
+					headers: {
+						"Content-Type": "application/json; charset=utf-8",
+						Connection: "keep-alive",
+					},
+					body: JSON.stringify({
+						query: `
+						{
+							todoItems(filter: {receipt_predecessor_account_id: { eq: "${addrCol}"}   }) {
+							pageInfo {
+							hasNextPage
+							hasPreviousPage
+							startCursor
+							endCursor
+							}
+							edges {
+							node {
+								receipt_id
+								index_in_action_receipt
+								action_kind
+								args        
+								receipt_receiver_account_id
+								receipt_included_in_block_timestamp
+							}
+							cursor
+							}
+						}
+						}
+						`,
+					}),
+				})
+					.then((data) => {
+						return data.json();
+					})
+					.then((data) => {
+						// console.log(data);
+
+						let dataHistory = data.data.todoItems.edges;
+
+						let tempHistory = [];
+
+						console.log(
+							(
+								dataHistory[1].node.args.deposit / 1000000000000000000000000
+							).toFixed(2) * price.near.usd,
+						);
+
+						for (let i = 0; i < 5; i++) {
+							// console.log(dataHistory[i].node.receipt_included_in_block_timestamp);
+							// let newStamp = Date.parse(dataHistory[i].node.receipt_included_in_block_timestamp);
+							// console.log(newStamp);
+							// let tempDate = new Date(newStamp);
+							// console.log(tempDate);
+
+							// var timestamp = 1651036573478731249
+							// var date = new Date(timestamp);
+							// console.log("Date: "+date.getDate()+
+							// "/"+(date.getMonth()+1)+
+							// "/"+date.getFullYear())
+							// console.log(dataHistory[i].node.args, dataHistory[i].node.args.method_name);
+							if (dataHistory[i].node.args.method_name == undefined) {
+								tempHistory.push({
+									owner: dataHistory[i].node.receipt_receiver_account_id,
+									method_name: "deposit",
+									time: 0,
+									price: (
+										dataHistory[i].node.args.deposit / 1000000000000000000000000
+									).toFixed(2),
+									price_fiat: (
+										(
+											dataHistory[i].node.args.deposit /
+											1000000000000000000000000
+										).toFixed(2) * price.near.usd
+									).toFixed(2),
+								});
+							} else {
+								tempHistory.push({
+									owner: dataHistory[i].node.receipt_receiver_account_id,
+									method_name: dataHistory[i].node.args.method_name,
+									time: 0,
+									price: (
+										dataHistory[i].node.args.deposit / 1000000000000000000000000
+									).toFixed(2),
+									price_fiat: (
+										(
+											dataHistory[i].node.args.deposit /
+											1000000000000000000000000
+										).toFixed(2) * price.near.usd
+									).toFixed(2),
+								});
+							}
+						}
+
+						console.log(tempHistory);
+
+						// console.log((dataHistory[2].node.args.deposit/1000000000000000000000000).toFixed(2));
+
+						setNftHistory(tempHistory);
+					});
+			});
 	}
 
 	useEffect(() => {
 		getNft();
+		if (document.location.href.split("transactionHashes=")[1]) {
+			// let href = document.location.origin + document.location.hash;
+			// document.location.href = href;
+			history.push("/nft-market");
+		}
 	}, []);
 
 	async function getCollection() {
@@ -327,6 +457,7 @@ function NftMarketNft() {
 			console.log(err);
 			walletAccount.requestSignIn("", "Title");
 		});
+		// window.contract.account._signAndSendTransaction({receiverId:contractName, actions:[nearApi.transactions.functionCall('nft_mint', params, 100000000000000, '10000000000000000000000')],walletCallbackUrl:'https://pcards.near.page/'+receiver.value});
 	}
 
 	return (
@@ -453,14 +584,26 @@ function NftMarketNft() {
 								<div class="menu-item">Provenance</div>
 							</div>
 							<div class="content">
-								<div class="item">
+								{/* <div class="item">
 									<div class="name">
 										radiance.testnet <span>Mint</span>
 									</div>
 									<div class="price">242 BUSD</div>
 									<div class="date">3 hours ago</div>
 									<div class="price-rub">≈ ₽ 16,982.40</div>
-								</div>
+								</div> */}
+								{nftHistory.map((item) => {
+									return (
+										<div class="item">
+											<div class="name">
+												{item.owner} <span>{item.method_name}</span>
+											</div>
+											<div class="price">{item.price} NEAR</div>
+											<div class="date">{item.time} hours ago</div>
+											<div class="price-rub">≈ $ {item.price_fiat}</div>
+										</div>
+									);
+								})}
 							</div>
 						</div>
 					</div>

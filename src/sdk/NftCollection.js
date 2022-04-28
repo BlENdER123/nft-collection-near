@@ -317,6 +317,10 @@ function NftCollection() {
 				});
 		}
 
+		isSaleAvailiable();
+	}, [collectionMinted]);
+
+	async function isSaleAvailiable() {
 		window.contractMarket = await new nearAPI.Contract(
 			window.walletConnection.account(),
 			marketNft,
@@ -363,7 +367,7 @@ function NftCollection() {
 			.catch((err) => {
 				console.log("err");
 			});
-	}, [collectionMinted]);
+	}
 
 	useEffect(async () => {
 		console.log("useEff1");
@@ -897,6 +901,12 @@ function NftCollection() {
 			recentBlockHash,
 		);
 
+		console.log(actionsTrans);
+
+		if (actionsTrans.length == 0) {
+			return;
+		}
+
 		try {
 			const result = await walletConnection.requestSignTransactions([
 				transaction,
@@ -1027,7 +1037,7 @@ function NftCollection() {
 						).length,
 						ipfs_path: res + "/",
 						extension: "png",
-						price: "1600000000000000000",
+						price: parseNearAmount(price.toString()),
 						nft_titles: deployData.projectName,
 						nft_descriptions: deployData.projectDescription,
 					},
@@ -1219,6 +1229,10 @@ function NftCollection() {
 
 	async function mint_nft(amount) {
 		let addr = sessionStorage.getItem("addrCol");
+
+		if (addr == null || addr == undefined) {
+			return;
+		}
 
 		window.tempContract = await new nearAPI.Contract(
 			window.walletConnection.account(),
@@ -1659,10 +1673,15 @@ function NftCollection() {
 											mint_nft(amountMintNft);
 										}}
 									>
-										Mint <span>(8.00 NEAR)</span>{" "}
+										Mint{" "}
+										<span>
+											(
+											{(amountMintNft * 0.1 + amountMintNft * price).toFixed(1)}{" "}
+											NEAR)
+										</span>{" "}
 									</button>
 									<div style={{textAlign: "center"}} class="desc">
-										Estimated fee ~ 8.00 NEAR (17,0070 USD)
+										Estimated fee ~ 0.1 NEAR
 									</div>
 
 									<div
@@ -1698,26 +1717,26 @@ function NftCollection() {
 										onClick={saleAllNft}
 										className={depositSale.avail ? "button-3-square" : "hide"}
 									>
-										Sale <span>(1 NFT’s)</span>{" "}
+										Sale <span>(All NFT’s)</span>{" "}
 									</button>
 									<div
 										style={{textAlign: "center"}}
 										className={depositSale.avail ? "desc" : "hide"}
 									>
-										Estimated fee ~ 8.00 NEAR (17,0070 USD)
+										Estimated fee ~ 0.1 NEAR
 									</div>
 
 									<button
 										onClick={depositAll}
 										className={depositSale.avail ? "hide" : "button-1-square"}
 									>
-										Deposit Funds <span>(3.00 NEAR)</span>{" "}
+										Deposit Funds <span></span>{" "}
 									</button>
 									<div
 										style={{textAlign: "center"}}
 										className={depositSale.avail ? "hide" : "desc"}
 									>
-										No enough funds to sale: 3.00 NEAR
+										No enough funds to sale
 									</div>
 
 									<div
@@ -1732,6 +1751,9 @@ function NftCollection() {
 										className={"button-4-square button-arrow"}
 										style={{margin: "0px 0px 10px 0px"}}
 										// onClick={activeButtons[0] ? deployColectionNear : null}
+										onClick={() => {
+											history.push("/profile/" + walletAccount.getAccountId());
+										}}
 									>
 										Go to Profile
 									</button>
@@ -1784,6 +1806,7 @@ function NftCollection() {
 											: "step step3"
 									}
 									onClick={() => {
+										isSaleAvailiable();
 										localStorage.setItem("nft-collection-step", 3);
 										setCurentCollectionStep(3);
 									}}

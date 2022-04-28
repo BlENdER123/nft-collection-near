@@ -192,6 +192,16 @@ function Header({activeCat}) {
 
 	return (
 		<Router>
+			<span
+				style={{
+					position: "absolute",
+					bottom: "0px",
+					left: "0px",
+					color: "#fff",
+				}}
+			>
+				V28.04/11:00
+			</span>
 			<div className="header header2">
 				<div className="container-header">
 					<div className="acc-info">
@@ -238,9 +248,6 @@ function Header({activeCat}) {
 									<button onClick={test123}>view1</button> */}
 								</div>
 							)}
-							<span style={{position: "absolute", top: "0px", left: "0px"}}>
-								V27.04/10:30
-							</span>
 						</div>
 
 						<div className="pages">

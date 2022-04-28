@@ -3958,7 +3958,7 @@ input[type="text"] {
 	margin-left: 0px;
 }
 .auction-sale > .content > .history > .menu-history > .menu-item {
-	margin: 0px 20px;
+	margin-right: 20px;
 	padding-bottom: 10px;
 	color: rgba(255, 255, 255, 0.7);
 	border-bottom: 3px solid #6333ff;
@@ -4023,7 +4023,7 @@ input[type="text"] {
 
 @media (max-width: 1650px) {
 	.steps-univ > .step {
-		display: none;
+		display: flex !important;
 	}
 	.steps-univ > .line {
 		display: none;
@@ -4042,6 +4042,12 @@ input[type="text"] {
 	}
 	.steps > .active {
 		display: flex;
+	}
+	.steps-univ > .step {
+		margin-right: 0px;
+	}
+	.steps-univ > .step > .img {
+		margin-right: 0px;
 	}
 }
 
@@ -4114,6 +4120,13 @@ input[type="text"] {
 	}
 	.constructors-col > .container-header {
 		grid-template-columns: 100%;
+	}
+
+	.steps-univ > .step {
+		margin-right: 20px;
+	}
+	.steps-univ > .step > .img {
+		margin-right: 10px;
 	}
 }
 

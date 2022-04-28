@@ -955,7 +955,7 @@ function ProfilePage() {
 													history.push(
 														"/nft-details/" +
 															i.addrCol +
-															"#token#" +
+															"!token!" +
 															i.token_id,
 													);
 												}}
