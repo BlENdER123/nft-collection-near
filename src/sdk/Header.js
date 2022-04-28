@@ -194,10 +194,11 @@ function Header({activeCat}) {
 		<Router>
 			<span
 				style={{
-					position: "absolute",
+					position: "fixed",
 					bottom: "0px",
 					left: "0px",
 					color: "#fff",
+					zIndex: "10",
 				}}
 			>
 				V28.04/11:00
