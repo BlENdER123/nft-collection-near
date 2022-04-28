@@ -232,6 +232,13 @@ function App() {
 		console.log("rerender");
 		let res = await getCollections();
 		setLoader(false);
+
+		// await fetch("https://helper.nearapi.org/v1/batch/[%7B%22contract%22:%22dev-1648581158866-16348149344133%22,%22method%22:%22get_sales_by_nft_contract_id%22,%22args%22:%7B%22nft_contract_id%22:%22vfxcfsuy374jmbpk7ajj.dev-1649955014160-15139685094806%22%7D,%22batch%22:%7B%22from_index%22:%220%22,%22limit%22:%22500%22,%22step%22:50,%22flatten%22:[]%7D,%22sort%22:%7B%22path%22:%22metadata.issued_at%22%7D%7D]", {
+		// 	"max-age": "1",
+		// }).then(async (resp) => {
+		// 	let responce = await resp.json();
+		// 	console.log(response);
+		// });
 	}, []);
 
 	return (

@@ -77,19 +77,19 @@ function PackPage() {
 
 	var openRequest = window.indexedDB.open("imgsStore", 1);
 	// localClass = JSON.parse(localStorage.getItem("class"))
-	openRequest.onsuccess = async (event) => {
-		let db = event.target.result;
+	// openRequest.onsuccess = async (event) => {
+	// 	let db = event.target.result;
 
-		let store = db.transaction("imgs").objectStore("imgs");
+	// 	let store = db.transaction("imgs").objectStore("imgs");
 
-		for (let i = 0; i < classArr.length; i++) {
-			for (let j = 0; j < classArr[i].imgs.length; j++) {
-				store.get(classArr[i].imgs[j]).onsuccess = (event) => {
-					classArr[i].url[j] = URL.createObjectURL(event.target.result);
-				};
-			}
-		}
-	};
+	// 	for (let i = 0; i < classArr.length; i++) {
+	// 		for (let j = 0; j < classArr[i].imgs.length; j++) {
+	// 			store.get(classArr[i].imgs[j]).onsuccess = (event) => {
+	// 				classArr[i].url[j] = URL.createObjectURL(event.target.result);
+	// 			};
+	// 		}
+	// 	}
+	// };
 
 	useEffect(async () => {
 		console.log("UseEffect minted");
@@ -1071,8 +1071,16 @@ function PackPage() {
 
 		const acc = await near.account(addr);
 
-		let pubKey = JSON.parse(keyStore.localStorage.undefined_wallet_auth_key)
-			.allKeys[0];
+		let keys = keyStore.localStorage.undefined_wallet_auth_key;
+		// console.log(keys);
+
+		if (keys == undefined) {
+			return;
+		}
+
+		let pubKey = JSON.parse(keys).allKeys[0];
+
+		console.log(pubKey, "pubkey");
 
 		let status = await near.connection.provider.status();
 
