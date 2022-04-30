@@ -2644,6 +2644,17 @@ input[type="text"] {
 // .modal-constructor-settings > .project-settings > .setting > .dim-title:nth-child(1) {
 // 	width: 55%;
 // }
+.inputErr {
+	border: 1px solid #ff3f33 !important;
+}
+.errMsg {
+	font-weight: 300;
+	font-size: 14px;
+	color: #ff5045;
+	position: absolute;
+	bottom: -20px;
+	left: 0;
+}
 .modal-constructor-settings > .project-settings > .setting > .inputErr {
 	border: 1px solid #ff3f33;
 }
@@ -3901,6 +3912,37 @@ input[type="text"] {
 .auction-sale > .content > .price {
 	margin-bottom: 40px;
 }
+
+.auction-sale > .content > .price-sale {
+	position: relative;
+}
+.auction-sale > .content > .price-sale > .price-input > input {
+	width: 100%;
+	font-size: 28px;
+	padding: 20px 15px;
+	border: 1px solid #444444;
+	border-radius: 2px;
+	background: url("./sdk/img/Ellipse\ 57.png") #282a2d no-repeat 15px center;
+	padding-left: 47px;
+	padding-right: 90px;
+}
+.auction-sale > .content > .price-sale > .price-input > span {
+	font-size: 28px;
+	color: #ffffff;
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	right: 10px;
+}
+// .auction-sale > .content > .price-sale > input::before {
+// 	content: "";
+// 	display: block;
+// 	position: relative;
+// 	width: 26px;
+// 	height: 26px;
+// 	background: url("./sdk/img/Ellipse\ 57.png");
+// 	margin-right: 8px;
+// }
 
 .auction-sale > .content > .price > .price {
 	font-size: 28px;

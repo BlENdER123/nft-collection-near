@@ -623,9 +623,9 @@ function NftMarket(props) {
 														<img src={item.icon} />
 													</div>
 													<div class="nameCol">
-														{item.name.substring(0, 40)}
+														{item.nameCollection.substring(0, 40)}
 													</div>
-													<div class="name">{item.desc.substring(0, 20)}</div>
+													<div class="name">{item.name.substring(0, 20)}</div>
 													<div class="subtitle">Price</div>
 													<div class="price">
 														<span></span> {item.price.toFixed(3)} NEAR

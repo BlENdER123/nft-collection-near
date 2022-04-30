@@ -70,6 +70,14 @@ function NftMarketNft() {
 	console.log(addrCol, token_id);
 	const [isFullDescription, setIsFullDescription] = useState(false);
 
+	const [isSaleAvailable, setIsSaleAvailable] = useState(false);
+
+	const [isOnSale, setIsOnSale] = useState(false);
+
+	const [salePrice, setSalePrice] = useState("");
+
+	const [errorInput, setErrorInput] = useState();
+
 	// let arr = JSON.parse(localStorage.getItem("collection"));
 
 	// const [collection, setCollection] = useState(arr);
@@ -115,6 +123,155 @@ function NftMarketNft() {
 	const zeroAddress =
 		"0:0000000000000000000000000000000000000000000000000000000000000000";
 
+	async function removeSale() {
+		window.contractMarket = await new nearAPI.Contract(
+			window.walletConnection.account(),
+			marketNft,
+			{
+				// View methods are read-only – they don't modify the state, but usually return some value
+				viewMethods: ["storage_minimum_balance"],
+				// Change methods can modify the state, but you don't receive the returned value when called
+				changeMethods: ["storage_deposit", "remove_sale"],
+				// Sender is the account ID to initialize transactions.
+				// getAccountId() will return empty string if user is still unauthorized
+				sender: window.walletConnection.getAccountId(),
+			},
+		);
+
+		contractMarket
+			.remove_sale(
+				{
+					nft_contract_id: addrCol,
+					token_id: token_id,
+				},
+				"30000000000000",
+				"1",
+			)
+			.catch(() => {
+				alert("Connect Wallet");
+			});
+	}
+
+	function changeError(input, value) {
+		if (value == "" || value < 0 || value == undefined || value == null) {
+			setErrorInput(input);
+			setSalePrice(value);
+		} else {
+			if (input == "salePrice") {
+				setErrorInput("");
+				setSalePrice(value);
+			}
+		}
+	}
+
+	async function saleNft() {
+		// console.log(nft);
+
+		// console.log(salePrice);
+
+		// let salePrice = 1;
+
+		if (
+			salePrice <= 0 ||
+			salePrice == "" ||
+			salePrice == undefined ||
+			salePrice == null
+		) {
+			// alert("Set Sale Price");
+			setErrorInput("salePrice");
+			return;
+		}
+
+		window.contractSale = await new nearAPI.Contract(
+			window.walletConnection.account(),
+			addrCol,
+			{
+				// View methods are read-only – they don't modify the state, but usually return some value
+				// viewMethods: ['get_num'],
+				// Change methods can modify the state, but you don't receive the returned value when called
+				changeMethods: ["nft_approve"],
+				// Sender is the account ID to initialize transactions.
+				// getAccountId() will return empty string if user is still unauthorized
+				sender: window.walletConnection.getAccountId(),
+			},
+		);
+
+		window.contractMarket = await new nearAPI.Contract(
+			window.walletConnection.account(),
+			marketNft,
+			{
+				// View methods are read-only – they don't modify the state, but usually return some value
+				viewMethods: [
+					"storage_minimum_balance",
+					"get_sale",
+					"get_sales_by_owner_id",
+				],
+				// Change methods can modify the state, but you don't receive the returned value when called
+				changeMethods: ["storage_deposit"],
+				// Sender is the account ID to initialize transactions.
+				// getAccountId() will return empty string if user is still unauthorized
+				sender: window.walletConnection.getAccountId(),
+			},
+		);
+
+		// contractMarket
+		// 	.get_sales_by_owner_id({
+		// 		account_id: window.walletConnection.getAccountId(),
+		// 		from_index: "0",
+		// 		limit: 50,
+		// 	})
+		// 	.then((data) => {
+		// 		console.log(data);
+		// 	});
+
+		contractSale
+			.nft_approve(
+				{
+					token_id: token_id,
+					account_id: marketNft,
+					msg: JSON.stringify({
+						sale_conditions: parseNearAmount(salePrice),
+					}),
+				},
+				"30000000000000",
+				parseNearAmount("0.01"),
+			)
+			.catch((err) => {
+				// alert("Connect Wallet");
+			});
+
+		// setSalePrice(0);
+	}
+
+	async function depositNft() {
+		window.contractMarket = await new nearAPI.Contract(
+			window.walletConnection.account(),
+			marketNft,
+			{
+				// View methods are read-only – they don't modify the state, but usually return some value
+				viewMethods: ["storage_minimum_balance", "storage_balance_of"],
+				// Change methods can modify the state, but you don't receive the returned value when called
+				changeMethods: ["storage_deposit"],
+				// Sender is the account ID to initialize transactions.
+				// getAccountId() will return empty string if user is still unauthorized
+				sender: window.walletConnection.getAccountId(),
+			},
+		);
+
+		// contractMarket.storage_balance_of({account_id: window.walletConnection.getAccountId()}).then((data)=> {
+		// 	console.log(data);
+		// })
+
+		contractMarket.storage_minimum_balance().then(async (data) => {
+			console.log(data);
+
+			contractMarket.storage_deposit({}, "30000000000000", data);
+		});
+		// .catch(() => {
+		// 	alert("Connect Wallet");
+		// });
+	}
+
 	async function getNft() {
 		window.near = await nearAPI.connect({
 			deps: {
@@ -131,7 +288,11 @@ function NftMarketNft() {
 			marketNft,
 			{
 				// View methods are read-only – they don't modify the state, but usually return some value
-				viewMethods: ["get_sale"],
+				viewMethods: [
+					"get_sale",
+					"get_sales_by_owner_id",
+					"storage_balance_of",
+				],
 				changeMethods: ["offer"],
 				// Change methods can modify the state, but you don't receive the returned value when called
 				// changeMethods: ["new"],
@@ -145,10 +306,16 @@ function NftMarketNft() {
 
 		await ContractMarket.get_sale({
 			nft_contract_token: addrCol + "." + token_id,
-		}).then((data) => {
-			console.log(data);
-			tempPrice = data.sale_conditions;
-		});
+		})
+			.then((data) => {
+				console.log(data);
+				tempPrice = data.sale_conditions;
+				setIsOnSale(true);
+			})
+			.catch((err) => {
+				console.log(err, "160");
+				setIsOnSale(false);
+			});
 
 		window.ContractCol = await new nearAPI.Contract(
 			window.walletConnection.account(),
@@ -161,6 +328,7 @@ function NftMarketNft() {
 					"nft_tokens_for_owner",
 					"nft_token",
 					"nft_metadata",
+					"storage_balance_of",
 				],
 				// Change methods can modify the state, but you don't receive the returned value when called
 				// changeMethods: ["new"],
@@ -170,9 +338,49 @@ function NftMarketNft() {
 			},
 		);
 
+		ContractMarket.get_sales_by_owner_id({
+			account_id: window.walletConnection.getAccountId(),
+			from_index: "0",
+			limit: 100,
+		})
+			.then((sales) => {
+				console.log(sales, addrCol, token_id);
+				ContractMarket.storage_balance_of({
+					account_id: window.walletConnection.getAccountId(),
+				})
+					.then((data) => {
+						if (sales.length < data / 10000000000000000000000) {
+							console.log(sales);
+							console.log(sales.length, data / 10000000000000000000000);
+							setIsSaleAvailable(true);
+						} else {
+							console.log(sales.length, data / 10000000000000000000000);
+							setIsSaleAvailable(false);
+						}
+					})
+					.catch((err) => {
+						console.log(err);
+					});
+
+				// for (let i = 0; i < sales.length; i++) {
+				// 	if (
+				// 		sales[i].nft_contract_id == addrCol &&
+				// 		sales[i].token_id == token_id
+				// 	) {
+				// 		console.log(true, "212");
+				// 		setIsOnSale(true);
+				// 	}
+				// }
+			})
+			.catch((err) => {
+				console.log(err);
+				setIsSaleAvailable(false);
+			});
+
 		ContractCol.nft_token({
 			token_id: token_id,
 		}).then((data) => {
+			console.log(data);
 			let info = data.metadata;
 
 			let mediaUrl;
@@ -203,6 +411,13 @@ function NftMarketNft() {
 						console.log(res);
 						ContractCol.nft_metadata({}).then((metadata) => {
 							console.log(metadata);
+
+							console.log(
+								tempPrice,
+								1000000000000000000000000,
+								tempPrice / (1000000000000000000000000).toString(),
+							);
+
 							setNftInfo({
 								name: info.title,
 								desc: info.description,
@@ -215,6 +430,11 @@ function NftMarketNft() {
 								size: res.size / 1024 / 1024,
 								nameCollection: metadata.name,
 							});
+
+							console.log(
+								data.owner_id,
+								window.walletConnection.getAccountId(),
+							);
 						});
 					});
 				});
@@ -411,11 +631,11 @@ function NftMarketNft() {
 
 	useEffect(() => {
 		getNft();
-		if (document.location.href.split("transactionHashes=")[1]) {
-			// let href = document.location.origin + document.location.hash;
-			// document.location.href = href;
-			history.push("/nft-market");
-		}
+		// if (document.location.href.split("transactionHashes=")[1]) {
+		// 	// let href = document.location.origin + document.location.hash;
+		// 	// document.location.href = href;
+		// 	history.push("/nft-market");
+		// }
 	}, []);
 
 	async function getCollection() {
@@ -515,17 +735,28 @@ function NftMarketNft() {
 	}
 
 	async function buyNft() {
-		await ContractMarket.offer(
-			{
-				nft_contract_id: addrCol,
-				token_id: token_id,
-			},
-			"300000000000000",
-			parseNearAmount(nftInfo.price.toString()),
-		).catch((err) => {
-			console.log(err);
-			walletAccount.requestSignIn("", "Title");
+		console.log(nftInfo.price, nftInfo.price.toString());
+
+		// return;
+
+		await ContractMarket.get_sale({
+			nft_contract_token: addrCol + "." + token_id,
+		}).then(async (data) => {
+			console.log(data);
+
+			await ContractMarket.offer(
+				{
+					nft_contract_id: addrCol,
+					token_id: token_id,
+				},
+				"300000000000000",
+				data.sale_conditions,
+			).catch((err) => {
+				console.log(err);
+				walletAccount.requestSignIn("", "Title");
+			});
 		});
+
 		// window.contract.account._signAndSendTransaction({receiverId:contractName, actions:[nearApi.transactions.functionCall('nft_mint', params, 100000000000000, '10000000000000000000000')],walletCallbackUrl:'https://pcards.near.page/'+receiver.value});
 	}
 
@@ -546,7 +777,7 @@ function NftMarketNft() {
 				<Header activeCat={2}></Header>
 
 				<div class="container auction-sale">
-					<div className="back" onClick={() => history.push("/nft-market")}>
+					<div className="back" onClick={() => history.goBack()}>
 						{/* <button ></button> */}
 					</div>
 					<div class="img">
@@ -606,7 +837,13 @@ function NftMarketNft() {
 								Show full description{" "}
 							</div>
 						</div>
-						<div class="price">
+						<div
+							className={
+								nftInfo.owner == window.accountId || !isOnSale
+									? "hide"
+									: "price"
+							}
+						>
 							<div class="title">Price</div>
 							<div class="price">
 								<span></span>
@@ -615,16 +852,82 @@ function NftMarketNft() {
 							<div class="buttons">
 								<div
 									className={
-										nftInfo.owner == window.accountId
+										nftInfo.owner == window.accountId || !isOnSale
 											? "hide"
 											: "button button-1-square"
 									}
 									onClick={buyNft}
 								>
+									{console.log(nftInfo.owner == window.accountId, !isOnSale)}
 									Buy now
 								</div>
 							</div>
 						</div>
+						<div
+							className={
+								nftInfo.owner == window.accountId &&
+								isSaleAvailable &&
+								!isOnSale
+									? "price-sale price"
+									: "hide"
+							}
+						>
+							<div class="title">Price</div>
+							<div className="price-input">
+								<input
+									value={salePrice}
+									onChange={(ev) => {
+										changeError("salePrice", ev.target.value);
+									}}
+									className={errorInput == "salePrice" ? "inputErr" : "price"}
+								/>
+								<span>NEAR</span>
+							</div>
+							<span className={errorInput == "salePrice" ? "errMsg" : "hide"}>
+								Set Price
+							</span>
+						</div>
+						{/* <input
+							className={
+								nftInfo.owner == window.accountId && isSaleAvailable && !isOnSale ? "" : "hide"
+							}
+							onClick={saleNft}
+						/> */}
+						<button
+							className={
+								nftInfo.owner !== window.accountId ||
+								isSaleAvailable ||
+								isOnSale
+									? "hide"
+									: "button-1-square"
+							}
+							onClick={depositNft}
+						>
+							Activate Sale (0.01 NEAR)
+						</button>
+
+						<button
+							className={
+								nftInfo.owner == window.accountId &&
+								isSaleAvailable &&
+								!isOnSale
+									? "button-1-square"
+									: "hide"
+							}
+							onClick={saleNft}
+						>
+							Put on Sale
+						</button>
+						<button
+							className={
+								nftInfo.owner == window.accountId && isOnSale
+									? "button-4-square"
+									: "hide"
+							}
+							onClick={removeSale}
+						>
+							Cancel Sale
+						</button>
 						{/* <div class="time">
 							<div class="title">Auction ends in</div>
 							<div class="timer">
@@ -650,7 +953,7 @@ function NftMarketNft() {
 						<div class="history">
 							<div class="menu-history">
 								<div class="menu-item">Item Activity</div>
-								<div class="menu-item">Provenance</div>
+								{/* <div class="menu-item">Provenance</div> */}
 							</div>
 							<div class="content">
 								{/* <div class="item">

@@ -953,7 +953,7 @@ function ProfilePage() {
 												class="nft"
 												onClick={() => {
 													history.push(
-														"/nft-details/" +
+														"/nft-market-nft/" +
 															i.addrCol +
 															"!token!" +
 															i.token_id,
@@ -1011,7 +1011,7 @@ function ProfilePage() {
 												class="nft"
 												onClick={() => {
 													history.push(
-														"/nft-details/" +
+														"/nft-market-nft/" +
 															i.addrCol +
 															"!token!" +
 															i.token_id,

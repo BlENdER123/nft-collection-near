@@ -163,6 +163,7 @@ function App() {
 						"nft_supply_for_owner",
 						"nft_tokens_for_owner",
 						"nft_token",
+						"nft_metadata",
 					],
 					// Change methods can modify the state, but you don't receive the returned value when called
 					// changeMethods: ["new"],
@@ -202,14 +203,17 @@ function App() {
 						info.description = "No Description";
 					}
 
-					tempCols.push({
-						name: info.title,
-						desc: info.description,
-						icon: mediaUrl,
-						addrNftCol: sales[i].nft_contract_id,
-						token_id: sales[i].token_id,
-						price: sales[i].sale_conditions / 1000000000000000000000000,
-						index: i,
+					tempContract.nft_metadata({}).then((metadata) => {
+						tempCols.push({
+							name: info.title,
+							desc: info.description,
+							nameCollection: metadata.name,
+							icon: mediaUrl,
+							addrNftCol: sales[i].nft_contract_id,
+							token_id: sales[i].token_id,
+							price: sales[i].sale_conditions / 1000000000000000000000000,
+							index: i,
+						});
 					});
 
 					// tempCol.push({

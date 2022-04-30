@@ -116,6 +116,10 @@ function PackPage() {
 			},
 		);
 
+		tempContract.nft_remaining_count({}).then((data) => {
+			console.log(data);
+		});
+
 		tempContract
 			.nft_metadata({})
 			.then((data) => {

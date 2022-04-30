@@ -1379,7 +1379,11 @@ function LoadNftPage() {
 									class="step step3"
 									onClick={() => {
 										let res = logData();
-										if (res) {
+										if (
+											res &&
+											localStorage.getItem("nftAreaSize") !== undefined &&
+											localStorage.getItem("nftAreaSize") !== null
+										) {
 											history.push("/nft-generate");
 										}
 									}}
@@ -1488,7 +1492,11 @@ function LoadNftPage() {
 									class="step step3"
 									onClick={() => {
 										let res = logData();
-										if (res) {
+										if (
+											res &&
+											localStorage.getItem("nftAreaSize") !== undefined &&
+											localStorage.getItem("nftAreaSize") !== null
+										) {
 											history.push("/nft-generate");
 										}
 									}}
