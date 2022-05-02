@@ -827,7 +827,7 @@ function NftCustomization() {
 							</div>
 							<div style={{margin: "40px 0px 10px 0px"}} className="title">
 								Resale Royalty{" "}
-								<div aria-label="hint" className="hint hint--top"></div>{" "}
+								<div aria-label="Scroll the slider to set the author's percentage of sales" className="hint hint--top"></div>{" "}
 								<span
 									className={accordionHidden[1] ? "hidden" : ""}
 									onClick={() => {

@@ -276,84 +276,11 @@ function NftCollection() {
 					}
 				}
 
-				//
-
-				// const store = event.target.result.transaction("imgs").objectStore("imgs");
-				// store.getAll().onsuccess = (event) => {
-				// 	console.log(event.target.result);
-				// 	const storeData = event.target.result;
-
-				// 	const data = {
-				// 		projectName: details.projectName,
-				// 		collectionName: details.collectionName,
-				// 		projectDescription: details.projectDescription,
-				// 		width: localStorage.getItem("width"),
-				// 		height: localStorage.getItem("height"),
-				// 		classArr: arrClass,
-				// 		indexedData: storeData,
-				// 	};
-		
-				// 	e.preventDefault();
-				// 	downloadFile({
-				// 		data: JSON.stringify(data),
-				// 		fileName: details.projectName + ".json",
-				// 		fileType: "text/json",
-				// 	});
-
-				// }
-
-				// console.log(store_data.result);
+				
 
 			}
 
-			setTimeout(async ()=>{
-				console.log(tempArr);
-				console.log(idBlobObj);
-
-				for (let key in idBlobObj) {
-
-					let type = idBlobObj[key].split(";base64,")[0].split("data:")[1];
-
-					console.log(type);
-
-					var image = new Image();
-
-					image.onload = function(){
-						console.log(image);
-					}
-					image.src = idBlobObj[key];
-
-					// const base64Response = await fetch(idBlobObj[key]);
-					// console.log(base64Response);
-					// const blob = await base64Response.blob();
-					// console.log(blob);
-					
-
-					const byteCharacters = atob(idBlobObj[key].split(";base64,")[1]);
-					const byteNumbers = new Array(byteCharacters.length);
-					for (let i = 0; i < byteCharacters.length; i++) {
-						byteNumbers[i] = byteCharacters.charCodeAt(i);
-					}
-					const byteArray = new Uint8Array(byteNumbers);
-					console.log(byteArray);
-					const blob = new Blob([byteArray], {type: type});
-
-					console.log(blob);
-
-					let tempFile = new File(byteArray, key);
-
-					console.log(URL.createObjectURL(tempFile));
-
-					// let reader = new FileReader();
-					// reader.readAsArrayBuffer(byteArray);
-					// reader.onload = (e) => {
-					// 	// console.log(e.target.result);
-					// 	console.log(URL.createObjectURL(e.target.result));
-					// }
-
-					// console.log(tempFile);
-				}
-			}, 1000);
+			
 
 			setTimeout(()=>{
 				console.log(idBlobObj);
@@ -609,7 +536,7 @@ function NftCollection() {
 			setOwner("Null");
 		}
 
-		let hashTrans = document.location.search.split("transactionHashes=")[1];
+		let hashTrans = document.location.search.split("transactionHashes=")[1].split("&errorCode=")[0];
 		// let hashTrans = "H1Wh3Kf96NWE56HwGLnajVtQGB55rsXAgTTopHdWX72N";
 		if (hashTrans != undefined) {
 			console.log(hashTrans, "HASHTRANS");
@@ -1262,6 +1189,7 @@ function NftCollection() {
 							base_uri: null,
 							reference: null,
 							reference_hash: null,
+							
 						},
 					},
 					"30000000000000",
@@ -1281,6 +1209,7 @@ function NftCollection() {
 						price: parseNearAmount(price.toString()),
 						nft_titles: deployData.projectName,
 						nft_descriptions: deployData.projectDescription,
+						creator: window.walletConnection.getAccountId(),
 					},
 					"30000000000000",
 					"0",
@@ -2099,7 +2028,9 @@ function NftCollection() {
 
 							<div className={curentCollectionStep == 1 ? "progress": "hide"}>
 								<div class="title">Collection generation process</div>
-								<div class="bar"></div>
+								<div class="bar">
+									<span style={{"width": "100%"}}/>	
+								</div>
 								<span>
 									{JSON.parse(localStorage.getItem("uniqFor")).length}/
 									{JSON.parse(localStorage.getItem("uniqFor")).length}

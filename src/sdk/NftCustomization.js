@@ -463,18 +463,15 @@ function NftCustomization() {
 		}
 
 		//fabric
-		// console.log("item", curLayer, curentImages);
-		// objects.map((e) => {
-		// 	//console.log("index", e.index, e.classIndex, curentLayer);
-		// 	if (e.classIndex == curLayer) {
-		// 		console.log("index", e.index, e.classIndex, curentLayer);
-		// 		editor.canvas.item(e.index).set({selectable: true});
-		// 		//editor.canvas.setActiveObject(editor.canvas.item(e.index));
-		// 	} else {
-		// 		editor.canvas.item(e.index).set({selectable: false});
-		// 	}
-		// });
-		// editor.canvas.renderAll();
+		if (item.name == "background") {
+			return;
+		} else {
+			console.log("item", curLayer, curentImages);
+			editor.canvas.getObjects().map((e, i) => {
+				e.idLayerName == item.name ? editor.canvas.setActiveObject(e) : null;
+			});
+			editor.canvas.renderAll();
+		}
 		//end fabric
 		setClassArr(tempArr);
 		// console.log(curentLayer);
@@ -739,9 +736,15 @@ function NftCustomization() {
 			const ob = editor.canvas
 				.getObjects()
 				.filter((e) => e.idLayerName == classArr[curentLayer].name);
-			console.log("EEEEEEEEEEEEEEEEEEEEEEEEERTEYTE", ob);
 			ob.map((e) => {
-				e.idImg == index ? e.set({visible: true}) : e.set({visible: false});
+				if (e.idImg == index) {
+					editor.canvas.setActiveObject(e);
+					e.set({
+						visible: true,
+						left: classArr[curentLayer].x / nftSizeIndex,
+						top: classArr[curentLayer].y / nftSizeIndex,
+					});
+				} else e.set({visible: false});
 			});
 			editor.canvas.renderAll();
 		}
@@ -2108,7 +2111,7 @@ export default NftCustomization;
 // 							<div className="setting">
 // 								<div className="title-settings">
 // 									Rarity{" "}
-// 									<span aria-label="hint" className="info hint--top"></span>
+// 									<span aria-label="Scroll the slider and choose the level of rarity for layers of your collection" className="info hint--top"></span>
 // 								</div>
 // 								{classArr[curentLayer].imgs.map((item, index) => {
 // 									return (
@@ -2432,7 +2435,7 @@ export default NftCustomization;
 
 // 										<div className="title">
 // 											Elements{" "}
-// 											<div aria-label="hint" className="hint hint--top"></div>{" "}
+// 											{/* <div aria-label="hint" className="hint hint--top"></div>{" "} */}
 // 											<span
 // 												className={accordionHidden[2] ? "hidden" : ""}
 // 												onClick={() => {
@@ -2476,7 +2479,7 @@ export default NftCustomization;
 // 											<div className="title-settings">
 // 												Rarity{" "}
 // 												<span
-// 													aria-label="hint"
+// 													aria-label="Scroll the slider and choose the level of rarity for elements of your collection"
 // 													className="info hint--top"
 // 												></span>
 // 											</div>

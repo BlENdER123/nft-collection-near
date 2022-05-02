@@ -125,6 +125,7 @@ function PackPage() {
 		tempContract.nft_remaining_count({}).then((data) => {
 			console.log(data);
 			setCollectionCount([data.total_mintable_tokens_count, data.token_matrix]);
+			setOwner(data.creator);
 		});
 
 		tempContract
@@ -160,7 +161,7 @@ function PackPage() {
 			})
 			.then((data) => {
 				console.log(data);
-				setOwner(data[0].owner_id);
+				// setOwner(data[0].owner_id);
 				let tempCollectionMinted = [];
 
 				for (let i = 0; i < data.length; i++) {

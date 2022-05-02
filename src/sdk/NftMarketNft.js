@@ -329,6 +329,7 @@ function NftMarketNft() {
 					"nft_token",
 					"nft_metadata",
 					"storage_balance_of",
+					"nft_remaining_count",
 				],
 				// Change methods can modify the state, but you don't receive the returned value when called
 				// changeMethods: ["new"],
@@ -399,6 +400,8 @@ function NftMarketNft() {
 				mediaUrl = info.media;
 			}
 
+			
+
 			let img = new Image();
 			img.src = mediaUrl;
 
@@ -418,18 +421,24 @@ function NftMarketNft() {
 								tempPrice / (1000000000000000000000000).toString(),
 							);
 
-							setNftInfo({
-								name: info.title,
-								desc: info.description,
-								// desc: "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
-								img: mediaUrl,
-								owner: data.owner_id,
-								price: tempPrice / 1000000000000000000000000,
-								width: tempW,
-								height: tempH,
-								size: res.size / 1024 / 1024,
-								nameCollection: metadata.name,
-							});
+							ContractCol.nft_remaining_count({}).then((creator)=>{
+								console.log(creator);
+								setNftInfo({
+									name: info.title,
+									desc: info.description,
+									// desc: "111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111",
+									img: mediaUrl,
+									owner: data.owner_id,
+									creator: creator.creator,
+									price: tempPrice / 1000000000000000000000000,
+									width: tempW,
+									height: tempH,
+									size: res.size / 1024 / 1024,
+									nameCollection: metadata.name,
+								});
+							})
+
+							
 
 							console.log(
 								data.owner_id,
@@ -566,7 +575,23 @@ function NftMarketNft() {
 									return data.json();
 								})
 								.then((data_id) => {
+									console.log(data_id);
 									console.log(data_id.data.todoItem.args.deposit);
+									console.log(data_id.data.todoItem.args.args_json.balance + data_id.data.todoItem.args.deposit);
+
+									let deposit = 0;
+
+									if (data_id.data.todoItem.args.deposit > data_id.data.todoItem.args.args_json.balance || data_id.data.todoItem.args.args_json.balance == undefined || data_id.data.todoItem.args.args_json.balance == null) {
+
+										deposit = data_id.data.todoItem.args.deposit;
+
+									} else {
+										deposit = data_id.data.todoItem.args.args_json.balance;
+									}
+
+									// data_id.data.todoItem.args.deposit > data_id.data.todoItem.args.args_json.balance? deposit = data_id.data.todoItem.args.deposit: deposit = data_id.data.todoItem.args.args_json.balance;
+
+									console.log(deposit);
 
 									tempHistory.push({
 										owner: dataHistory[i].node.token_new_owner_account_id,
@@ -575,12 +600,12 @@ function NftMarketNft() {
 										// price: 0,
 										// price_fiat: 0,
 										price: (
-											data_id.data.todoItem.args.deposit /
+											deposit /
 											1000000000000000000000000
 										).toFixed(2),
 										price_fiat: (
 											(
-												data_id.data.todoItem.args.deposit /
+												deposit /
 												1000000000000000000000000
 											).toFixed(2) * price.near.usd
 										).toFixed(2),
@@ -815,7 +840,8 @@ function NftMarketNft() {
 							<div class="user">
 								<div class="img">H</div>
 								<div class="text">
-									<span>Creator</span>Hellow World
+									<span>Creator</span>
+									{nftInfo.creator}
 								</div>
 							</div>
 							<div class="user">
