@@ -1,0 +1,9 @@
+
+tvm_linker decode --tvc SafeMultisigWallet.tvc > code.txt
+export msigCodeExtraton=`cat code.txt`
+
+
+tonos-cli call 0:30c13390ceca5b43d568e7eff7079028391f73cbb701f8f8a8a9df656de19124 setGiverCode '{"code":"'$msigCodeExtraton'"}' --sign root.keys.json --abi DEXRoot.abi.json
+
+tonos-cli run 0:30c13390ceca5b43d568e7eff7079028391f73cbb701f8f8a8a9df656de19124 getGiverAddress '{"_answer_id":0,"giverPubKey":"0xedc2431c864ac67b988dc0f9abc737b229b6b49426ee63479852858aa31e5bd3"}' --abi DEXRoot.abi.json
+

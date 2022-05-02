@@ -1,0 +1,23 @@
+{
+	"rustc": 16065624160775160083,
+	"features": "[\"std\"]",
+	"target": 1867104470408149367,
+	"profile": 4881301595602780980,
+	"path": 6367675930124143762,
+	"deps": [
+		[5262205180847191334, "num_traits", false, 1034950633939220473],
+		[7005326755200385312, "build_script_build", false, 2997182813581823339],
+		[9206902667115925935, "num_integer", false, 3148056897929328569]
+	],
+	"local": [
+		{
+			"CheckDepInfo": {
+				"dep_info": "wasm32-unknown-unknown\\release\\.fingerprint\\num-bigint-ad1f0bb5fa47da52\\dep-lib-num-bigint"
+			}
+		}
+	],
+	"rustflags": ["-C", "link-args=-s"],
+	"metadata": 10601054166942238371,
+	"config": 2202906307356721367,
+	"compile_kind": 8104632896995515128
+}

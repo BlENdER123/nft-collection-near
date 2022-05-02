@@ -1,0 +1,1 @@
+D:\Desktop\near\contract-that-deploys-contracts-rs\contract\target\wasm32-unknown-unknown\debug\greeter.wasm: D:\Desktop\near\contract-that-deploys-contracts-rs\contract\src\../../wasmFile/rust_counter_tutorial.wasm D:\Desktop\near\contract-that-deploys-contracts-rs\contract\src\lib.rs

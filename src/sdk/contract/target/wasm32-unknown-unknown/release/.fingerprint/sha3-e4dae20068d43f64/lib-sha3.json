@@ -1,0 +1,25 @@
+{
+	"rustc": 16065624160775160083,
+	"features": "[\"default\", \"std\"]",
+	"target": 6398611705529749231,
+	"profile": 4881301595602780980,
+	"path": 16387918512447262797,
+	"deps": [
+		[2601600727762447980, "opaque_debug", false, 15877713999620312100],
+		[9080745114019210895, "keccak", false, 7359368723963351702],
+		[10662856717395731129, "block_buffer", false, 2401641528518612613],
+		[12063539356711812582, "byte_tools", false, 17327029607151143645],
+		[17682359962314163568, "digest", false, 9217223637349523792]
+	],
+	"local": [
+		{
+			"CheckDepInfo": {
+				"dep_info": "wasm32-unknown-unknown\\release\\.fingerprint\\sha3-e4dae20068d43f64\\dep-lib-sha3"
+			}
+		}
+	],
+	"rustflags": ["-C", "link-args=-s"],
+	"metadata": 1773086615371866852,
+	"config": 2202906307356721367,
+	"compile_kind": 8104632896995515128
+}

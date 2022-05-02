@@ -1,0 +1,24 @@
+{
+	"rustc": 16065624160775160083,
+	"features": "[]",
+	"target": 4727854412706373915,
+	"profile": 4881301595602780980,
+	"path": 12848395695538910429,
+	"deps": [
+		[1974656595065353045, "block_padding", false, 4289535225517118878],
+		[12063539356711812582, "byte_tools", false, 17327029607151143645],
+		[13447428104013985507, "generic_array", false, 8380712730969952352],
+		[16727177497680903800, "byteorder", false, 4938531898223082510]
+	],
+	"local": [
+		{
+			"CheckDepInfo": {
+				"dep_info": "wasm32-unknown-unknown\\release\\.fingerprint\\block-buffer-5ba135c6bc07f065\\dep-lib-block-buffer"
+			}
+		}
+	],
+	"rustflags": ["-C", "link-args=-s"],
+	"metadata": 15558279325495868285,
+	"config": 2202906307356721367,
+	"compile_kind": 8104632896995515128
+}

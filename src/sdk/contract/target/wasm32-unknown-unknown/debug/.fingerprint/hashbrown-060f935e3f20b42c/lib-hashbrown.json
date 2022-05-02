@@ -1,0 +1,19 @@
+{
+	"rustc": 16065624160775160083,
+	"features": "[\"ahash\", \"default\", \"inline-more\"]",
+	"target": 7861740280460442625,
+	"profile": 12637318739757120569,
+	"path": 10542115303059692627,
+	"deps": [[15468617392942388283, "ahash", false, 5210212877140475196]],
+	"local": [
+		{
+			"CheckDepInfo": {
+				"dep_info": "wasm32-unknown-unknown\\debug\\.fingerprint\\hashbrown-060f935e3f20b42c\\dep-lib-hashbrown"
+			}
+		}
+	],
+	"rustflags": ["-C", "link-args=-s"],
+	"metadata": 6228333144549390726,
+	"config": 2202906307356721367,
+	"compile_kind": 8104632896995515128
+}

@@ -1,0 +1,17 @@
+{
+	"networks": {
+		"2": {
+			"dexrootTest": "0:eaaaffaa24457d6088fca0732cf00172cd854e9ca26d42434ded9ada297dfa62",
+			"dexrootMainPerevious": "0:628277ac76b44180de19bc5399c820e0e6d4d411370e80f174904e8ea5040362",
+			"dexroot": "0:5d0f5a8cb443e00934d1bb632acadc036a6c41b59308e3a36d809449a5e777d9",
+
+			"vaultAddr": "0:d0936a9fc29b5175487208b1d07ab8042ce7ddbc2de7e271c4087ca833b865cc",
+			"vaultWTONAddr": "0:9ded00aed222ece1b9ce7b4de60b2e1e705dd5b685e25a537a012a988193647d",
+			"rootWTONAddr": "0:0ee39330eddb680ce731cd6a443c71d9069db06d149a9bec9569d1eb8d04eb37",
+			"rootAddrNFT": "0:c0f1550614238e8e8408e4287ddf06895c83207be7f3ab282dd819467735dd04",
+			"depoolAddress": "0:127ae93241278304fff6b7e5b7b182fd382b6e95b200551061a7354e032e50bf",
+			"BroxusRootCodeHash": "3bae4a28a3491aa348ad9b4f21ca642828fcecb0a4945246c5ba7ad4f7f87d04",
+			"DappServer":"main.ton.dev"
+		}
+	}
+}

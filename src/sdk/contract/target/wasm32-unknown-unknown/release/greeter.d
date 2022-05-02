@@ -1,0 +1,1 @@
+D:\Desktop\DID-React\nft\ collection\ near\ copy\src\sdk\contract\target\wasm32-unknown-unknown\release\greeter.wasm: D:\Desktop\DID-React\nft\ collection\ near\ copy\src\sdk\contract\src\../../wasmFile/main.wasm D:\Desktop\DID-React\nft\ collection\ near\ copy\src\sdk\contract\src\lib.rs

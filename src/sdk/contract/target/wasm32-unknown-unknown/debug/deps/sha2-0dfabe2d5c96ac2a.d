@@ -1,0 +1,12 @@
+D:\Desktop\near\contract-that-deploys-contracts-rs\contract\target\wasm32-unknown-unknown\debug\deps\sha2-0dfabe2d5c96ac2a.rmeta: C:\Users\anton\.cargo\registry\src\github.com-1ecc6299db9ec823\sha2-0.9.3\src\lib.rs C:\Users\anton\.cargo\registry\src\github.com-1ecc6299db9ec823\sha2-0.9.3\src\consts.rs C:\Users\anton\.cargo\registry\src\github.com-1ecc6299db9ec823\sha2-0.9.3\src\sha256.rs C:\Users\anton\.cargo\registry\src\github.com-1ecc6299db9ec823\sha2-0.9.3\src\sha512.rs C:\Users\anton\.cargo\registry\src\github.com-1ecc6299db9ec823\sha2-0.9.3\src\sha256\soft.rs C:\Users\anton\.cargo\registry\src\github.com-1ecc6299db9ec823\sha2-0.9.3\src\sha512\soft.rs
+
+D:\Desktop\near\contract-that-deploys-contracts-rs\contract\target\wasm32-unknown-unknown\debug\deps\libsha2-0dfabe2d5c96ac2a.rlib: C:\Users\anton\.cargo\registry\src\github.com-1ecc6299db9ec823\sha2-0.9.3\src\lib.rs C:\Users\anton\.cargo\registry\src\github.com-1ecc6299db9ec823\sha2-0.9.3\src\consts.rs C:\Users\anton\.cargo\registry\src\github.com-1ecc6299db9ec823\sha2-0.9.3\src\sha256.rs C:\Users\anton\.cargo\registry\src\github.com-1ecc6299db9ec823\sha2-0.9.3\src\sha512.rs C:\Users\anton\.cargo\registry\src\github.com-1ecc6299db9ec823\sha2-0.9.3\src\sha256\soft.rs C:\Users\anton\.cargo\registry\src\github.com-1ecc6299db9ec823\sha2-0.9.3\src\sha512\soft.rs
+
+D:\Desktop\near\contract-that-deploys-contracts-rs\contract\target\wasm32-unknown-unknown\debug\deps\sha2-0dfabe2d5c96ac2a.d: C:\Users\anton\.cargo\registry\src\github.com-1ecc6299db9ec823\sha2-0.9.3\src\lib.rs C:\Users\anton\.cargo\registry\src\github.com-1ecc6299db9ec823\sha2-0.9.3\src\consts.rs C:\Users\anton\.cargo\registry\src\github.com-1ecc6299db9ec823\sha2-0.9.3\src\sha256.rs C:\Users\anton\.cargo\registry\src\github.com-1ecc6299db9ec823\sha2-0.9.3\src\sha512.rs C:\Users\anton\.cargo\registry\src\github.com-1ecc6299db9ec823\sha2-0.9.3\src\sha256\soft.rs C:\Users\anton\.cargo\registry\src\github.com-1ecc6299db9ec823\sha2-0.9.3\src\sha512\soft.rs
+
+C:\Users\anton\.cargo\registry\src\github.com-1ecc6299db9ec823\sha2-0.9.3\src\lib.rs:
+C:\Users\anton\.cargo\registry\src\github.com-1ecc6299db9ec823\sha2-0.9.3\src\consts.rs:
+C:\Users\anton\.cargo\registry\src\github.com-1ecc6299db9ec823\sha2-0.9.3\src\sha256.rs:
+C:\Users\anton\.cargo\registry\src\github.com-1ecc6299db9ec823\sha2-0.9.3\src\sha512.rs:
+C:\Users\anton\.cargo\registry\src\github.com-1ecc6299db9ec823\sha2-0.9.3\src\sha256\soft.rs:
+C:\Users\anton\.cargo\registry\src\github.com-1ecc6299db9ec823\sha2-0.9.3\src\sha512\soft.rs:

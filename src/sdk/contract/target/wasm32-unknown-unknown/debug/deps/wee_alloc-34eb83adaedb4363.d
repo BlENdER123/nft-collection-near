@@ -1,0 +1,11 @@
+D:\Desktop\near\contract-that-deploys-contracts-rs\contract\target\wasm32-unknown-unknown\debug\deps\wee_alloc-34eb83adaedb4363.rmeta: C:\Users\anton\.cargo\registry\src\github.com-1ecc6299db9ec823\wee_alloc-0.4.5\src\lib.rs C:\Users\anton\.cargo\registry\src\github.com-1ecc6299db9ec823\wee_alloc-0.4.5\src\extra_assert.rs C:\Users\anton\.cargo\registry\src\github.com-1ecc6299db9ec823\wee_alloc-0.4.5\src\const_init.rs C:\Users\anton\.cargo\registry\src\github.com-1ecc6299db9ec823\wee_alloc-0.4.5\src\neighbors.rs C:\Users\anton\.cargo\registry\src\github.com-1ecc6299db9ec823\wee_alloc-0.4.5\src\imp_wasm32.rs
+
+D:\Desktop\near\contract-that-deploys-contracts-rs\contract\target\wasm32-unknown-unknown\debug\deps\libwee_alloc-34eb83adaedb4363.rlib: C:\Users\anton\.cargo\registry\src\github.com-1ecc6299db9ec823\wee_alloc-0.4.5\src\lib.rs C:\Users\anton\.cargo\registry\src\github.com-1ecc6299db9ec823\wee_alloc-0.4.5\src\extra_assert.rs C:\Users\anton\.cargo\registry\src\github.com-1ecc6299db9ec823\wee_alloc-0.4.5\src\const_init.rs C:\Users\anton\.cargo\registry\src\github.com-1ecc6299db9ec823\wee_alloc-0.4.5\src\neighbors.rs C:\Users\anton\.cargo\registry\src\github.com-1ecc6299db9ec823\wee_alloc-0.4.5\src\imp_wasm32.rs
+
+D:\Desktop\near\contract-that-deploys-contracts-rs\contract\target\wasm32-unknown-unknown\debug\deps\wee_alloc-34eb83adaedb4363.d: C:\Users\anton\.cargo\registry\src\github.com-1ecc6299db9ec823\wee_alloc-0.4.5\src\lib.rs C:\Users\anton\.cargo\registry\src\github.com-1ecc6299db9ec823\wee_alloc-0.4.5\src\extra_assert.rs C:\Users\anton\.cargo\registry\src\github.com-1ecc6299db9ec823\wee_alloc-0.4.5\src\const_init.rs C:\Users\anton\.cargo\registry\src\github.com-1ecc6299db9ec823\wee_alloc-0.4.5\src\neighbors.rs C:\Users\anton\.cargo\registry\src\github.com-1ecc6299db9ec823\wee_alloc-0.4.5\src\imp_wasm32.rs
+
+C:\Users\anton\.cargo\registry\src\github.com-1ecc6299db9ec823\wee_alloc-0.4.5\src\lib.rs:
+C:\Users\anton\.cargo\registry\src\github.com-1ecc6299db9ec823\wee_alloc-0.4.5\src\extra_assert.rs:
+C:\Users\anton\.cargo\registry\src\github.com-1ecc6299db9ec823\wee_alloc-0.4.5\src\const_init.rs:
+C:\Users\anton\.cargo\registry\src\github.com-1ecc6299db9ec823\wee_alloc-0.4.5\src\neighbors.rs:
+C:\Users\anton\.cargo\registry\src\github.com-1ecc6299db9ec823\wee_alloc-0.4.5\src\imp_wasm32.rs:
