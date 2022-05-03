@@ -536,7 +536,13 @@ function NftCollection() {
 			setOwner("Null");
 		}
 
-		let hashTrans = document.location.search.split("transactionHashes=")[1].split("&errorCode=")[0];
+		let hashTrans = document.location.search.split("transactionHashes=")[1];
+
+		try {
+			hashTrans = hashTrans.split("&errorCode=")[0];
+		} catch {
+
+		}
 		// let hashTrans = "H1Wh3Kf96NWE56HwGLnajVtQGB55rsXAgTTopHdWX72N";
 		if (hashTrans != undefined) {
 			console.log(hashTrans, "HASHTRANS");
