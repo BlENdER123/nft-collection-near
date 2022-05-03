@@ -3952,6 +3952,32 @@ input[type="text"] {
 	transform: translateY(-50%);
 	right: 10px;
 }
+
+.modal-constructor > .price-sale {
+	position: relative;
+}
+.modal-constructor > .price-sale > .title {
+	font-size: 16px;
+	margin-bottom: 10px;
+}
+.modal-constructor > .price-sale > .price-input > input {
+	width: 100%;
+	font-size: 28px;
+	padding: 20px 15px;
+	border: 1px solid #444444;
+	border-radius: 2px;
+	background: url("./sdk/img/Ellipse\ 57.png") #282a2d no-repeat 15px center;
+	padding-left: 47px;
+	padding-right: 90px;
+}
+.modal-constructor > .price-sale > .price-input > span {
+	font-size: 28px;
+	color: #ffffff;
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	right: 10px;
+}
 // .auction-sale > .content > .price-sale > input::before {
 // 	content: "";
 // 	display: block;
@@ -3968,6 +3994,7 @@ input[type="text"] {
 	display: flex;
 	align-items: center;
 }
+
 .auction-sale > .content > .price > .price > span {
 	width: 26px;
 	height: 26px;

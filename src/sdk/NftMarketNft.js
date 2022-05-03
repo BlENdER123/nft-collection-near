@@ -902,6 +902,7 @@ function NftMarketNft() {
 							<div className="price-input">
 								<input
 									value={salePrice}
+									type="number"
 									onChange={(ev) => {
 										changeError("salePrice", ev.target.value);
 									}}

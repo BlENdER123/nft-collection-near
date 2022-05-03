@@ -139,7 +139,7 @@ function ProfilePage() {
 			.get_sales_by_owner_id({
 				account_id: window.walletConnection.getAccountId(),
 				from_index: "0",
-				limit: 100,
+				limit: 200,
 			})
 			.then(async (data) => {
 				console.log(data);
@@ -169,7 +169,7 @@ function ProfilePage() {
 					await tempContract
 						.nft_token({token_id: data[i].token_id})
 						.then((data1) => {
-							console.log(data1);
+							// console.log(data1);
 
 							let info = data1.metadata;
 
@@ -200,7 +200,6 @@ function ProfilePage() {
 						});
 				}
 
-				console.log(tempCol);
 				let tempItems = items;
 				tempItems[0] = tempCol.length;
 				setItems(tempItems);
@@ -234,13 +233,10 @@ function ProfilePage() {
 		// }).then((data)=>{
 		// 	return data.json();
 		// }).then((data)=>{
-		// 	console.log(data);
-		// 	console.log(1);
 		// })
 
 		let accountName = window.walletConnection.account().accountId;
 
-		console.log(accountName);
 
 		fetch(
 			"https://helper.testnet.near.org/account/" + accountName + "/likelyNFTs",
@@ -277,7 +273,7 @@ function ProfilePage() {
 					.get_sales_by_owner_id({
 						account_id: window.walletConnection.getAccountId(),
 						from_index: "0",
-						limit: 100,
+						limit: 200,
 					})
 					.then(async (sales) => {
 						contractMarket
@@ -286,15 +282,12 @@ function ProfilePage() {
 							})
 							.then((data) => {
 								if (sales.length < data / 10000000000000000000000) {
-									console.log(sales);
-									console.log(sales.length, data / 10000000000000000000000);
 									setDepositSale({
 										deposit: data / 10000000000000000000000,
 										sale: sales.length,
 										avail: true,
 									});
 								} else {
-									console.log(sales.length, data / 10000000000000000000000);
 									setDepositSale({
 										deposit: data / 10000000000000000000000,
 										sale: sales.length,
@@ -306,7 +299,6 @@ function ProfilePage() {
 						for (let i = 0; i < data.length; i++) {
 							let tempAddr = data[i];
 
-							// console.log(tempAddr);
 
 							window.tempContract = await new nearAPI.Contract(
 								window.walletConnection.account(),
@@ -331,7 +323,7 @@ function ProfilePage() {
 									.nft_tokens_for_owner({
 										account_id: window.walletConnection.getAccountId(),
 										from_index: "0",
-										limit: 50,
+										limit: 100,
 									})
 									.then(async (data) => {
 										console.log(data);
@@ -340,16 +332,13 @@ function ProfilePage() {
 
 											let onSale = false;
 
-											console.log(1);
 
 											for (let k = 0; k < sales.length; k++) {
-												// console.log(tempAddr , sales[k].nft_contract_id , data[j].token_id , sales[k].token_id);
 												if (
 													tempAddr == sales[k].nft_contract_id &&
 													data[j].token_id == sales[k].token_id
 												) {
 													onSale = true;
-													console.log("true");
 												}
 											}
 
@@ -400,7 +389,6 @@ function ProfilePage() {
 						tempItems[1] = tempCol.length;
 						setItems(tempItems);
 
-						console.log(tempCol);
 						if (tempCol.length > 0) {
 							setNftCol(tempCol);
 						}
@@ -541,13 +529,10 @@ function ProfilePage() {
 
 	function close() {
 		dispatch({type: "closeConnect"});
-		console.log(connectWallet);
 	}
 
 	async function saleNft(nft) {
-		console.log(nft);
 
-		console.log(salePrice);
 
 		if (
 			salePrice <= 0 ||
@@ -688,7 +673,7 @@ function ProfilePage() {
 			.get_sales_by_owner_id({
 				account_id: window.walletConnection.getAccountId(),
 				from_index: "0",
-				limit: 50,
+				limit: 100,
 			})
 			.then((data) => {
 				console.log(data);
@@ -735,7 +720,6 @@ function ProfilePage() {
 		contractMarket
 			.storage_minimum_balance()
 			.then(async (data) => {
-				console.log(data);
 
 				contractMarket.storage_deposit({}, "30000000000000", data).catch(() => {
 					alert("Connect Wallet");

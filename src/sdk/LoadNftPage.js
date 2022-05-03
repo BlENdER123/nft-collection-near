@@ -201,9 +201,10 @@ function LoadNftPage() {
 	const [classArr1, setClassArr1] = useState([]);
 
 	function newProject() {
+		history.push("/load-nft");
 		localStorage.clear();
 		let deleteRequest = window.indexedDB.deleteDatabase("imgsStore");
-		history.go("/load-nft");
+		location.reload();
 	}
 
 	function loadProject() {}

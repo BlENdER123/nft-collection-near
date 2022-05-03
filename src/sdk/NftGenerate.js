@@ -166,84 +166,78 @@ function NftCustomization() {
 	}
 
 	function newProject() {
+		history.push("/load-nft");
 		localStorage.clear();
 		let deleteRequest = window.indexedDB.deleteDatabase("imgsStore");
-		history.go("/load-nft");
+		location.reload();
 	}
 
 	function loadProject() {}
 
 	function saveProject(e) {
-		if (projectName === undefined) {
-			setErrorModal({
-				hidden: true,
-				message: "Project name is empty!",
-			});
-			return;
-		} else {
-			let idBlobObj = {};
+		
+		let idBlobObj = {};
 
-			let tempArr = [];
+		let tempArr = [];
 
-			const openRequest = window.indexedDB.open("imgsStore", 1);
+		const openRequest = window.indexedDB.open("imgsStore", 1);
 
-			openRequest.onsuccess = async (event) => {
-				const store = event.target.result
-					.transaction("imgs")
-					.objectStore("imgs");
-				store.getAll().onsuccess = (event) => {
-					console.log(event.target.result);
-					const store_data = event.target.result;
+		openRequest.onsuccess = async (event) => {
+			const store = event.target.result
+				.transaction("imgs")
+				.objectStore("imgs");
+			store.getAll().onsuccess = (event) => {
+				console.log(event.target.result);
+				const store_data = event.target.result;
 
-					for (let i = 0; i < store_data.length; i++) {
-						let tempFile = store_data[i];
+				for (let i = 0; i < store_data.length; i++) {
+					let tempFile = store_data[i];
 
-						console.log(tempFile);
-						// tempFile.arrayBuffer().then((data)=>{
-						//   console.log(data);
-						// })
+					console.log(tempFile);
+					// tempFile.arrayBuffer().then((data)=>{
+					//   console.log(data);
+					// })
 
-						tempArr.push(tempFile);
+					tempArr.push(tempFile);
 
-						let reader = new FileReader();
-						reader.readAsDataURL(tempFile);
-						reader.onload = (e) => {
-							console.log(e.currentTarget.result);
-							let tempId = tempFile.id;
-							idBlobObj[tempId] = e.currentTarget.result;
-						};
-					}
-				};
+					let reader = new FileReader();
+					reader.readAsDataURL(tempFile);
+					reader.onload = (e) => {
+						console.log(e.currentTarget.result);
+						let tempId = tempFile.id;
+						idBlobObj[tempId] = e.currentTarget.result;
+					};
+				}
+			};
+		};
+
+		setTimeout(() => {
+			console.log(idBlobObj);
+			const data = {
+				projectName: JSON.parse(localStorage.getItem("details")).projectName,
+				collectionName: JSON.parse(localStorage.getItem("details")).projName,
+				projectDescription: JSON.parse(localStorage.getItem("details")).projectDescription,
+				width: localStorage.getItem("width"),
+				height: localStorage.getItem("height"),
+				classArr: classArr,
+				indexedData: idBlobObj,
 			};
 
-			setTimeout(() => {
-				console.log(idBlobObj);
-				const data = {
-					projectName: projectName,
-					collectionName: collectionName,
-					projectDescription: projectDescription,
-					width: localStorage.getItem("width"),
-					height: localStorage.getItem("height"),
-					classArr: classArr1,
-					indexedData: idBlobObj,
-				};
+			e.preventDefault();
+			const a = document.createElement("a");
+			const file = new Blob([JSON.stringify(data)], {type: "text/json"});
+			a.href = URL.createObjectURL(file);
+			a.download = JSON.parse(localStorage.getItem("details")).projectName + ".json";
+			a.click();
 
-				e.preventDefault();
-				const a = document.createElement("a");
-				const file = new Blob([JSON.stringify(data)], {type: "text/json"});
-				a.href = URL.createObjectURL(file);
-				a.download = projectName + ".json";
-				a.click();
+			URL.revokeObjectURL(a.href);
 
-				URL.revokeObjectURL(a.href);
-
-				// downloadFile({
-				// 	data: JSON.stringify(data),
-				// 	fileName: projectName + ".json",
-				// 	fileType: "text/json",
-				// });
-			}, 1000);
-		}
+			// downloadFile({
+			// 	data: JSON.stringify(data),
+			// 	fileName: projectName + ".json",
+			// 	fileType: "text/json",
+			// });
+		}, 1000);
 	}
 
     function openProject() {

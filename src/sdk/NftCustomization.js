@@ -1284,6 +1284,11 @@ import ImportButtons from "./ImportButtons";
 
 import {useDispatch, useSelector} from "react-redux";
 
+//fabric
+import {FabricJSCanvas, useFabricJSEditor} from "fabricjs-react";
+import {fabric} from "fabric";
+//end fabric
+
 Object.defineProperty(window, "indexedDB", {
 	value:
 		window.indexedDB ||
@@ -1316,6 +1321,120 @@ function NftCustomization() {
 		curImg.push(0);
 	}
 
+	//fabric
+	const {selectedObjects, editor, onReady} = useFabricJSEditor();
+	const [data, setData] = React.useState("");
+	const [objects, setObjects] = React.useState([]);
+	const [layerPosition, setLayerPosition] = React.useState({
+		x: 0,
+		y: 0,
+	});
+
+	const onAddImage = () => {
+		classArr.map((e, i) => {
+			if (e.name != "background")
+				fabric.Image.fromURL(classArr[i].url[curentImages[0]], (img) => {
+					editor.canvas.add(img);
+				});
+		});
+		console.log(editor.canvas.getObjects());
+	};
+
+	const _onReady = (canvas) => {
+		//canvas.set({preserveObjectStacking: true});
+		let index = 0,
+			objs = [];
+		changeBackground(canvas, 0);
+
+		classArr.map((e, i) => {
+			classArr[i].url.map((l, j) => {
+				if (e.name != "background")
+					fabric.Image.fromURL(classArr[i].url[j], (img) => {
+						img.scaleToWidth(img.width / nftSizeIndex);
+						img.scaleToHeight(img.height / nftSizeIndex);
+						img.set({
+							id: index,
+							idLayer: i,
+							idLayerName: e.name,
+							idImg: j,
+							top: classArr[i].y / nftSizeIndex,
+							left: classArr[i].x / nftSizeIndex,
+							lockScalingX: true,
+							lockScalingY: true,
+							lockRotation: true,
+							visible: j === 0 ? true : false,
+							selectable: false,
+						});
+						canvas.add(img);
+						canvas.moveTo(img, i + 1);
+						i == classArr.length - 1 ? canvas.setActiveObject(img) : null;
+						index++;
+					});
+			});
+		});
+
+		canvas.on("object:moving", () => {
+			let clas = classArr;
+
+			const x = canvas.getActiveObject().left * nftSizeIndex;
+			const y = canvas.getActiveObject().top * nftSizeIndex;
+			clas[canvas.getActiveObject().idLayer].x = x;
+			clas[canvas.getActiveObject().idLayer].y = y;
+			const imgsByLayer = canvas
+				.getObjects()
+				.filter((l) => l.idLayerName == canvas.getActiveObject().idLayerName);
+			imgsByLayer.map((m) =>
+				m.set({left: x / nftSizeIndex, top: y / nftSizeIndex}),
+			);
+
+			setLayerPosition({
+				x: x.toFixed(),
+				y: y.toFixed(),
+			});
+			setClassArr(clas);
+		});
+
+		canvas.setDimensions({
+			width: nftAreaSize.width,
+			height: nftAreaSize.height,
+		});
+
+		// canvas.on("after:render", function () {
+		// 	canvas
+		// 		.getObjects()
+		// 		.map((e) => (e.opacity != 1 ? e.set({opacity: 1}) : null));
+		// 	//canvas.renderAll();
+		// });
+
+		onReady(canvas);
+	};
+
+	const toSVG = () => {
+		const svg = editor.canvas.toSVG();
+		console.log(svg);
+		setData(svg);
+	};
+	const toJSON = () => {
+		const json = editor.canvas.toJSON();
+		const data = JSON.stringify(json);
+		console.log(data);
+		setData(data);
+	};
+
+	const changeBackground = (canvas, indexImage) => {
+		const bakgroundLayer = classArr.filter((e) => e.name == "background");
+		fabric.Image.fromURL(bakgroundLayer[0].url[indexImage], (img) => {
+			img.set({
+				left: 0,
+				top: 0,
+			});
+			img.scaleToHeight(nftAreaSize.height);
+			img.scaleToWidth(nftAreaSize.width);
+			canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
+		});
+	};
+	//end fabric
+
 	const [curentImages, setCurentImages] = useState(curImg);
 
 	const [nftSizeIndex, setNftSizeIndex] = useState(1);
@@ -1330,84 +1449,78 @@ function NftCustomization() {
 	// const [errorInput, setErrorInput] = useState();
 
 	function newProject() {
+		history.push("/load-nft");
 		localStorage.clear();
 		let deleteRequest = window.indexedDB.deleteDatabase("imgsStore");
-		history.go("/load-nft");
+		location.reload();
 	}
 
 	function loadProject() {}
 
 	function saveProject(e) {
-		if (projectName === undefined) {
-			setErrorModal({
-				hidden: true,
-				message: "Project name is empty!",
-			});
-			return;
-		} else {
-			let idBlobObj = {};
+		
+		let idBlobObj = {};
 
-			let tempArr = [];
+		let tempArr = [];
 
-			const openRequest = window.indexedDB.open("imgsStore", 1);
+		const openRequest = window.indexedDB.open("imgsStore", 1);
 
-			openRequest.onsuccess = async (event) => {
-				const store = event.target.result
-					.transaction("imgs")
-					.objectStore("imgs");
-				store.getAll().onsuccess = (event) => {
-					console.log(event.target.result);
-					const store_data = event.target.result;
+		openRequest.onsuccess = async (event) => {
+			const store = event.target.result
+				.transaction("imgs")
+				.objectStore("imgs");
+			store.getAll().onsuccess = (event) => {
+				console.log(event.target.result);
+				const store_data = event.target.result;
 
-					for (let i = 0; i < store_data.length; i++) {
-						let tempFile = store_data[i];
+				for (let i = 0; i < store_data.length; i++) {
+					let tempFile = store_data[i];
 
-						console.log(tempFile);
-						// tempFile.arrayBuffer().then((data)=>{
-						//   console.log(data);
-						// })
+					console.log(tempFile);
+					// tempFile.arrayBuffer().then((data)=>{
+					//   console.log(data);
+					// })
 
-						tempArr.push(tempFile);
+					tempArr.push(tempFile);
 
-						let reader = new FileReader();
-						reader.readAsDataURL(tempFile);
-						reader.onload = (e) => {
-							console.log(e.currentTarget.result);
-							let tempId = tempFile.id;
-							idBlobObj[tempId] = e.currentTarget.result;
-						};
-					}
-				};
+					let reader = new FileReader();
+					reader.readAsDataURL(tempFile);
+					reader.onload = (e) => {
+						console.log(e.currentTarget.result);
+						let tempId = tempFile.id;
+						idBlobObj[tempId] = e.currentTarget.result;
+					};
+				}
+			};
+		};
+
+		setTimeout(() => {
+			console.log(idBlobObj);
+			const data = {
+				projectName: JSON.parse(localStorage.getItem("details")).projectName,
+				collectionName: JSON.parse(localStorage.getItem("details")).projName,
+				projectDescription: JSON.parse(localStorage.getItem("details")).projectDescription,
+				width: localStorage.getItem("width"),
+				height: localStorage.getItem("height"),
+				classArr: classArr,
+				indexedData: idBlobObj,
 			};
 
-			setTimeout(() => {
-				console.log(idBlobObj);
-				const data = {
-					projectName: projectName,
-					collectionName: collectionName,
-					projectDescription: projectDescription,
-					width: localStorage.getItem("width"),
-					height: localStorage.getItem("height"),
-					classArr: classArr1,
-					indexedData: idBlobObj,
-				};
+			e.preventDefault();
+			const a = document.createElement("a");
+			const file = new Blob([JSON.stringify(data)], {type: "text/json"});
+			a.href = URL.createObjectURL(file);
+			a.download = JSON.parse(localStorage.getItem("details")).projectName + ".json";
+			a.click();
 
-				e.preventDefault();
-				const a = document.createElement("a");
-				const file = new Blob([JSON.stringify(data)], {type: "text/json"});
-				a.href = URL.createObjectURL(file);
-				a.download = projectName + ".json";
-				a.click();
+			URL.revokeObjectURL(a.href);
 
-				URL.revokeObjectURL(a.href);
-
-				// downloadFile({
-				// 	data: JSON.stringify(data),
-				// 	fileName: projectName + ".json",
-				// 	fileType: "text/json",
-				// });
-			}, 1000);
-		}
+			// downloadFile({
+			// 	data: JSON.stringify(data),
+			// 	fileName: projectName + ".json",
+			// 	fileType: "text/json",
+			// });
+		}, 1000);
 	}
 
 	useEffect(() => {
@@ -1660,31 +1773,31 @@ function NftCustomization() {
 	// 	}
 	// }
 
-	const dragStart = (e) => {
-		console.log("START", e.clientX, e.clientY);
-		if (e.clientX === 0 && e.clientY === 0) return;
-		setActivePosition({x: e.clientX, y: e.clientY});
-	};
+	// const dragStart = (e) => {
+	// 	console.log("START", e.clientX, e.clientY);
+	// 	if (e.clientX === 0 && e.clientY === 0) return;
+	// 	setActivePosition({x: e.clientX, y: e.clientY});
+	// };
 
-	const dragEnd = (e) => {
-		console.log("END", e.clientX, e.clientY);
-		setActivePosition({x: 0, y: 0});
-	};
+	// const dragEnd = (e) => {
+	// 	console.log("END", e.clientX, e.clientY);
+	// 	setActivePosition({x: 0, y: 0});
+	// };
 
-	const Drag = (x, y, index) => {
-		let tempArr = [];
-		for (let i = 0; i < classArr.length; i++) {
-			let temp = classArr[i];
-			if (i == index) {
-				temp.x = x;
-				temp.y = y;
-				tempArr.push(temp);
-			} else {
-				tempArr.push(temp);
-			}
-		}
-		setClassArr(tempArr);
-	};
+	// const Drag = (x, y, index) => {
+	// 	let tempArr = [];
+	// 	for (let i = 0; i < classArr.length; i++) {
+	// 		let temp = classArr[i];
+	// 		if (i == index) {
+	// 			temp.x = x;
+	// 			temp.y = y;
+	// 			tempArr.push(temp);
+	// 		} else {
+	// 			tempArr.push(temp);
+	// 		}
+	// 	}
+	// 	setClassArr(tempArr);
+	// };
 
 	function copySrc() {
 		const asyncFunction = async function () {
@@ -1713,6 +1826,7 @@ function NftCustomization() {
 
 	function setActive(item) {
 		let tempArr = [];
+		let curLayer = 0; //fabric
 		for (let i = 0; i < classArr.length; i++) {
 			let temp = classArr[i];
 			if (temp == item) {
@@ -1720,11 +1834,31 @@ function NftCustomization() {
 				temp.active = true;
 				tempArr.push(temp);
 				setCurentLayer(i);
+				curLayer = i; //fabric
 			} else {
 				temp.active = false;
 				tempArr.push(temp);
 			}
 		}
+
+		//fabric
+		if (item.name == "background") {
+			return;
+		} else {
+			console.log("item", curLayer, curentImages);
+			editor.canvas.getObjects().map((e, i) => {
+				if (e.idLayerName == item.name) {
+					editor.canvas.setActiveObject(e);
+					e.set({opacity: 0.6});
+					editor.canvas.item(i).set({selectable: true});
+				} else {
+					editor.canvas.item(i).set({selectable: false});
+					e.set({opacity: 1});
+				}
+			});
+			editor.canvas.renderAll();
+		}
+		//end fabric
 		setClassArr(tempArr);
 		// console.log(curentLayer);
 	}
@@ -2040,6 +2174,28 @@ function NftCustomization() {
 			}
 		}
 
+		//fabric
+		if (classArr[curentLayer].name == "background") {
+			changeBackground(editor.canvas, index);
+		} else {
+			const ob = editor.canvas
+				.getObjects()
+				.filter((e) => e.idLayerName == classArr[curentLayer].name);
+			ob.map((e) => {
+				if (e.idImg == index) {
+					editor.canvas.setActiveObject(e);
+					e.set({
+						visible: true,
+						left: classArr[curentLayer].x / nftSizeIndex,
+						top: classArr[curentLayer].y / nftSizeIndex,
+					});
+					editor.canvas.moveTo(e, classArr[curentLayer].z_index);
+				} else e.set({visible: false});
+			});
+			editor.canvas.renderAll();
+		}
+		//end fabric
+
 		//curImg[curentLayer] = index;
 		setCurentImages(curImg);
 		console.log(curImg);
@@ -2283,65 +2439,13 @@ function NftCustomization() {
 
 							<div className="nft-img" ref={nftArea}>
 								<div
-									// className={statusSize == "horizontal" ? "horizontal img" : statusSize == "vertical" ? "vertical img" : statusSize == "square" ? "square img" : "img"}
-									// style={statusSize == ""?{
-									// 	width: localStorage.getItem("width") + "px",
-									// 	height: localStorage.getItem("height") + "px",
-									// }:null}
-
 									className={"img"}
 									style={{
 										width: nftAreaSize.width + "px",
 										height: nftAreaSize.height + "px",
 									}}
-									// style={{
-									// 	width: localStorage.getItem("width") + "px",
-									// 	height: localStorage.getItem("height") + "px",
-									// }}
 								>
-									{/* classArr[0].src?.length > 0 */}
-									{classArr[0].url?.length > 0
-										? classArr.map((item, index) => {
-												return (
-													<Rnd
-														style={{
-															// ...style,
-															zIndex: index,
-															// background: "#ccc",
-															opacity: item.active ? "1" : "0.8",
-														}}
-														key={`rnd${index}`}
-														scale={0.5}
-														onDrag={(e, data) =>
-															Drag(data.x.toFixed(), data.y.toFixed(), index)
-														}
-													>
-														<img
-															onClick={() => setActive(item)}
-															onDragStart={(e) => setActive(item)}
-															onDrag={(e) => Drag(e, index)}
-															key={"uniqueId" + index}
-															src={classArr[index].url[curentImages[index]]}
-															style={{
-																width: newSizesArr
-																	? newSizesArr[index].width[
-																			curentImages[index]
-																	  ] + "px"
-																	: "0px",
-																height: newSizesArr
-																	? newSizesArr[index].height[
-																			curentImages[index]
-																	  ] + "px"
-																	: "0px",
-																left: item.x / nftSizeIndex + "px",
-																top: item.y / nftSizeIndex + "px",
-																zIndex: item.z_index,
-															}}
-														/>
-													</Rnd>
-												);
-										  })
-										: copySrc()}
+									{nftAreaSize.width && <FabricJSCanvas onReady={_onReady} />}
 									<div
 										className={classArr[0].url?.length > 0 ? "hide" : "loader"}
 									>
