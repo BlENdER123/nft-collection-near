@@ -166,11 +166,85 @@ function NftCustomization() {
 	}
 
 	function newProject() {
-        // localStorage.clear();
-        // sessionStorage.clear();
-        // TODO Delete all DB data
-        history.push("/load-nft")
-    }
+		localStorage.clear();
+		let deleteRequest = window.indexedDB.deleteDatabase("imgsStore");
+		history.go("/load-nft");
+	}
+
+	function loadProject() {}
+
+	function saveProject(e) {
+		if (projectName === undefined) {
+			setErrorModal({
+				hidden: true,
+				message: "Project name is empty!",
+			});
+			return;
+		} else {
+			let idBlobObj = {};
+
+			let tempArr = [];
+
+			const openRequest = window.indexedDB.open("imgsStore", 1);
+
+			openRequest.onsuccess = async (event) => {
+				const store = event.target.result
+					.transaction("imgs")
+					.objectStore("imgs");
+				store.getAll().onsuccess = (event) => {
+					console.log(event.target.result);
+					const store_data = event.target.result;
+
+					for (let i = 0; i < store_data.length; i++) {
+						let tempFile = store_data[i];
+
+						console.log(tempFile);
+						// tempFile.arrayBuffer().then((data)=>{
+						//   console.log(data);
+						// })
+
+						tempArr.push(tempFile);
+
+						let reader = new FileReader();
+						reader.readAsDataURL(tempFile);
+						reader.onload = (e) => {
+							console.log(e.currentTarget.result);
+							let tempId = tempFile.id;
+							idBlobObj[tempId] = e.currentTarget.result;
+						};
+					}
+				};
+			};
+
+			setTimeout(() => {
+				console.log(idBlobObj);
+				const data = {
+					projectName: projectName,
+					collectionName: collectionName,
+					projectDescription: projectDescription,
+					width: localStorage.getItem("width"),
+					height: localStorage.getItem("height"),
+					classArr: classArr1,
+					indexedData: idBlobObj,
+				};
+
+				e.preventDefault();
+				const a = document.createElement("a");
+				const file = new Blob([JSON.stringify(data)], {type: "text/json"});
+				a.href = URL.createObjectURL(file);
+				a.download = projectName + ".json";
+				a.click();
+
+				URL.revokeObjectURL(a.href);
+
+				// downloadFile({
+				// 	data: JSON.stringify(data),
+				// 	fileName: projectName + ".json",
+				// 	fileType: "text/json",
+				// });
+			}, 1000);
+		}
+	}
 
     function openProject() {
 
@@ -1010,7 +1084,7 @@ function NftCustomization() {
 
 						<div className="modal-constructor modal-constructor-elements">
 							{/* <div className="import opacity">Import Project</div> */}
-							<div class="import-buttons">
+							{/* <div class="import-buttons">
 							<div class="new" onClick={newProject}></div>
 								<Box className="import" type="button" component="label">
 									<input
@@ -1021,8 +1095,14 @@ function NftCustomization() {
 									/>
 								</Box>
 								<div class="save"></div>
-							</div>
+							</div> */}
 							{/* <ImportButtons/> */}
+							<div class="import-buttons">
+								<div onClick={newProject} class="new"></div>
+								<div onClick={loadProject} class="import"></div>
+								<div onClick={saveProject} class="save"></div>
+							</div>
+
 							<div className="title">
 								Elements{" "}
 								<span
