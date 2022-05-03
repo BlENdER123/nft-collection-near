@@ -113,7 +113,7 @@ function NftCollection() {
 
 	async function uploadToNFTStore() {
 		const token =
-			"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGEwMTJGQWNhM0E5ZWQ0ZEI5MGY2ZmMzZUZFQTc1ZjBBMzZBNmE5MWUiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY1MDY2ODgzNjI1OCwibmFtZSI6Ik1hcmtldCJ9.sWJK68Mh8EIHUYusyqoB19mkAsP_KcwnBd7jqq7BZuU";
+			"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGEwMTJGQWNhM0E5ZWQ0ZEI5MGY2ZmMzZUZFQTc1ZjBBMzZBNmE5MWUiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY1MTYwMjY4MjQ2NCwibmFtZSI6Ik1hcmtldDIifQ.h3Xw4kXDgUZMoJcJTUxl_RTKZDJIlVVOPr5WYI14_as";
 		const nft = new NFTStorage({
 			endpoint: "https://api.nft.storage",
 			token,
@@ -1049,7 +1049,15 @@ function NftCollection() {
 
 		let actionsTrans = [];
 
+		// let tempGas = "300000000000000"/collectionMinted.length;
+
+		// console.log(tempGas);
+		// return;
+
 		for (let i = 0; i < collectionMinted.length; i++) {
+			let tempGas = "300000000000000" / collectionMinted.length;
+			// console.log(tempGas);
+			// return;
 			actionsTrans.push(
 				nearAPI.transactions.functionCall(
 					"nft_approve",
@@ -1060,7 +1068,7 @@ function NftCollection() {
 							sale_conditions: parseNearAmount("1"),
 						}),
 					},
-					"30000000000000",
+					tempGas,
 					parseNearAmount("0.01"),
 				),
 			);
@@ -1076,6 +1084,8 @@ function NftCollection() {
 		);
 
 		console.log(actionsTrans);
+
+		// return;
 
 		if (actionsTrans.length == 0) {
 			return;
@@ -1407,6 +1417,14 @@ function NftCollection() {
 		let addr = sessionStorage.getItem("addrCol");
 		// let addr = "kadqjgcyjio4tdqdtene.dev-1649955546633-94708956977447";
 		if (addr == null || addr == undefined) {
+			return;
+		}
+
+		if (amountMintNft > collectionCount[1]) {
+			return;
+		}
+
+		if (collectionCount[0] == 0 || collectionCount[1] == 0) {
 			return;
 		}
 
@@ -1849,7 +1867,7 @@ function NftCollection() {
 									</div>
 
 									<button
-										className="button-3-square"
+										className={amountMintNft > collectionCount[1] || collectionCount[0] == 0 || collectionCount[1] == 0?"button-3-square button-1-square-disabled" : "button-3-square"}
 										onClick={() => {
 											mint_nft(amountMintNft);
 										}}

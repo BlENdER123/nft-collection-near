@@ -337,8 +337,8 @@ input {
 	text-align: center;
 }
 .button-1-square-disabled {
-	color: #fff;
-	background: grey;
+	color: #fff !important;
+	background: grey !important;
 	border: none;
 	font-size: 14px;
 	border-radius: 4px;
