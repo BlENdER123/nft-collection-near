@@ -115,7 +115,7 @@ function NftCollection() {
 
 	async function uploadToNFTStore() {
 		const token =
-			"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGEwMTJGQWNhM0E5ZWQ0ZEI5MGY2ZmMzZUZFQTc1ZjBBMzZBNmE5MWUiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY1MTYwNjIwNTY0NiwibmFtZSI6Ik1hcmtldDMifQ.IzBaKMQuQRq9G6Pi5Y-vNKoxVy4-r5KtABSu2S_VL9U";
+			"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGEwMTJGQWNhM0E5ZWQ0ZEI5MGY2ZmMzZUZFQTc1ZjBBMzZBNmE5MWUiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY1MTc1MTkzMTY2NiwibmFtZSI6Ik1hcmtldHBsYWNlMyJ9.O-UUNi9Q7D-qmqR-fWDFkYekFvpvCtyCl_7eGYqdtf8";
 		const nft = new NFTStorage({
 			endpoint: "https://api.nft.storage",
 			token,
