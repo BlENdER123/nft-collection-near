@@ -2220,7 +2220,7 @@ function NftCollection() {
 										</span>{" "}
 									</button>
 									<div style={{textAlign: "center"}} class="desc">
-										Estimated fee ~ 0.1 NEAR
+										Estimated fee ~ 0.1 NEAR for each
 									</div>
 
 									<div

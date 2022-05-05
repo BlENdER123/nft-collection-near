@@ -2196,6 +2196,9 @@ function NftCustomization() {
 				editor.canvas.moveTo(e, classArr[curentLayer].z_index);
 			} else e.set({visible: false});
 		});
+
+		updateZ(editor.canvas, classArr);
+		
 		editor.canvas.renderAll();
 
 		//end fabric
