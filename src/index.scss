@@ -2000,6 +2000,56 @@ button,
 .modal-constructor .import-buttons {
 	margin-bottom: 30px;
 }
+.form-item {
+	// Form item input
+	position: relative;
+	//margin: 10px;
+
+	&__input {
+		overflow: hidden;
+		position: absolute;
+		clip: rect(0 0 0 0);
+		opacity: 0;
+	}
+
+	// Form item label
+	&__label {
+		width: 56px;
+		height: 56px;
+		display: inline-block;
+		background: #6333ff;
+		background-repeat: no-repeat;
+		background-position: center;
+		cursor: pointer;
+		border-radius: 2px;
+		background-image: url("./sdk/img/Folder_open_light.png");
+
+		.form-item__input:focus + &,
+		&:hover {
+			//box-shadow: 0 1px 3px #b8cdf9;
+			background-color: #7747f7;
+		}
+	}
+
+	// List files
+	.list-files {
+		// стили для списка фалов
+		font-size: 0.85em;
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		white-space: nowrap;
+
+		li {
+			padding: 5px 10px;
+			background-color: #fff27e;
+			margin-bottom: 5px;
+			text-overflow: ellipsis;
+			overflow: hidden;
+		}
+	}
+}
+
 .modal-constructor .import-buttons > div {
 	width: 56px;
 	height: 56px;

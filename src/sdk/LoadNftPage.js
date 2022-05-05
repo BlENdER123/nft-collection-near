@@ -207,7 +207,75 @@ function LoadNftPage() {
 		location.reload();
 	}
 
-	function loadProject() {}
+	async function loadProject(e) {
+		const fileReader = new FileReader();
+		fileReader.readAsText(e.target.files[0], "UTF-8");
+		fileReader.onload = async (e) => {
+			localStorage;
+			const data = JSON.parse(e.target.result);
+
+			setProjectName(data.projectName || "");
+			setCollectionName(data.collectionName || "");
+			setProjectDescription(data.projectDescription || "");
+			setWidth(data.width);
+			setHeight(data.height);
+			setClassArr1(data.classArr);
+			// localStorage.setItem(
+			// 	"project",
+			// 	JSON.stringify({
+			// 		name: projectName,
+			// 		collectionName: collectionName,
+			// 		description: projectDescription,
+			// 	}),
+			// );
+			localStorage.setItem("class", JSON.stringify(data.classArr));
+			localStorage.setItem("width", data.width);
+			localStorage.setItem("height", data.height);
+
+			//setFiles(e.target.result);
+
+			const imgs = Object.values(data.indexedData);
+			await imgs.reduce((previousPromise, nextID) => {
+				return previousPromise.then(() => {
+					return addFileInDB(nextID, 1);
+				});
+			}, Promise.resolve());
+
+			const openRequest = window.indexedDB.open("imgsStore", 1);
+			const localClass = JSON.parse(localStorage.getItem("class"));
+			await request(openRequest, localClass).then((result) => {
+				localStorage.setItem("class", JSON.stringify(result));
+				//setClassArr1(result);
+			});
+			await history.go("/load-nft");
+		};
+	}
+
+	async function addFileInDB(dataURL, index) {
+		var arr = dataURL.split(",");
+		var mime = arr[0].match(/:(.*?);/)[1];
+		var type = mime.split("/")[1];
+
+		//console.log("file", arr, mime, type);
+		const file = await fetch(dataURL)
+			.then((res) => res.blob())
+			.then((blob) => {
+				return new File([blob], index + "." + type, {type: mime});
+			});
+
+		try {
+			const openRequest = await window.indexedDB.open("imgsStore", 1);
+			openRequest.onsuccess = async (event) => {
+				const store = event.target.result
+					.transaction("imgs", "readwrite")
+					.objectStore("imgs");
+
+				await store.add(file);
+			};
+		} catch (e) {
+			console.error(e);
+		}
+	}
 
 	function saveProject(e) {
 		if (projectName === undefined) {
@@ -282,37 +350,39 @@ function LoadNftPage() {
 		}
 	}
 
-	useEffect(() => {
-		function request(openRequest, localClass) {
-			return new Promise((resolve, reject) => {
-				openRequest.onsuccess = async (event) => {
-					const store = event.target.result
-						.transaction("imgs")
-						.objectStore("imgs");
+	function request(openRequest, localClass) {
+		return new Promise((resolve, reject) => {
+			openRequest.onsuccess = async (event) => {
+				const store = event.target.result
+					.transaction("imgs")
+					.objectStore("imgs");
 
-					const functionsToWait = [];
-					for (let i = 0; i < localClass.length; i++) {
-						for (let j = 0; j < localClass[i].imgs.length; j++) {
-							functionsToWait.push(
-								new Promise((resolve, reject) => {
-									console.log(i, j);
-									store.get(localClass[i].imgs[j]).onsuccess = (event) => {
-										console.log(event.target.result);
-										localClass[i].url[j] = URL.createObjectURL(
-											event.target.result,
-										);
-										resolve(true);
-									};
-								}),
-							);
-						}
+				const functionsToWait = [];
+				for (let i = 0; i < localClass.length; i++) {
+					for (let j = 0; j < localClass[i].imgs.length; j++) {
+						functionsToWait.push(
+							new Promise((resolve, reject) => {
+								console.log(i, j);
+								store.get(localClass[i].imgs[j]).onsuccess = (event) => {
+									console.log(event.target.result);
+									localClass[i].url[j] = URL.createObjectURL(
+										event.target.result,
+									);
+									resolve(true);
+								};
+							}),
+						);
 					}
-					Promise.all(functionsToWait).then((res) => {
-						resolve(localClass);
-					});
-				};
-			});
-		}
+				}
+				Promise.all(functionsToWait).then((res) => {
+					resolve(localClass);
+				});
+			};
+		});
+	}
+
+	useEffect(() => {
+		
 
 		if (
 			localStorage.getItem("class") !== undefined &&
@@ -983,6 +1053,7 @@ function LoadNftPage() {
 			let tempArrImg = [];
 			let tempArrUrl = [];
 			let tempArrNames = [];
+			let tempArrRarity = [];
 			let tempArrImgSizeW = [];
 			let tempArrImgSizeH = [];
 			if (classArr1[curentLayer].name == classArr1[i].name) {
@@ -1000,6 +1071,7 @@ function LoadNftPage() {
 						tempArrImg.push(classArr1[curentLayer].imgs[j]);
 						tempArrUrl.push(classArr1[curentLayer].url[j]);
 						tempArrNames.push(classArr1[curentLayer].names[j]);
+						tempArrRarity.push(classArr1[curentLayer].rarity[j]);
 						tempArrImgSizeW.push(classArr1[curentLayer].sizes.width[j]);
 						tempArrImgSizeH.push(classArr1[curentLayer].sizes.height[j]);
 					}
@@ -1007,6 +1079,7 @@ function LoadNftPage() {
 
 				temp.imgs = tempArrImg;
 				temp.url = tempArrUrl;
+				temp.rarity = tempArrRarity;
 				temp.names = tempArrNames;
 				temp.sizes = {
 					width: tempArrImgSizeW,
@@ -1174,6 +1247,10 @@ function LoadNftPage() {
 		// 	return;
 		// }
 
+		let tempCollectionName = "";
+		let tempProjectName = "";
+		let tempProjectDescription = "";
+
 		if (collectionName === "" || collectionName === undefined) {
 			// setErrorModal({
 			// 	hidden: true,
@@ -1183,7 +1260,10 @@ function LoadNftPage() {
 			// setErrorInput("colName");
 
 			setCollectionName("No Name");
+			tempCollectionName = "No Name";
 			// return;
+		} else {
+			tempCollectionName = collectionName;
 		}
 
 		if (projectName === "" || projectName === undefined) {
@@ -1195,8 +1275,10 @@ function LoadNftPage() {
 			// setProjectName("Project Name");
 
 			setProjectName("Project Name");
-
+			tempProjectName = "Project Name";
 			// return;
+		} else {
+			tempProjectName = projectName;
 		}
 
 		if (projectDescription === "" || projectDescription === undefined) {
@@ -1208,8 +1290,17 @@ function LoadNftPage() {
 			// setErrorInput("colDesc");
 
 			setProjectDescription("Project Description");
+			tempProjectDescription = "Project Description";
 			// return;
+		} else {
+			tempProjectDescription = projectDescription;
 		}
+
+
+
+		console.log(tempCollectionName,tempProjectName,tempProjectDescription);
+
+		// return;
 
 		localStorage.setItem("class", JSON.stringify(classArr1));
 		localStorage.setItem("width", width);
@@ -1218,9 +1309,9 @@ function LoadNftPage() {
 		localStorage.setItem(
 			"details",
 			JSON.stringify({
-				projName: projectName,
-				projectName: collectionName,
-				projectDescription: projectDescription,
+				projName: tempCollectionName,
+				projectName: tempProjectName,
+				projectDescription: tempProjectDescription,
 			}),
 		);
 
@@ -1706,7 +1797,17 @@ function LoadNftPage() {
 
 							<div class="import-buttons">
 								<div onClick={newProject} class="new"></div>
-								<div onClick={loadProject} class="import"></div>
+								{/* <div onClick={loadProject} class="import"></div> */}
+								<div class="form-item">
+									<input
+										className="form-item__input"
+										type="file"
+										id="files"
+										accept=".json"
+										onChange={loadProject}
+									/>
+									<label class="form-item__label" for="files"></label>
+								</div>
 								<div onClick={saveProject} class="save"></div>
 							</div>
 

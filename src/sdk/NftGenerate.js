@@ -172,7 +172,106 @@ function NftCustomization() {
 		location.reload();
 	}
 
-	function loadProject() {}
+	function loadProject(e) {
+		history.push("/load-nft");
+		const fileReader = new FileReader();
+		fileReader.readAsText(e.target.files[0], "UTF-8");
+		fileReader.onload = async (e) => {
+			localStorage;
+			const data = JSON.parse(e.target.result);
+
+			// setProjectName(data.projectName || "");
+			// setCollectionName(data.collectionName || "");
+			// setProjectDescription(data.projectDescription || "");
+			// setWidth(data.width);
+			// setHeight(data.height);
+			// setClassArr1(data.classArr);
+			// localStorage.setItem(
+			// 	"project",
+			// 	JSON.stringify({
+			// 		name: projectName,
+			// 		collectionName: collectionName,
+			// 		description: projectDescription,
+			// 	}),
+			// );
+			localStorage.setItem("class", JSON.stringify(data.classArr));
+			localStorage.setItem("width", data.width);
+			localStorage.setItem("height", data.height);
+
+			//setFiles(e.target.result);
+
+			const imgs = Object.values(data.indexedData);
+			await imgs.reduce((previousPromise, nextID) => {
+				return previousPromise.then(() => {
+					return addFileInDB(nextID, 1);
+				});
+			}, Promise.resolve());
+
+			const openRequest = window.indexedDB.open("imgsStore", 1);
+			const localClass = JSON.parse(localStorage.getItem("class"));
+			await request(openRequest, localClass).then((result) => {
+				localStorage.setItem("class", JSON.stringify(result));
+				//setClassArr1(result);
+			});
+			await history.go("/load-nft");
+		};
+	}
+
+	async function addFileInDB(dataURL, index) {
+		var arr = dataURL.split(",");
+		var mime = arr[0].match(/:(.*?);/)[1];
+		var type = mime.split("/")[1];
+
+		//console.log("file", arr, mime, type);
+		const file = await fetch(dataURL)
+			.then((res) => res.blob())
+			.then((blob) => {
+				return new File([blob], index + "." + type, {type: mime});
+			});
+
+		try {
+			const openRequest = await window.indexedDB.open("imgsStore", 1);
+			openRequest.onsuccess = async (event) => {
+				const store = event.target.result
+					.transaction("imgs", "readwrite")
+					.objectStore("imgs");
+
+				await store.add(file);
+			};
+		} catch (e) {
+			console.error(e);
+		}
+	}
+
+	function request(openRequest, localClass) {
+		return new Promise((resolve, reject) => {
+			openRequest.onsuccess = async (event) => {
+				const store = event.target.result
+					.transaction("imgs")
+					.objectStore("imgs");
+
+				const functionsToWait = [];
+				for (let i = 0; i < localClass.length; i++) {
+					for (let j = 0; j < localClass[i].imgs.length; j++) {
+						functionsToWait.push(
+							new Promise((resolve, reject) => {
+								console.log(i, j);
+								store.get(localClass[i].imgs[j]).onsuccess = (event) => {
+									localClass[i].url[j] = URL.createObjectURL(
+										event.target.result,
+									);
+									resolve(true);
+								};
+							}),
+						);
+					}
+				}
+				Promise.all(functionsToWait).then((res) => {
+					resolve(localClass);
+				});
+			};
+		});
+	}
 
 	function saveProject(e) {
 		
@@ -546,7 +645,9 @@ function NftCustomization() {
 		console.log(classArr);
 		for (let i = 0; i < classArr.length; i++) {
 			let temp = [];
+			console.log(classArr[i].rarity);
 			for (let j = 0; j < classArr[i].rarity.length; j++) {
+				
 				for (let k = 0; k < Number(classArr[i].rarity[j]) + 1; k++) {
 					temp.push(j);
 				}
@@ -1093,7 +1194,17 @@ function NftCustomization() {
 							{/* <ImportButtons/> */}
 							<div class="import-buttons">
 								<div onClick={newProject} class="new"></div>
-								<div onClick={loadProject} class="import"></div>
+								{/* <div onClick={loadProject} class="import"></div> */}
+								<div class="form-item">
+									<input
+										className="form-item__input"
+										type="file"
+										id="files"
+										accept=".json"
+										onChange={loadProject}
+									/>
+									<label class="form-item__label" for="files"></label>
+								</div>
 								<div onClick={saveProject} class="save"></div>
 							</div>
 

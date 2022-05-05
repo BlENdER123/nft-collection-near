@@ -402,11 +402,11 @@ function NftCollection() {
 		console.log("UseEffect minted");
 
 		if (
-			sessionStorage.getItem("addrCol") !== undefined &&
-			sessionStorage.getItem("addrCol") !== null &&
-			sessionStorage.getItem("addrCol") !== ""
+			localStorage.getItem("addrCol") !== undefined &&
+			localStorage.getItem("addrCol") !== null &&
+			localStorage.getItem("addrCol") !== ""
 		) {
-			let addr = sessionStorage.getItem("addrCol");
+			let addr = localStorage.getItem("addrCol");
 
 			if (addr == null || addr == undefined) {
 				return;
@@ -480,11 +480,11 @@ function NftCollection() {
 		console.log("UseEffect on sale");
 
 		if (
-			sessionStorage.getItem("addrCol") !== undefined &&
-			sessionStorage.getItem("addrCol") !== null &&
-			sessionStorage.getItem("addrCol") !== ""
+			localStorage.getItem("addrCol") !== undefined &&
+			localStorage.getItem("addrCol") !== null &&
+			localStorage.getItem("addrCol") !== ""
 		) {
-			let addr = sessionStorage.getItem("addrCol");
+			let addr = localStorage.getItem("addrCol");
 
 			if (addr == null || addr == undefined) {
 				return;
@@ -740,7 +740,7 @@ function NftCollection() {
 					})
 					.then((data) => {
 						if (sales.length+JSON.parse(localStorage.getItem("uniqFor")).length <= data / 10000000000000000000000) {
-							// console.log(sales.length, sales.length+JSON.parse(localStorage.getItem("uniqFor")).length, data / 10000000000000000000000);
+							console.log(sales.length, sales.length+JSON.parse(localStorage.getItem("uniqFor")).length, data / 10000000000000000000000);
 							// console.log(sales.length, data / 10000000000000000000000);
 							setDepositSale({
 								deposit: data / 10000000000000000000000,
@@ -748,7 +748,7 @@ function NftCollection() {
 								avail: true,
 							});
 						} else {
-							console.log(sales.length + collectionNotOnSale, data / 10000000000000000000000);
+							console.log(sales.length + JSON.parse(localStorage.getItem("uniqFor")).length, data / 10000000000000000000000);
 							setDepositSale({
 								deposit: data / 10000000000000000000000,
 								sale: sales.length,
@@ -1290,8 +1290,8 @@ function NftCollection() {
 		}
 
 		if (
-			sessionStorage.getItem("addrCol") == null ||
-			sessionStorage.getItem("addrCol") == undefined
+			localStorage.getItem("addrCol") == null ||
+			localStorage.getItem("addrCol") == undefined
 		) {
 			return;
 		}
@@ -1330,7 +1330,7 @@ function NftCollection() {
 
 		window.tempContract = await new nearAPI.Contract(
 			window.walletConnection.account(),
-			sessionStorage.getItem("addrCol"),
+			localStorage.getItem("addrCol"),
 			{
 				// View methods are read-only – they don't modify the state, but usually return some value
 				viewMethods: [
@@ -1407,7 +1407,7 @@ function NftCollection() {
 					const transaction = nearAPI.transactions.createTransaction(
 						walletConnection.getAccountId(),
 						nearAPI.utils.key_pair.PublicKey.fromString(pubKey),
-						sessionStorage.getItem("addrCol"),
+						localStorage.getItem("addrCol"),
 						nonce,
 						actionsTrans,
 						recentBlockHash,
@@ -1503,7 +1503,7 @@ function NftCollection() {
 
 		setLoaderMult(true);
 
-		let addr = sessionStorage.getItem("addrCol");
+		let addr = localStorage.getItem("addrCol");
 
 		// let addr = "g1go05b6cyzsgxu9vs6v.dev-1649955546633-94708956977447";
 
@@ -1720,9 +1720,9 @@ function NftCollection() {
 			result += characters.charAt(Math.floor(Math.random() * charactersLength));
 		}
 
-		sessionStorage.setItem("addrCol", result + "." + contractRootNft);
+		localStorage.setItem("addrCol", result + "." + contractRootNft);
 
-		sessionStorage.setItem("curentAction", "deploy");
+		localStorage.setItem("curentAction", "deploy");
 
 		contractRoot
 			.deploy_contract_code(
@@ -1754,7 +1754,7 @@ function NftCollection() {
 	}
 
 	async function mint_nft(amount) {
-		let addr = sessionStorage.getItem("addrCol");
+		let addr = localStorage.getItem("addrCol");
 		// let addr = "kadqjgcyjio4tdqdtene.dev-1649955546633-94708956977447";
 		if (addr == null || addr == undefined) {
 			return;
@@ -1891,7 +1891,7 @@ function NftCollection() {
 	}
 
 	async function initCollection() {
-		let addr = sessionStorage.getItem("addrCol");
+		let addr = localStorage.getItem("addrCol");
 
 		window.contractCollection = await new nearAPI.Contract(
 			window.walletConnection.account(),
@@ -1907,7 +1907,7 @@ function NftCollection() {
 			},
 		);
 
-		sessionStorage.setItem("curentAction", "init");
+		localStorage.setItem("curentAction", "init");
 		//?transactionHashes=Eo49vvUqQZ9NwC8abasWYzcsyaMLHHHcUdsVXYS9ZH9L
 
 		let deployData = JSON.parse(localStorage.getItem("details"));
@@ -1931,7 +1931,7 @@ function NftCollection() {
 	}
 
 	async function deployNft(nft) {
-		let addr = sessionStorage.getItem("addrCol");
+		let addr = localStorage.getItem("addrCol");
 
 		window.contractCollection = await new nearAPI.Contract(
 			window.walletConnection.account(),
@@ -1948,9 +1948,9 @@ function NftCollection() {
 		);
 
 		if (nft[1] + 1 == collection.length) {
-			sessionStorage.setItem("curentAction", "deployNft");
+			localStorage.setItem("curentAction", "deployNft");
 		} else {
-			sessionStorage.setItem("curentAction", "deploingNft");
+			localStorage.setItem("curentAction", "deploingNft");
 		}
 
 		let deployData = JSON.parse(localStorage.getItem("details"));
