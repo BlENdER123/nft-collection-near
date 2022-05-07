@@ -488,25 +488,39 @@ function NftMarket(props) {
 							<div className="text"></div>
 							<div className={accordionHidden[1] ? "hide" : "filter"}>
 								<div>
-									<button
+								<input type="radio" id="ASC" 
+										onClick={(ev) => {
+											handleSort(ev);
+											// console.log(ev.target.classList.toggle("active"));
+										}} className="checkbox" name="drone" value="ASC" />
+								<label for="ASC"></label>
+								
+								
+									{/* <button
 										id={"ASC"}
 										onClick={(ev) => {
 											handleSort(ev);
 											console.log(ev.target.classList.toggle("active"));
 										}}
 										className="checkbox"
-									/>{" "}
+									/>{" "} */}
 									Sort by price (ASC)
 								</div>
 								<div>
-									<button
+								<input type="radio" id="DESC" 
+										onClick={(ev) => {
+											handleSort(ev);
+											console.log(ev.target.classList.toggle("active"));
+										}} className="checkbox" name="drone" value="DESC" />
+								<label for="DESC"></label>
+									{/* <button
 										id={"DESC"}
 										onClick={(ev) => {
 											handleSort(ev);
 											console.log(ev.target.classList.toggle("active"));
 										}}
 										className="checkbox"
-									/>{" "}
+									/>{" "} */}
 									Sort by price (DESC)
 								</div>
 							</div>

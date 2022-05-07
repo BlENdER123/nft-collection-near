@@ -3485,6 +3485,8 @@ input[type="text"] {
 	margin-bottom: 8px;
 	font-size: 16px;
 	color: #6f7376;
+	display: flex;
+	align-items: center;
 }
 .modal-constructor-market > .grid {
 	display: grid;
@@ -3564,6 +3566,24 @@ input[type="text"] {
 	height: 16px;
 	background: url("./sdk/img/ever.png");
 	margin-right: 5px;
+}
+
+.modal-constructor-filter > .filter > div > input {
+	display: none;
+}
+.modal-constructor-filter > .filter > div > label {
+	display: inline-block;
+	width: 18px;
+	height: 18px;
+	background: #212121;
+	border: 1px solid #444444;
+	border-radius: 2px;
+	margin-right: 10px;
+}
+.modal-constructor-filter > .filter > div > input[type=radio]:checked + label {
+	background: #6333ff;
+	border: 1px solid #6333ff;
+	border-radius: 2px;
 }
 
 .modal-constructor-filter > .filter > div > button {

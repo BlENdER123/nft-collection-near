@@ -185,6 +185,19 @@ function LoadNftPage() {
 
 	const [errorInput, setErrorInput] = useState();
 
+	const [limit, setLimit] = useState(1);
+
+	const checkLimit = () => {
+		let lim = 1;
+		const imgs = classArr1.map((e) => (lim = e.url.length * lim));
+		setLimit(lim);
+		setTimeout(() => {
+			setLimit(1);
+		}, 2000);
+		console.log("LIMIT", limit);
+		return lim != 0 && lim < 30 ? true : false;
+	};
+
 	let projDet;
 	let localClass;
 	let localWidth;
@@ -1539,7 +1552,7 @@ function LoadNftPage() {
 									class="step step2"
 									onClick={() => {
 										let res = logData();
-										if (res) {
+										if (res && checkLimit()) {
 											history.push("/nft-customization");
 										}
 									}}
@@ -1557,6 +1570,7 @@ function LoadNftPage() {
 										let res = logData();
 										if (
 											res &&
+											checkLimit() &&
 											localStorage.getItem("nftAreaSize") !== undefined &&
 											localStorage.getItem("nftAreaSize") !== null
 										) {
@@ -1652,7 +1666,7 @@ function LoadNftPage() {
 									class="step step2"
 									onClick={() => {
 										let res = logData();
-										if (res) {
+										if (checkLimit() && res ) {
 											history.push("/nft-customization");
 										}
 									}}
@@ -1670,6 +1684,7 @@ function LoadNftPage() {
 										let res = logData();
 										if (
 											res &&
+											checkLimit() &&
 											localStorage.getItem("nftAreaSize") !== undefined &&
 											localStorage.getItem("nftAreaSize") !== null
 										) {
@@ -1775,12 +1790,19 @@ function LoadNftPage() {
 								}
 								onClick={() => {
 									let res = logData();
-									if (res) {
+									if (res && checkLimit()) {
 										history.push("/nft-customization");
 									}
 								}}
 							>
-								Next
+								{limit > 30 ? (
+									<span style={{color: "red"}}>
+										{`Combinations - ${limit}, is exceeded. Allowed - 30 .Please
+										reduce the number of images`}
+									</span>
+								) : (
+									"Next"
+								)}
 							</div>
 						</div>
 
