@@ -510,7 +510,7 @@ function NftMarket(props) {
 								<input type="radio" id="DESC" 
 										onClick={(ev) => {
 											handleSort(ev);
-											console.log(ev.target.classList.toggle("active"));
+											// console.log(ev.target.classList.toggle("active"));
 										}} className="checkbox" name="drone" value="DESC" />
 								<label for="DESC"></label>
 									{/* <button

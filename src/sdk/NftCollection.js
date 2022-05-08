@@ -739,8 +739,8 @@ function NftCollection() {
 						account_id: window.walletConnection.getAccountId(),
 					})
 					.then((data) => {
-						if (sales.length+JSON.parse(localStorage.getItem("uniqFor")).length <= data / 10000000000000000000000) {
-							console.log(sales.length, sales.length+JSON.parse(localStorage.getItem("uniqFor")).length, data / 10000000000000000000000);
+						if (sales.length+collectionNotOnSale <= data / 10000000000000000000000) {
+							console.log(sales.length, sales.length+collectionNotOnSale, data / 10000000000000000000000);
 							// console.log(sales.length, data / 10000000000000000000000);
 							setDepositSale({
 								deposit: data / 10000000000000000000000,
@@ -748,7 +748,7 @@ function NftCollection() {
 								avail: true,
 							});
 						} else {
-							console.log(sales.length + JSON.parse(localStorage.getItem("uniqFor")).length, data / 10000000000000000000000);
+							console.log(sales.length + collectionNotOnSale, data / 10000000000000000000000);
 							setDepositSale({
 								deposit: data / 10000000000000000000000,
 								sale: sales.length,
