@@ -2126,9 +2126,8 @@ function NftCollection() {
 								<>
 									<div class="title">Publish collection into blockchain</div>
 									<div class="desc">
-										This will make NFT Minting available for you or end-users.
-										User can mint random NFTs one-by-one for the fixed price of
-										XX.XX NEAR.
+									This will publish your collection and make it available for NFT Minting.
+									Once done, your published collection will be available for you or other users to Mint.
 									</div>
 
 									<button
@@ -2137,11 +2136,15 @@ function NftCollection() {
 												? "button-1-square button-arrow"
 												: "button-1-square button-1-square-disabled"
 										}
-										style={{margin: "0px 0px 10px 0px"}}
+										style={{margin: "0px 0px 00px 0px"}}
 										onClick={activeButtons[0] ? deployColectionNear : null}
 									>
 										I. Initialize Collection
 									</button>
+
+									<div style={{margin: "0px 0px 10px 0px"}} className="desc">
+										Smart-contract one-time fee ~8 NEAR 
+									</div>
 
 									<button
 										className={
@@ -2165,16 +2168,14 @@ function NftCollection() {
 										)}
 									</button>
 									{/* <button onClick={uploadToNFTStore}>Test</button> */}
-									<div style={{margin: "0px"}} className="desc">
-										Smart-contract one-time fee ~8 NEAR (YYY USD)
-									</div>
+									
 								</>
 							) : null}
 							{curentCollectionStep == 2 ? (
 								<>
-									<div class="title">Mint some NFTs</div>
+									<div class="title">Mint your NFTs</div>
 									<div class="desc">
-										Enter amount of starting NFTs to mint for yourself
+										Set the number of NFTs you want to Mint
 									</div>
 
 									<div class="mint">
@@ -2213,9 +2214,11 @@ function NftCollection() {
 										}}
 									>
 										Mint{" "}
-										<span>
+										<span style={{"margin": "0px 8px","display": "flex","alignItems": "center", "justifyContent": "center"}}>
 											(
 											{(amountMintNft * 0.1 + amountMintNft * price).toFixed(1)}{" "}
+											<span className="near-sign" style={{"margin": "0px 8px", "width": "20px", "height": "20px"}}></span>
+
 											NEAR)
 										</span>{" "}
 									</button>
@@ -2227,9 +2230,7 @@ function NftCollection() {
 										style={{opacity: "1", margin: "0px 0px 20px 0px"}}
 										class="desc"
 									>
-										You can choose not to mint NFTs of the collection. Minting
-										will be available later on the Collection Page at
-										Marketplace.
+										If you choose not to Mint NFTs now then you can always do it later from Marketplace{">"}Collection page.
 									</div>
 
 									<button
@@ -2247,7 +2248,7 @@ function NftCollection() {
 							) : null}
 							{curentCollectionStep == 3 ? (
 								<>
-									<div class="title">Open sales</div>
+									<div class="title">Sell NFTs on the Marketplace</div>
 									<div class="desc">
 										Put all your new NFTs on sale at Marketplace
 									</div>
@@ -2297,15 +2298,14 @@ function NftCollection() {
 										style={{textAlign: "center"}}
 										className={depositSale.avail ? "hide" : "desc"}
 									>
-										No enough funds to sale
+										Not enough NEAR tokens
 									</div>
 
 									<div
-										style={{opacity: "1", margin: "0px 0px 100px 0px"}}
+										style={{opacity: "1", margin: "0px 0px 10px 0px"}}
 										class="desc"
 									>
-										You can choose not to sale your NFTs now. All of them are
-										available in your Profile page.
+										If you choose not to sell your NFTs now. Don't worry. All of your items are now available under Profile page.
 									</div>
 
 									<button
@@ -2356,7 +2356,7 @@ function NftCollection() {
 									<div class="img"></div>
 									<div class="text">
 										<div class="name">Step 2</div>
-										<div class="desc">Mint some NFTs</div>
+										<div class="desc">Mint your NFTs</div>
 									</div>
 								</div>
 								<div class="line"></div>
@@ -2375,7 +2375,7 @@ function NftCollection() {
 									<div class="img"></div>
 									<div class="text">
 										<div class="name">Step 3</div>
-										<div class="desc">Open sales</div>
+										<div class="desc">Sell NFTs on the Marketplace</div>
 									</div>
 								</div>
 							</div>

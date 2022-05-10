@@ -2320,7 +2320,7 @@ function NftCustomization() {
 								</div>
 							</div>
 							<div className="title">Layers</div>
-							<div className="text">Select and edit the layer</div>
+							<div className="text">Select a layer to Edit</div>
 							{classArr.map((item, index) => {
 								return (
 									<div

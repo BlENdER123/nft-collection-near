@@ -33,10 +33,10 @@ function Footer() {
 								<div className="page-element">Telegram</div>
 							</a> */}
 						</div>
-						<div className="email">
+						{/* <div className="email">
 							<span>For corporation</span>
 							<div className="text">info@radianceteam.com</div>
-						</div>
+						</div> */}
 					</div>
 				</div>
 			</div>

@@ -188,6 +188,13 @@ input {
 	color: #fff;
 	cursor: pointer;
 }
+.near-sign {
+	display: inline-block;
+	width: 26px;
+	height: 26px;
+	background: url("./sdk/img/Ellipse\ 57.png");
+	background-size: contain;
+}
 .video-start {
 	width: 100%;
 	padding: 15px;
@@ -3234,6 +3241,9 @@ input[type="text"] {
 	width: 100%;
 	padding: 20px 10px;
 	margin-bottom: 10px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 .modal-constructor-param > .button-4-square {
 	width: 100%;

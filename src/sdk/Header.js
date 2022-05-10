@@ -228,7 +228,7 @@ function Header({activeCat}) {
 												history.push("/profile/" + walletAddress);
 											}}
 										>
-											Your Profile
+											Profile
 										</a>
 										<a onClick={logOut}>Log out</a>
 									</div>
@@ -267,7 +267,7 @@ function Header({activeCat}) {
 										activeCat == 1 ? "page-element active" : "page-element"
 									}
 								>
-									Collection Editor
+									NFT Collection Editor
 								</div>
 							</a>
 							<a href="#/nft-market">
@@ -306,7 +306,7 @@ function Header({activeCat}) {
 										activeCat == 1 ? "page-element active" : "page-element"
 									}
 								>
-									Collection Editor
+									NFT Collection Editor
 								</div>
 							</a>
 							<a href="#/nft-market">

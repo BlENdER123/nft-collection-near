@@ -1537,7 +1537,7 @@ function LoadNftPage() {
 						</div>
 
 						<div className="modal-constructor modal-constructor-layers">
-							<div className="title-1">NFT Editor</div>
+							<div className="title-1">NFT Collection Editor</div>
 
 							<div class="steps mobile-steps">
 								<div class="step step1 active">
@@ -1587,7 +1587,7 @@ function LoadNftPage() {
 							</div>
 
 							<div className="title">Layers</div>
-							<div className="text">Add and edit layers</div>
+							<div className="text">Add/Edit layers</div>
 							{classArr1.length > 0 &&
 								classArr1.map((item, index) => {
 									return (
@@ -1638,7 +1638,7 @@ function LoadNftPage() {
 							</div>
 
 							<div className="title">Layer Settings</div>
-							<div className="text">Change your layers settings</div>
+							<div className="text">Change layer settings</div>
 							<div className="setting">
 								<div className="title-settings">Layer Name</div>
 								{classArr1.length > 0 && (
@@ -1701,10 +1701,10 @@ function LoadNftPage() {
 							</div>
 
 							<div class="video-start">
-								Not sure where to start? &nbsp;{" "}
+								Need Help? &nbsp;{" "}
 								<span onClick={() => setVideoPlay(true)}>
 									{" "}
-									Check out our intro video here.
+									Click to watch the Walkthrough Video.
 								</span>
 							</div>
 
@@ -1765,7 +1765,7 @@ function LoadNftPage() {
 
 								<label htmlFor="input_file" className="input__file-button">
 									<span className="input__file-icon-wrapper"></span>
-									<span className="input__file-text">Browse Image</span>
+									<span className="input__file-text">Browse Images</span>
 									<span className="input__file-text2">
 										(image/png, image/jpg, image/jpeg) <br />
 										You can select multiple images at once
