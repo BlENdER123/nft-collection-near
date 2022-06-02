@@ -1,0 +1,90 @@
+.pool {
+  &-wrapper {
+    text-align: center;
+    //max-height: 414px;
+    overflow: auto;
+    margin-right: -32px;
+    padding-right: 26px;
+
+    /* width */
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    /* Track */
+    &::-webkit-scrollbar-track {
+      background-color: var(--select-scrollbar-bg-color);
+      border-radius: 30px;
+    }
+
+    /* Handle */
+    &::-webkit-scrollbar-thumb {
+      background-color: var(--accent);
+      border-radius: 30px;
+    }
+  }
+
+  &-back {
+    color: inherit;
+
+    svg {
+      margin-right: 21px;
+
+      path {
+        fill: var(--icons-color);
+      }
+    }
+  }
+
+  &-enter {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+
+  &-enter-active {
+    opacity: 1;
+    transform: translateX(0);
+    transition: opacity 200ms, transform 200ms;
+  }
+
+  &-enter-done {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  &-exit {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  &-exit-active {
+    opacity: 0;
+    transform: translateX(100%);
+    transition: opacity 200ms, transform 200ms;
+  }
+}
+
+.liquidity-btn {
+  padding: 8px 20px;
+  border-radius: 18px;
+  font-size: 20px;
+  //font-size: 20px;
+}
+@media screen and (max-width: 1025px) {
+  .pool {
+    &-wrapper {
+      margin-right: -20px;
+      padding-right: 11px;
+    }
+  }
+  .liquidity-btn {
+    padding: 8px 12px;
+    border-radius: 12px;
+    font-size: 16px;
+  }
+}
+@media screen and (max-width: 321px) {
+  .liquidity-btn {
+    font-size: 11px;
+  }
+}

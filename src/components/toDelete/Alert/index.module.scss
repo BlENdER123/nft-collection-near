@@ -1,0 +1,27 @@
+.alert__box {
+  background-color: var(--action-btn-bg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: rgba(0, 0, 0, 0.14) 0 4px 14px;
+  border-radius: 10px;
+  padding: 15px;
+  height: fit-content;
+  margin-top: 10px;
+  word-break: break-word;
+  width: 100%;
+}
+
+.alert__span {
+  font-size: 14px;
+  flex: 2;
+}
+
+.alert__button {
+  margin-left: 20px;
+  border: none;
+  display: flex;
+  background-color: transparent;
+  cursor: pointer;
+  color: var(--primary-color);
+}

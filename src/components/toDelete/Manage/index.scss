@@ -1,0 +1,38 @@
+.manage-remove-link {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+
+  span {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--icons-color);
+    cursor: pointer;
+  }
+}
+
+@media screen and (max-width: 415px) {
+  .manage-confirm {
+    .confirm-block {
+      flex-wrap: wrap;
+    }
+
+    .confirm-value {
+      width: 100%;
+
+      &.supply {
+        width: auto;
+      }
+    }
+
+    .popup-btn,
+    .manage-remove-link {
+      margin-top: 20px;
+    }
+  }
+
+  .popup-wrapper .manage-confirm {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}

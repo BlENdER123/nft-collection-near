@@ -1,0 +1,192 @@
+@import '../../../../Mixins';
+
+.Card {
+  display: flex;
+  border-bottom: 1px solid var(--account-inner-border-color);
+  justify-content: space-between;
+  padding-bottom: 15px;
+  margin-bottom: 5px;
+  @include m() {
+    flex-direction: column;
+    border: 1px solid var(--account-inner-border-color);
+    border-radius: 30px;
+    padding-bottom: unset;
+    padding-top: 9px;
+    margin-bottom: 20px;
+  }
+}
+
+.Card:hover {
+  background-color: rgba($color: #3569f0, $alpha: 0.4);
+}
+
+.Card__meta {
+  display: flex;
+  align-items: center;
+  @include m() {
+    justify-content: center;
+  }
+}
+
+.Card__icon {
+  width: 50px;
+  height: 50px;
+  border: 1px solid #c4c4c4;
+  border-radius: 200px;
+  margin-right: 8px;
+}
+
+.Card__icons {
+  display: flex;
+}
+
+.Card__tokens_name {
+  font-style: normal;
+  font-weight: bold;
+  font-size: 25px;
+  line-height: 33px;
+  text-transform: uppercase;
+
+  color: var(--mainblock-title-color);
+}
+
+.Card__tvl {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  max-width: 20%;
+  min-width: 20%;
+  @include m() {
+    max-width: unset;
+    min-width: unset;
+    flex-direction: column;
+  }
+}
+
+.Card__apr {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  max-width: 15%;
+  min-width: 15%;
+  @include m() {
+    max-width: unset;
+    min-width: unset;
+    flex-direction: column;
+  }
+}
+
+.Card__tvl_text {
+  font-style: normal;
+  font-weight: bold;
+  font-size: 25px;
+  line-height: 33px;
+  text-transform: uppercase;
+
+  color: var(--mainblock-title-color);
+}
+
+.Card__button {
+  background: #3569f0;
+  border: 1px solid #3569f0;
+  box-sizing: border-box;
+  border-radius: 50px;
+  height: 51px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 9px 56px;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 22px;
+  /* identical to box height */
+
+  letter-spacing: 0.05em;
+
+  color: #fffdfd;
+  width: 130px;
+  @include m() {
+    width: 100%;
+    border-radius: 0 0 30px 30px;
+  }
+}
+
+.Card__button_icon {
+  width: 30px;
+  height: 30px;
+  margin-left: 9px;
+}
+
+.Card__earned {
+  display: flex;
+  align-items: center;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 30px;
+  line-height: 33px;
+  /* identical to box height */
+
+  letter-spacing: 0.05em;
+
+  color: #000000;
+}
+
+.Card__earned_block {
+  display: flex;
+  justify-content: flex-end;
+  min-width: 130px;
+  @include m() {
+    width: 100%;
+    background: var(--earned-bg);
+    border-radius: 0 0 30px 30px;
+    justify-content: center;
+    min-height: 51px;
+  }
+}
+
+.Card__block {
+  display: flex;
+}
+
+.Card__text {
+  display: none;
+  @include m() {
+    display: flex;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 13px;
+    /* identical to box height */
+
+    letter-spacing: 0.02em;
+
+    color: var(--mainblock-title-color);
+  }
+}
+
+.Card__blocks {
+  display: none;
+  @include m() {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    margin-bottom: 24px;
+    margin-top: 24px;
+  }
+}
+
+.Card__none {
+  display: none;
+  @include m() {
+    display: flex;
+  }
+}
+
+.Card__none_inverse {
+  display: flex;
+  @include m() {
+    display: none;
+  }
+}

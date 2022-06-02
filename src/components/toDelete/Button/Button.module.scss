@@ -1,0 +1,88 @@
+.Button {
+  font-family: 'Mulish', sans-serif;
+  font-weight: 700;
+  color: #ffffff;
+  font-size: 26px;
+  text-align: center;
+  padding: 30px 0;
+  background-color: var(--accent);
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  &:hover {
+    background-color: var(--accent-hover);
+  }
+
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+
+    &:hover {
+      background-color: var(--accent);
+      opacity: 0.5;
+    }
+  }
+}
+
+.Button__neutral {
+  svg {
+    //margin-right: 10px;TODO: Найти применение этому
+    vertical-align: text-top;
+
+    path {
+      fill: var(--btn-primary-icons);
+    }
+  }
+}
+
+.Button__error {
+  background-color: var(--error);
+
+  &:hover {
+    background-color: var(--error-hover);
+  }
+}
+
+.Button__large {
+  width: 100%;
+  //margin-top: 40px; TODO: ??
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 0;
+
+  img {
+    margin-right: 10px;
+  }
+}
+
+.Button__medium {
+  font-size: 16px;
+  padding: 13px 15px;
+  border-radius: 18px;
+}
+
+.Button__icon {
+  margin-right: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Button__light {
+  padding: 13px 21px;
+  border-radius: 12px;
+  background: rgba(53, 105, 240, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 16px;
+  color: var(--header-link-color);
+  font-weight: 700;
+  &:hover {
+    background-color: var(--accent-hover);
+    color: #ffffff;
+  }
+}

@@ -1,0 +1,91 @@
+@import "../../../Mixins";
+
+.Farming {
+  width: 100%;
+  height: 100%;
+  border-radius: 50px;
+  margin-left: 5%;
+  margin-right: 5%;
+  padding: 5%;
+  background-color: var(--mainblock-bg-color);
+  border: 1px solid var(--mainblock-border-color);
+}
+
+.Farming__pools {
+  color: var(--mainblock-title-color);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.Farming__pools_text {
+}
+
+.Farming__pools_btn {
+}
+
+.Farming__table {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.Farming__search_bar {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 16px;
+
+  background: #FFFDFD;
+  border-radius: 50px;
+  min-width: 350px;
+  min-height: 54px;
+  height: 54px;
+  border: 1px solid var(--input-border-color);
+  input {
+    width: 100%;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 22px;
+    letter-spacing: 0.02em;
+    color: #A3A1A1;
+    outline: none;
+    border: none;
+  }
+}
+
+.Farming__table_header {
+  display: flex;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 22px;
+  color: var(--mainblock-title-color);
+  margin-top: 50px;
+  @include m() {
+    display: none;
+  }
+}
+.Farming__table_header_tvl {
+  width: 58%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+.Farming__table_header_volume {
+  width: 19%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  text-align: right;
+}
+.Farming__table_header_earned {
+  width: 17%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  text-align: right;
+}

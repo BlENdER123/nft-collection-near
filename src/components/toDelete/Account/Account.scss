@@ -1,0 +1,182 @@
+.account {
+  &-body {
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--account-inner-border-color);
+    border-radius: 18px;
+  }
+
+  &-title {
+    &::first-letter {
+      text-transform: uppercase;
+    }
+  }
+
+  &-body-title {
+    font-size: 20px;
+    color: var(--popup-title-color);
+    margin: 0;
+
+    &::first-letter {
+      text-transform: uppercase;
+    }
+  }
+
+  &-wallet-key {
+    font-size: 40px;
+    font-weight: 700;
+    color: var(--account-key-color);
+    margin: 16px 0;
+  }
+
+  &-wrapper {
+    display: flex;
+  }
+
+  &-btn {
+    font-family: 'Mulish', sans-serif;
+    background-color: transparent;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--icons-color);
+    padding: 0;
+
+    svg {
+      margin-right: 10px;
+      vertical-align: text-top;
+
+      path {
+        fill: var(--icons-color);
+      }
+    }
+  }
+
+  &-link {
+    background-color: transparent;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--icons-color);
+    display: inline-block;
+    margin-left: 40px;
+  }
+  &-deploy {
+    font-family: 'Mulish', sans-serif;
+    color: var(--accent);
+    font-weight: 700;
+    margin-left: 11%;
+  }
+  &-disconnect {
+    font-family: 'Mulish', sans-serif;
+    color: #ff4d4d;
+    font-weight: 700;
+    margin-left: auto;
+  }
+
+  &-footer {
+    padding: 30px 40px 45px;
+
+    &-title {
+      margin: 0;
+      color: var(--popup-title-color);
+      font-weight: 500;
+    }
+
+    &-clear {
+      font-weight: 600;
+      color: var(--wallet-text-color);
+      cursor: pointer;
+    }
+
+    &-list {
+      list-style: none;
+      color: var(--wallet-text-color);
+      overflow: auto;
+      //max-height: 160px;
+      margin: 20px -25px 0 0;
+      height: auto;
+      padding: 0 17px 0 0;
+      overflow-x: hidden;
+      /* width */
+      &::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      /* Track */
+      &::-webkit-scrollbar-track {
+        background-color: var(--select-scrollbar-bg-color);
+        border-radius: 30px;
+      }
+
+      /* Handle */
+      &::-webkit-scrollbar-thumb {
+        background-color: var(--accent);
+        border-radius: 30px;
+      }
+
+      &-item {
+        word-break: break-all;
+        margin-bottom: 10px;
+        font-weight: 200;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        &:last-of-type {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 1025px) {
+  .account {
+    &-wallet-key {
+      text-align: center;
+      font-size: 30px;
+    }
+
+    &-btn,
+    &-link {
+      font-size: 16px;
+    }
+  }
+}
+@media screen and (max-width: 426px) {
+  .account {
+    &-footer {
+      &-list {
+        &-item {
+          font-size: 10px;
+        }
+      }
+      &-title {
+        font-size: 12px;
+      }
+
+      &-clear {
+        font-size: 12px;
+      }
+    }
+  }
+}
+@media screen and (max-width: 481px) {
+  .account {
+    margin-bottom: 150px;
+
+    &-wrapper {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    &-link,
+    &-disconnect {
+      margin: 10px auto 0;
+    }
+
+    &-disconnect {
+      margin-top: 15px;
+    }
+  }
+}

@@ -1,0 +1,88 @@
+@import "../../../Mixins";
+
+.header {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  padding: 34px 70px 54px 70px;
+  font-weight: 500;
+  &-logo{
+    &-wrapper{
+      display: flex;
+      align-items: center;
+    }
+  }
+  &-wrap {
+    display: flex;
+    //justify-content: space-between;
+  }
+
+  &-link {
+    display: inline-flex;
+    align-self: center;
+    margin-right: 40px;
+    user-select: none;
+
+    &:last-of-type {
+      margin-right: 0;
+    }
+
+    &:hover {
+      color: var(--header-link-color);
+      transition: 0.3s;
+    }
+
+    &--active {
+      color: var(--header-link-color);
+      font-weight: 500;
+
+      //text-shadow: .25px 0 .1px, -.25px 0px .1px;
+    }
+  }
+
+  &-btn {
+    font-size: 20px;
+    padding: 15px;
+    margin-left: 30px;
+    max-height: 60px;
+    min-height: 60px;
+  }
+}
+
+@media screen and (max-width: 1025px) {
+  .header__items {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .header {
+    padding: 30px;
+    flex-direction: column;
+    align-items: center;
+    &-wrap {
+      display: flex;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+      justify-content: center;
+      &.first {
+        flex-direction: column;
+      }
+      .first {
+
+      }
+    }
+
+    &-btn {
+      padding: 10px;
+      max-height: 45px;
+      min-height: 45px;
+    }
+
+    &-link {
+      font-size: 18px;
+      //margin-right: 20px;
+      margin-right: unset;
+      margin-bottom: 5px;
+    }
+  }
+}

@@ -1,0 +1,122 @@
+// Swap
+export const MAKE_SWAP = "MAKE_SWAP";
+export const SWAP_HAPPENING = "SWAP_HAPPENING";
+export const SWAP_SUCCEEDED = "SWAP_SUCCEEDED";
+export const SWAP_FAILED = "SWAP_FAILED";
+export const UPDATE_SWAP_WALLETS = "UPDATE_SWAP_WALLETS";
+
+
+// APP
+export const NFTS_URL_FETCH_REQUESTED = "NFTS_URL_FETCH_REQUESTED"
+export const NFTS_URL_FETCH_SUCCESS = "NFTS_URL_FETCH_SUCCESS"
+export const NFTS_URL_FETCH_LOADING = "NFTS_URL_FETCH_LOADING"
+export const NFTS_URL_FETCH_FAILED = "NFTS_URL_FETCH_FAILED"
+
+export const CONNECT_WALLET_ACTION = "CONNECT_WALLET_ACTION"
+export const CONNECT_WALLET_LOADING = "CONNECT_WALLET_LOADING"
+export const CONNECT_WALLET_SUCCESS = "CONNECT_WALLET_SUCCESS"
+export const CONNECT_WALLET_FAILED = "CONNECT_WALLET_FAILED"
+export const DISCONNECT_WALLET_ACTION = "DISCONNECT_WALLET_ACTION"
+
+export const GET_ACCOUNT_DATA_ACTION = "GET_ACCOUNT_DATA_ACTION"
+export const GET_ACCOUNT_DATA_ACTION_FAILED = "GET_ACCOUNT_DATA_ACTION_FAILED"
+export const GET_ACCOUNT_DATA_ACTION_SUCCESS = "GET_ACCOUNT_DATA_ACTION_SUCCESS"
+export const GET_ACCOUNT_DATA_ACTION_LOADING = "GET_ACCOUNT_DATA_ACTION_LOADING"
+
+
+    
+    
+//MARKET
+export const NFTS_FETCH_REQUESTED = "NFTS_FETCH_REQUESTED"
+export const NFTS_FETCH_LOADING = "NFTS_FETCH_LOADING"
+export const NFTS_FETCH_SUCCESS = "NFTS_FETCH_SUCCESS"
+export const NFTS_FETCH_FAILED = "NFTS_FETCH_FAILED"
+
+
+
+
+
+// Add liquidity
+// export const ADD_LIQUIDITY = "ADD_LIQUIDITY";
+// export const ADDING_LIQUIDITY = "ADDING_LIQUIDITY";
+// export const ADD_LIQUIDITY_SUCCEEDED = "ADD_LIQUIDITY_SUCCEEDED";
+// export const ADD_LIQUIDITY_FAILED = "ADD_LIQUIDITY_FAILED";
+//
+// // Remove liquidity
+// export const REMOVE_LIQUIDITY = "REMOVE_LIQUIDITY" as const;
+// export const REMOVING_LIQUIDITY = "REMOVING_LIQUIDITY" as const;
+// export const REMOVE_LIQUIDITY_SUCCEEDED = "REMOVE_LIQUIDITY_SUCCEEDED" as const;
+// export const REMOVE_LIQUIDITY_FAILED = "REMOVE_LIQUIDITY_FAILED" as const;
+// export const UPDATE_LIQUIDITY_WALLETS = "UPDATE_LIQUIDITY_WALLETS" as const;
+//
+// // Create pair
+// export const CREATE_PAIR = "CREATE_PAIR" as const;
+// export const CREATING_PAIR = "CREATING_PAIR" as const;
+// export const CREATE_PAIR_SUCCEEDED = "CREATE_PAIR_SUCCEEDED" as const;
+// export const CREATE_PAIR_FAILED = "CREATE_PAIR_FAILED" as const;
+// export const SET_CREATE_PAIR_CONFIRM_VALUES = "SET_CREATE_PAIR_CONFIRM_VALUES" as const
+// export const RESET_CREATE_PAIR_CONFIRM_VALUES = "RESET_CREATE_PAIR_CONFIRM_VALUES" as const
+// export const UPDATE_PAIRS = "UPDATE_PAIRS" as const
+//
+//
+//
+// // Limit orders
+// export const MAKE_LIMIT_ORDER = "MAKE_LIMIT_ORDER" as const;
+// export const MAKING_LIMIT_ORDER = "MAKING_LIMIT_ORDER" as const;
+// export const MAKE_LIMIT_ORDER_SUCCEEDED = "MAKE_LIMIT_ORDER_SUCCEEDED" as const;
+// export const MAKE_LIMIT_ORDER_FAILED = "MAKE_LIMIT_ORDER_FAILED" as const;
+//
+// // Wallet
+// export const CONNECT_WALLET = "CONNECT_WALLET" as const;
+// export const DISCONNECT_WALLET = "DISCONNECT_WALLET" as const;
+// export const CONNECTING_WALLET = "CONNECTING_WALLET" as const;
+// export const CONNECT_WALLET_SUCCEEDED = "CONNECT_WALLET_SUCCEEDED" as const;
+// export const CONNECT_WALLET_FAILED = "CONNECT_WALLET_FAILED" as const;
+//
+// // Tokens
+// export const TOKENS_FETCH_REQUESTED = "TOKENS_FETCH_REQUESTED" as const;
+// export const TOKENS_FETCH_LOADING = "TOKENS_FETCH_LOADING" as const;
+// export const TOKENS_FETCH_SUCCEEDED = "TOKENS_FETCH_SUCCEEDED" as const;
+// export const TOKENS_FETCH_FAILED = "TOKENS_FETCH_FAILED" as const;
+//
+// // Pairs
+// export const PAIRS_FETCH_REQUESTED = "PAIRS_FETCH_REQUESTED" as const;
+// export const PAIRS_FETCH_LOADING = "PAIRS_FETCH_LOADING" as const;
+// export const PAIRS_FETCH_SUCCEEDED = "PAIRS_FETCH_SUCCEEDED" as const;
+// export const PAIRS_FETCH_FAILED = "PAIRS_FETCH_FAILED" as const;
+//
+// // Lp-tokens
+export const LP_TOKENS_FETCH_REQUESTED = "LP_TOKENS_FETCH_REQUESTED";
+export const LP_TOKENS_FETCH_LOADING = "LP_TOKENS_FETCH_LOADING";
+export const LP_TOKENS_FETCH_SUCCEEDED = "LP_TOKENS_FETCH_SUCCEEDED";
+export const LP_TOKENS_FETCH_FAILED = "LP_TOKENS_FETCH_FAILED";
+// export const UPDATE_LP_TOKENS = "UPDATE_LP_TOKENS" as const;
+//
+// // Swap confirm values
+// export const SET_SWAP_CONFIRM_VALUES = "SWAP_CONFIRM_VALUES" as const;
+// export const RESET_SWAP_CONFIRM_VALUES = "RESET_SWAP_CONFIRM_VALUES" as const;
+//
+// // Make limit order confirm values
+// export const SET_MAKE_LIMIT_ORDER_CONFIRM_VALUES =
+//   "SET_MAKE_LIMIT_ORDER_CONFIRM_VALUES" as const;
+// export const RESET_MAKE_LIMIT_ORDER_CONFIRM_VALUES =
+//   "RESET_MAKE_LIMIT_ORDER_CONFIRM_VALUES" as const;
+//
+// // Provide liquidity confirm values
+// export const SET_PROVIDE_LIQUIDITY_CONFIRM_VALUES =
+//   "SET_PROVIDE_LIQUIDITY_CONFIRM_VALUES" as const;
+// export const RESET_PROVIDE_LIQUIDITY_CONFIRM_VALUES =
+//   "RESET_PROVIDE_LIQUIDITY_CONFIRM_VALUES" as const;
+//
+// // Remove liquidity confirm values
+// export const SET_REMOVE_LIQUIDITY_CONFIRM_VALUES =
+//   "SET_REMOVE_LIQUIDITY_CONFIRM_VALUES" as const;
+// export const RESET_REMOVE_LIQUIDITY_CONFIRM_VALUES =
+//   "RESET_REMOVE_LIQUIDITY_CONFIRM_VALUES" as const;
+//
+// // Waiting popup values
+// export const SET_WAITING_VALUES = "SET_WAITING_VALUES" as const;
+// export const RESET_WAITING_VALUES = "RESET_WAITING_VALUES" as const;
+//
+// // App theme
+// export const CHANGE_THEME = "CHANGE_THEME" as const;

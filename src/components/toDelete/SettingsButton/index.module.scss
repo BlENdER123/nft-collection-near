@@ -1,0 +1,21 @@
+.btn {
+  border-radius: 18px;
+  width: 56px;
+  height: 56px;
+  background:var(--accent);
+  transform: scale(0.7);
+  &:hover {
+    background:var(--accent-hover);
+
+  }
+  @media screen and (max-width: 1025px) {
+    transform: scale(0.7);
+    position: unset;
+    right: unset;
+  }
+
+  @media screen and (max-width: 350px) {
+    width: 45px;
+    height: 45px;
+  }
+}

@@ -1,0 +1,51 @@
+.add-liquidity {
+  &-wrapper {
+    display: flex;
+    justify-content: space-between;
+    color: var(--popup-title-color);
+    margin-top: 40px;
+    flex-direction: column;
+
+    div {
+      display: flex;
+      flex-direction: column;
+      margin: 10px;
+    }
+
+    span {
+      font-weight: 700;
+      color: var(--icons-color);
+    }
+  }
+
+  &-plus {
+    display: block;
+    margin: 50px auto;
+
+    path {
+      fill: var(--icons-color);
+    }
+  }
+}
+
+@media screen and (max-width: 1025px) {
+  .add-liquidity-plus {
+    margin: 20px auto;
+  }
+}
+
+@media screen and (max-width: 769px) {
+  .add-liquidity-wrapper {
+    flex-direction: column;
+    align-items: center;
+
+    div {
+      text-align: center;
+      margin-top: 20px;
+
+      &:first-of-type {
+        margin-top: 0;
+      }
+    }
+  }
+}

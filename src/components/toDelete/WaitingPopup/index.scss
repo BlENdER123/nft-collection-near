@@ -1,0 +1,22 @@
+.popup {
+  &-loading-text {
+    text-align: center;
+    margin: 16px 0 0;
+    color: var(--mainblock-title-color);
+
+    span {
+      display: block;
+      color: var(--mainblock-title-color);
+    }
+  }
+
+  &-loading-descr {
+    color: var(--popup-title-color);
+    margin: 0;
+  }
+
+  &-circle {
+    display: block;
+    margin: 0 auto;
+  }
+}

@@ -1,0 +1,277 @@
+@import "../../../../Mixins";
+
+.poolExplorer__pairs {
+  align-items: center;
+  justify-content: center;
+  display: flex;
+}
+.poolExplorer__title{
+  display: flex;
+  align-items: center;
+}
+.poolExplorer__reserve {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+}
+
+.poolExplorer__icon {
+  width: 25px;
+}
+.poolExplorer__mini_icon_margin {
+  width: 20px !important;
+  height: 20px !important;
+  margin: unset !important;
+  margin-right: 1px !important;
+  margin-left: 1px !important;
+}
+.poolExplorer__icon_margin {
+  width: 25px;
+  margin: 5px;
+}
+
+.poolExplorer__box {
+  display: flex;
+  align-items: center;
+  padding-top: 10px;
+  justify-content: center;
+}
+
+.poolExplorer__pair_rate {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  max-width: 30%;
+  min-width: 30%;
+  @include m() {
+    margin-top: 10px;
+    max-width: none;
+  }
+}
+
+.PoolExplorer__tickers {
+  display: flex;
+  flex-direction: column;
+  min-width: 18%;
+}
+
+.poolExplorer__reserves {
+  width: 27%;
+  max-width: 27%;
+  min-width: 27%;
+  @include m() {
+    max-width: unset;
+    width: unset;
+    margin-bottom: 15px;
+  }
+}
+
+.poolExplorer__box_pair {
+  display: flex;
+  padding-right: 6px;
+  @include m() {
+   justify-content: center;
+  }
+}
+
+.poolExplorer__box_text {
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
+.poolExplorer__pair {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.poolExplorer__pair_block {
+  display: flex;
+  flex-direction: column;
+}
+
+.select-item {
+  &.swap {
+    justify-content: space-between !important;
+  }
+  padding-top: 20px;
+  border-bottom: 1px solid var(--select-item-border-color);
+  display: flex;
+  align-items: center;
+  justify-content: unset !important;
+  cursor: pointer;
+  
+  
+  &:hover {
+    .select-item-title,
+    .select-item-descr {
+      color: var(--accent);
+    }
+  }
+
+  &--active {
+    .select-item-title,
+    .select-item-descr {
+      color: #bbbbbb;
+    }
+
+    cursor: initial;
+
+    &:hover {
+      .select-item-title,
+      .select-item-descr {
+        color: #bbbbbb;
+      }
+    }
+  }
+
+  &-wrapper {
+    display: flex;
+  }
+
+  img {
+    width: auto;
+    margin-right: 12px;
+  }
+
+  &-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--mainblock-title-color);
+    margin: 0;
+    transition: 0s;
+  }
+
+  &-description {
+    font-size: 16px;
+    margin: 0;
+    transition: 0s;
+  }
+
+  &-descr {
+    font-size: 16px;
+    margin: 0;
+    transition: 0s;
+  }
+
+  &-balance {
+    font-weight: 700;
+    color: var(--icons-color);
+  }
+}
+
+.rate {
+  font-size: 16px;
+  margin: 0;
+  transition: 0s;
+}
+
+.PoolExplorerItem_pair_reserve_box {
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  display: none;
+  margin-bottom: 15px;
+}
+
+.PoolExplorerItem_mobile {
+  display: none;
+  @include m() {
+    display: flex;
+    margin-right: 5px;
+  }
+}
+
+.PoolExplorerItem_pair_margin_left {
+  margin-left: 5px;
+}
+
+.poolExplorer__volume_width {
+  width: 19%;
+  display: flex;
+  justify-content: center;
+  @include m() {
+    margin-bottom: 15px;
+  }
+}
+
+.poolExplorer__tvl_width {
+  //width: -webkit-fill-available;
+  display: flex;
+  justify-content: center;
+}
+
+@media screen and (max-width: 1025px) {
+  .poolExplorer__fixed_width {
+    width: unset;
+  }
+  .poolExplorer__title {
+    justify-content: center;
+  }
+  .PoolExplorerItem_pair_reserve_box {
+    display: flex;
+    flex-direction: row;
+
+    span {
+      margin-left: 5px;
+    }
+  }
+  .poolExplorer__pair_rate {
+    height: auto;
+  }
+  .select-item {
+    display: flex;
+
+    &.poolExplorer {
+      flex-direction: column;
+    }
+  }
+  .poolExplorer__pair_rate {
+    margin-bottom: 15px;
+  }
+  .poolExplorer__reserve {
+    margin-bottom: 5px;
+  }
+  .poolExplorer__box_text {
+    &.none {
+      display: none;
+    }
+  }
+}
+
+@media screen and (max-width: 376px) {
+  .poolExplorer__icon {
+    width: 23px;
+    height: 23px;
+    margin-right: 3px;
+  }
+  .PoolExplorerItem_pair_reserve_box {
+    height: 30px;
+  }
+  .poolExplorer__fixed_width {
+    //width: 100%;
+    display: flex;
+    justify-content: space-around;
+  }
+  .select-item {
+    &-description {
+      font-size: 10px;
+    }
+  }
+  .poolExplorer__pair_rate {
+    width: 100%;
+    display: flex;
+    //font-size: 12px;
+    flex-direction: row;
+  }
+}
+
+@media screen and (max-width: 481px) {
+  .select-item {
+    padding: 20px 0;
+
+    &-title {
+      font-size: 20px;
+    }
+  }
+}
