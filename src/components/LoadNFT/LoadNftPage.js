@@ -5,8 +5,8 @@ import {useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {Navigate} from "react-router";
 
-const axios = require("axios");
-const FormData = require("form-data");
+// const axios = require("axios");
+// const FormData = require("form-data");
  
 // layer instance
 class MyClass {
@@ -622,116 +622,116 @@ function LoadNftPage() {
 	// }, [classArr1]);
 
 	//uploading files to ipfs
-	const pinFileToIPFS = async (
-		pinataKey,
-		pinataSecretKey,
-		src,
-		newWidth,
-		newHeight,
-		name,
-	) => {
-		const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
-
-		let data = new FormData();
-
-		// console.log(src);
-		data.append("file", src);
-
-		await axios
-			.post(url, data, {
-				maxBodyLength: "Infinity", //this is needed to prevent axios from erroring out with large files
-				headers: {
-					"Content-Type": `multipart/form-data; boundary=${data._boundary}`,
-					pinata_api_key: pinataKey,
-					pinata_secret_api_key: pinataSecretKey,
-				},
-			})
-			.then(function (response) {
-				//handle response here
-
-				let tempArr = [];
-				for (let i = 0; i < classArr1.length; i++) {
-					let temp = classArr1[i];
-					if (classArr1[curentLayer].name == classArr1[i].name) {
-						if (temp.imgs[0] == undefined) {
-							// setWidth(newWidth);
-							// // changeError("width", width);
-							// setHeight(newHeight);
-							// changeError("height", height);
-
-							temp.imgs = [];
-							temp.imgs.push(response.data.IpfsHash);
-							temp.width = newWidth;
-							temp.height = newHeight;
-							temp.sizes = {
-								width: [newWidth],
-								height: [newHeight],
-							};
-							temp.names = [];
-							temp.rarity = [];
-							temp.rarity.push("4");
-							temp.names.push(name);
-						} else {
-							temp.imgs.push(response.data.IpfsHash);
-							temp.names.push(name);
-							temp.width = newWidth;
-
-							temp.height = newHeight;
-							temp.rarity.push("4");
-
-							let tempSizesWidth = temp.sizes.width;
-							tempSizesWidth.push(newWidth);
-
-							let tempSizesHeight = temp.sizes.height;
-							tempSizesHeight.push(newHeight);
-
-							temp.sizes = {
-								width: tempSizesWidth,
-								height: tempSizesHeight,
-							};
-
-							// if(width < newWidth ) {
-							// 	setWidth(newWidth);
-							// 	console.log(width);
-							// }
-							// if(height < newHeight ) {
-							// 	setHeight(newHeight);
-							// }
-							// setWidth(width);
-							// changeError("width", width);
-							// setHeight(height);
-							// changeError("height", height);
-							// if ((temp.height == image.height && temp.width == image.width)) {
-							// 	temp.imgs.push(src);
-							// } else {
-							// 	setErrorModal({
-							// 		hidden: true,
-							// 		message: "Your images are different sizes",
-							// 	});
-							// }
-						}
-					}
-					tempArr.push(temp);
-				}
-
-				let maxW = Math.max.apply(null, tempArr[curentLayer].sizes.width);
-				let maxH = Math.max.apply(null, tempArr[curentLayer].sizes.height);
-
-				if (width < maxW) {
-					setWidth(maxW);
-				}
-				if (height < maxH) {
-					setHeight(maxH);
-				}
-				// setHeight(Math.max.apply(null, tempArr[curentLayer].sizes.height));
-				// TODO : 123
-				//setClassArr1(tempArr);
-			})
-			.catch(function (error) {
-				//handle error here
-				console.error(error);
-			});
-	};
+	// const pinFileToIPFS = async (
+	// 	pinataKey,
+	// 	pinataSecretKey,
+	// 	src,
+	// 	newWidth,
+	// 	newHeight,
+	// 	name,
+	// ) => {
+	// 	const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
+  //
+	// 	let data = new FormData();
+  //
+	// 	// console.log(src);
+	// 	data.append("file", src);
+  //
+	// 	await axios
+	// 		.post(url, data, {
+	// 			maxBodyLength: "Infinity", //this is needed to prevent axios from erroring out with large files
+	// 			headers: {
+	// 				"Content-Type": `multipart/form-data; boundary=${data._boundary}`,
+	// 				pinata_api_key: pinataKey,
+	// 				pinata_secret_api_key: pinataSecretKey,
+	// 			},
+	// 		})
+	// 		.then(function (response) {
+	// 			//handle response here
+  //
+	// 			let tempArr = [];
+	// 			for (let i = 0; i < classArr1.length; i++) {
+	// 				let temp = classArr1[i];
+	// 				if (classArr1[curentLayer].name == classArr1[i].name) {
+	// 					if (temp.imgs[0] == undefined) {
+	// 						// setWidth(newWidth);
+	// 						// // changeError("width", width);
+	// 						// setHeight(newHeight);
+	// 						// changeError("height", height);
+  //
+	// 						temp.imgs = [];
+	// 						temp.imgs.push(response.data.IpfsHash);
+	// 						temp.width = newWidth;
+	// 						temp.height = newHeight;
+	// 						temp.sizes = {
+	// 							width: [newWidth],
+	// 							height: [newHeight],
+	// 						};
+	// 						temp.names = [];
+	// 						temp.rarity = [];
+	// 						temp.rarity.push("4");
+	// 						temp.names.push(name);
+	// 					} else {
+	// 						temp.imgs.push(response.data.IpfsHash);
+	// 						temp.names.push(name);
+	// 						temp.width = newWidth;
+  //
+	// 						temp.height = newHeight;
+	// 						temp.rarity.push("4");
+  //
+	// 						let tempSizesWidth = temp.sizes.width;
+	// 						tempSizesWidth.push(newWidth);
+  //
+	// 						let tempSizesHeight = temp.sizes.height;
+	// 						tempSizesHeight.push(newHeight);
+  //
+	// 						temp.sizes = {
+	// 							width: tempSizesWidth,
+	// 							height: tempSizesHeight,
+	// 						};
+  //
+	// 						// if(width < newWidth ) {
+	// 						// 	setWidth(newWidth);
+	// 						// 	console.log(width);
+	// 						// }
+	// 						// if(height < newHeight ) {
+	// 						// 	setHeight(newHeight);
+	// 						// }
+	// 						// setWidth(width);
+	// 						// changeError("width", width);
+	// 						// setHeight(height);
+	// 						// changeError("height", height);
+	// 						// if ((temp.height == image.height && temp.width == image.width)) {
+	// 						// 	temp.imgs.push(src);
+	// 						// } else {
+	// 						// 	setErrorModal({
+	// 						// 		hidden: true,
+	// 						// 		message: "Your images are different sizes",
+	// 						// 	});
+	// 						// }
+	// 					}
+	// 				}
+	// 				tempArr.push(temp);
+	// 			}
+  //
+	// 			let maxW = Math.max.apply(null, tempArr[curentLayer].sizes.width);
+	// 			let maxH = Math.max.apply(null, tempArr[curentLayer].sizes.height);
+  //
+	// 			if (width < maxW) {
+	// 				setWidth(maxW);
+	// 			}
+	// 			if (height < maxH) {
+	// 				setHeight(maxH);
+	// 			}
+	// 			// setHeight(Math.max.apply(null, tempArr[curentLayer].sizes.height));
+	// 			// TODO : 123
+	// 			//setClassArr1(tempArr);
+	// 		})
+	// 		.catch(function (error) {
+	// 			//handle error here
+	// 			console.error(error);
+	// 		});
+	// };
 
 	function handleFile(e) {
 		const fileReader = new FileReader();
@@ -1323,79 +1323,79 @@ function LoadNftPage() {
 		// setRedirect(true);
 	}
 
-	async function downloadUrl() {
-		const pinataKey = "0a2ed9f679a6c395f311";
-		const pinataSecretKey =
-			"7b53c4d13eeaf7063ac5513d4c97c4f530ce7e660f0c147ab5d6aee6da9a08b9";
-		var image = new Image();
-		image.src = urlImg;
-
-		await fetch(urlImg, {
-			mode: "no-cors",
-			// headers: {
-			// 	"Content-Type": "application/json",
-
-			// },
-		})
-			.then((res) => res.blob())
-			.then((blob) => {
-				const file = new File([blob], "File name", {type: "image/png"});
-
-				const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
-
-				let data = new FormData();
-
-				data.append("file", file);
-				var image = new Image();
-				image.src = URL.createObjectURL(file);
-
-				return axios
-					.post(url, data, {
-						maxBodyLength: "Infinity",
-						headers: {
-							"Content-Type": `multipart/form-data; boundary=${data._boundary}`,
-							pinata_api_key: pinataKey,
-							pinata_secret_api_key: pinataSecretKey,
-						},
-					})
-					.then(async function (response) {
-						// let tempArr = [];
-						// for (let i = 0; i < classArr1.length; i++) {
-						// 	let temp = classArr1[i];
-						// 	if (classArr1[curentLayer].name == classArr1[i].name) {
-						// 		if (temp.imgs[0] == undefined) {
-						// 			console.log("empty");
-						// 			setWidth(width);
-						// 			setHeight(height);
-						// 			temp.imgs = [];
-						// 			temp.imgs.push(response.data.IpfsHash);
-						// 			temp.width = width;
-						// 			temp.height = height;
-						// 			temp.names = [];
-						// 			temp.rarity = [];
-						// 			temp.rarity.push("4");
-						// 			temp.names.push("Name");
-						// 		} else {
-						// 			temp.imgs.push(response.data.IpfsHash);
-						// 			temp.names.push("Name");
-						// 			temp.rarity.push("4");
-						// 			// if ((temp.height == image.height && temp.width == image.width)) {
-						// 			// 	temp.imgs.push(src);
-						// 			// } else {
-						// 			// 	setErrorModal({
-						// 			// 		hidden: true,
-						// 			// 		message: "Your images are different sizes",
-						// 			// 	});
-						// 			// }
-						// 		}
-						// 	}
-						// 	tempArr.push(temp);
-						// }
-						// console.log(tempArr);
-						// setClassArr1(tempArr);
-					});
-			});
-	}
+	// async function downloadUrl() {
+	// 	const pinataKey = "0a2ed9f679a6c395f311";
+	// 	const pinataSecretKey =
+	// 		"7b53c4d13eeaf7063ac5513d4c97c4f530ce7e660f0c147ab5d6aee6da9a08b9";
+	// 	var image = new Image();
+	// 	image.src = urlImg;
+  //
+	// 	await fetch(urlImg, {
+	// 		mode: "no-cors",
+	// 		// headers: {
+	// 		// 	"Content-Type": "application/json",
+  //
+	// 		// },
+	// 	})
+	// 		.then((res) => res.blob())
+	// 		.then((blob) => {
+	// 			const file = new File([blob], "File name", {type: "image/png"});
+  //
+	// 			const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
+  //
+	// 			let data = new FormData();
+  //
+	// 			data.append("file", file);
+	// 			var image = new Image();
+	// 			image.src = URL.createObjectURL(file);
+  //
+	// 			return axios
+	// 				.post(url, data, {
+	// 					maxBodyLength: "Infinity",
+	// 					headers: {
+	// 						"Content-Type": `multipart/form-data; boundary=${data._boundary}`,
+	// 						pinata_api_key: pinataKey,
+	// 						pinata_secret_api_key: pinataSecretKey,
+	// 					},
+	// 				})
+	// 				.then(async function (response) {
+	// 					// let tempArr = [];
+	// 					// for (let i = 0; i < classArr1.length; i++) {
+	// 					// 	let temp = classArr1[i];
+	// 					// 	if (classArr1[curentLayer].name == classArr1[i].name) {
+	// 					// 		if (temp.imgs[0] == undefined) {
+	// 					// 			console.log("empty");
+	// 					// 			setWidth(width);
+	// 					// 			setHeight(height);
+	// 					// 			temp.imgs = [];
+	// 					// 			temp.imgs.push(response.data.IpfsHash);
+	// 					// 			temp.width = width;
+	// 					// 			temp.height = height;
+	// 					// 			temp.names = [];
+	// 					// 			temp.rarity = [];
+	// 					// 			temp.rarity.push("4");
+	// 					// 			temp.names.push("Name");
+	// 					// 		} else {
+	// 					// 			temp.imgs.push(response.data.IpfsHash);
+	// 					// 			temp.names.push("Name");
+	// 					// 			temp.rarity.push("4");
+	// 					// 			// if ((temp.height == image.height && temp.width == image.width)) {
+	// 					// 			// 	temp.imgs.push(src);
+	// 					// 			// } else {
+	// 					// 			// 	setErrorModal({
+	// 					// 			// 		hidden: true,
+	// 					// 			// 		message: "Your images are different sizes",
+	// 					// 			// 	});
+	// 					// 			// }
+	// 					// 		}
+	// 					// 	}
+	// 					// 	tempArr.push(temp);
+	// 					// }
+	// 					// console.log(tempArr);
+	// 					// setClassArr1(tempArr);
+	// 				});
+	// 		});
+	// }
 
 	function closeError() {
 		setErrorModal({

@@ -4,8 +4,23 @@
 	box-sizing: border-box;
 	position: relative;
 }
+//TODO
+.hoverMenuItems {
+  color:#fff;
+  cursor:pointer;
+}
+.hoverMenuItems:hover {
+  color: orange;
 
+}
+.hoverSorter {
+  color: #6f7376;
+  cursor:pointer;
+}
+.hoverSorter:hover {
+  color: orange;
 
+}
 .collectionItem{
 	margin-top:20px;
 	width: 170px;
@@ -612,16 +627,19 @@ input {
 .acc-info > .acc-info1 > .wallet > .menu-info {
 	width: 100%;
 	display: flex;
-	flex-wrap: wrap;
+  top: 63px;
+
+	//flex-wrap: wrap;
 	align-items: center;
 	justify-content: center;
 	position: absolute;
 	bottom: -15px;
+  flex-direction: column;
 }
 .acc-info > .acc-info1 > .wallet > .menu-info > a {
 	width: 100%;
 	position: relative;
-	top: 20px;
+	//top: 20px;
 	text-align: center;
 	cursor: pointer;
 }
@@ -3550,7 +3568,7 @@ input[type="text"] {
 .modal-constructor-filter > .filter > div {
 	margin-bottom: 8px;
 	font-size: 16px;
-	color: #6f7376;
+	//color: #6f7376;
 	display: flex;
 	align-items: center;
 }

@@ -147,16 +147,17 @@ function Header() {
                   />
 
                   <div className={openMenu ? "menu-info" : "hide"}>
-                    <Link
-                      to={"/profile/" + walletAddress}
-                      // onClick={(ev) => {
-                      //   ev.preventDefault();
-                      //   navigate("/profile/" + walletAddress);
-                      // }}
+                    <div
+                      // to={"/profile/" + walletAddress}
+                      className={"hoverMenuItems"}
+                      onClick={(ev) => {
+                        ev.preventDefault();
+                        navigate("/profile/" + walletAddress);
+                      }}
                     >
                       Profile
-                    </Link>
-                    <div onClick={logOut}>Log out</div>
+                    </div>
+                    <div className={"hoverMenuItems"} onClick={logOut}>Log out</div>
                   </div>
 
                   {/* <button onClick={new_init}>init Collection</button>

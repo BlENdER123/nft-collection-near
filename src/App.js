@@ -23,7 +23,6 @@ import NftMarketNft from "./components/NftMarketNft/NftMarketNft";
 import Header from "./Pages/Header/Header";
 import Footer from "./Pages/Footer/Footer";
 import LoadNftPage from "./components/LoadNFT/LoadNftPage";
-import {marketNft, nearConfig} from "../../nft-collection-near/src/sdk/config.json";
 import * as nearAPI from "near-api-js";
 import {Provider, useDispatch} from "react-redux";
 import {getAccountDataAction, requestNFtsUrlsFetchAction} from "./store/actions/app";
@@ -45,7 +44,7 @@ function App() {
   const [sales, setSales] = useState([])
 
   useEffect(async () => {
-    dispatch(requestNFtsUrlsFetchAction());
+    // dispatch(requestNFtsUrlsFetchAction());
 
     if(typeof(walletAccount) !== undefined){
       console.log("getAccountDataAction??")

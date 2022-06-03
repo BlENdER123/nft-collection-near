@@ -19,7 +19,8 @@ import Loader from "../Loader/Loader";
 
 let totalFetched = 0;
 
-function Retry(){
+function Retry() {
+  const dispatch = useDispatch();
   return <div onClick={() => dispatch(requestNFtsUrlsFetchAction())} className="title" style={{
     width: "100%",
     display: "flex",
@@ -30,6 +31,7 @@ function Retry(){
     <div style={{margin: "auto"}}>Oops! Some network problem, please try again.</div>
   </div>
 }
+
 function NftMarket(props) {
   const dispatch = useDispatch();
   const tips = useSelector((state) => state.marketReducer.tips);
@@ -54,7 +56,7 @@ function NftMarket(props) {
   });
 
   const [filter, setFilter] = useState({text: "", type: "name"});
-  const [typeOfSort, setTypeOfSort] = useState("");
+  const [typeOfSort, setTypeOfSort] = useState("DESC");
 
   function handleSearch(e) {
     setFilter({type: e.target.id, text: e.currentTarget.value});
@@ -62,7 +64,8 @@ function NftMarket(props) {
 
   function handleSort(e) {
     if (e.target.classList.value !== "checkbox active") {
-      setTypeOfSort(e.target.id);
+
+      setTypeOfSort(typeOfSort === "ASC" ? "DESC" : "ASC");
     } else {
       setTypeOfSort("");
     }
@@ -283,15 +286,16 @@ function NftMarket(props) {
   // },[])
 
   function handleCheck() {
-    let result = [];
-    for (let i = 0; i < sales.length; i++) {
-      for (let x = 0; i < collections.length; i++) {
-        if (sales[i].token_id !== collections[x].token_id) {
-          result.push(sales[i])
-        }
-      }
-    }
-    console.info("hasMore", hasMore, "result", result, "collections", collections, "sales", sales); // ["some5"]
+    console.log("typeOfSort", typeOfSort)
+    // let result = [];
+    // for (let i = 0; i < sales.length; i++) {
+    //   for (let x = 0; i < collections.length; i++) {
+    //     if (sales[i].token_id !== collections[x].token_id) {
+    //       result.push(sales[i])
+    //     }
+    //   }
+    // }
+    // console.info("hasMore", hasMore, "result", result, "collections", collections, "sales", sales); // ["some5"]
 
   }
 
@@ -302,37 +306,32 @@ function NftMarket(props) {
       >
         <span onClick={close}/>
       </div>
+      
+{/*TODO was ist das check with Anton*/}
       {/*<div*/}
-      {/*    className={*/}
-      {/*        !mintNftData.hidden || connectWallet ? "App-error" : "App App2"*/}
-      {/*    }*/}
+      {/*  className={*/}
+      {/*    mintNftData.hidden ? "hide" : "modal-connect modal-connect-first"*/}
+      {/*  }*/}
       {/*>*/}
-      {/*<Header activeCat={2}/>*/}
-
-      <div
-        className={
-          mintNftData.hidden ? "hide" : "modal-connect modal-connect-first"
-        }
-      >
-        <button
-          className="close"
-          onClick={() => setMintNftData({hidden: true})}
-        >
-          <span/>
-          <span/>
-        </button>
-        <div className="title">Robots Collection</div>
-        <div className="mint owner">
-          Owner: <span>0:65eb...fe7b</span>{" "}
-        </div>
-        <div className="mint price">
-          Price: <span>149</span>{" "}
-        </div>
-        <div className="mint royalty">
-          Royalty for Author <span>15%</span>{" "}
-        </div>
-        <div className="button-1-square">Buy & Open Pack</div>
-      </div>
+      {/*  <button*/}
+      {/*    className="close"*/}
+      {/*    onClick={() => setMintNftData({hidden: true})}*/}
+      {/*  >*/}
+      {/*    <span/>*/}
+      {/*    <span/>*/}
+      {/*  </button>*/}
+      {/*  <div className="title">Robots Collection</div>*/}
+      {/*  <div className="mint owner">*/}
+      {/*    Owner: <span>0:65eb...fe7b</span>{" "}*/}
+      {/*  </div>*/}
+      {/*  <div className="mint price">*/}
+      {/*    Price: <span>149</span>{" "}*/}
+      {/*  </div>*/}
+      {/*  <div className="mint royalty">*/}
+      {/*    Royalty for Author <span>15%</span>{" "}*/}
+      {/*  </div>*/}
+      {/*  <div className="button-1-square">Buy & Open Pack</div>*/}
+      {/*</div>*/}
       <div className="constructor-market">
         <div className="container-header">
           <div className="modal-constructor modal-constructor-filter">
@@ -368,40 +367,13 @@ function NftMarket(props) {
             </div>
             <div className="text"/>
             <div className={accordionHidden[1] ? "hide" : "filter"}>
-              <div>
-                <input type="radio" id="ASC"
-                       onClick={(ev) => {
-                         handleSort(ev);
-                         // console.log(ev.target.classList.toggle("active"));
-                       }} className="checkbox" name="drone" value="ASC"/>
-                <button
-                  id={"ASC"}
-                  onClick={(ev) => {
-                    handleSort(ev);
-                    console.log(ev.target.classList.toggle("active"));
-                  }}
-                  className="checkbox"
-                />
-                {" "}
-                Sort by price (ASC)
-              </div>
-              <div>
-                <input type="radio" id="DESC"
-                       onClick={(ev) => {
-                         handleSort(ev);
-                         // console.log(ev.target.classList.toggle("active"));
-                       }} className="checkbox" name="drone" value="DESC"/>
-                {/*<label for="DESC"></label>*/}
-                <button
-                  id={"DESC"}
-                  onClick={(ev) => {
-                    handleSort(ev);
-                    console.log(ev.target.classList.toggle("active"));
-                  }}
-                  className="checkbox"
-                />
-                {" "}
-                Sort by price (DESC)
+              {/*//TODO refactor styles*/}
+              <div id={"ASC"} className={"hoverSorter"}
+                   onClick={(ev) => {
+                     handleSort(ev);
+                     console.log(ev.target.classList.toggle("active"));
+                   }}>
+                Sort by price ({typeOfSort})
               </div>
             </div>
 
@@ -426,11 +398,6 @@ function NftMarket(props) {
                     </div>
 
                   }
-                  // scrollableTarget="scrollableDiv"
-                  // scrollThreshold="50px"
-                  // pullDownToRefresh={true}
-                  // height={400}
-                  // refreshFunction={fetchData}
                 >
                   <div className="collection_grid"> {
                     collections

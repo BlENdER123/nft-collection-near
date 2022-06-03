@@ -1,5 +1,5 @@
 import * as nearAPI from "near-api-js";
-import {marketNft, nearConfig} from "../../../nft-collection-near/src/sdk/config.json";
+import {marketNft, nearConfig} from "../../src/config.json";
 
 
 export default async function getUrlsData() {
