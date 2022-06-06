@@ -1,7 +1,7 @@
 #!/bin/bash
 
 SERVER_IP=$SERVER_IP
-SERVER_FOLDER="test.never.defispace.com"
+SERVER_FOLDER="nft-art-generator.defispace.com"
 
 npm install --force
 npm run build
