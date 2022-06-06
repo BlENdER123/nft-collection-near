@@ -1,9 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;800&display=swap');
+
+$black: #0d0d0d; //Backgound Color
+$gray: #282a2d; //Elements Color
+$lightGray: #444; //Elements Border Color
+$darkGray: #202225; //Elements Hover Color
+$green: #01824c; //Green Color
+$darkGreen: #017645; //Green Hover Color
+$purpure: #6333ff; //Purpure Color
+$darkPurpure: #5729ed; //Purpure Hover Color
+$red: #ff5045; //Red Color
+$darkRed: #e72f24; //Red Hover Color
+
+$text: #868b8f; //Main Text Color
+$white: #f1f1f1; //Main Titles Color
+$light: rgba(256, 256, 256, 0.15); //Main Devider Color & Hover Border Color
+$lightHover: rgba(256, 256, 256, 0.3); //Main Devider Color & Hover Border Color
+
+$transition: 0.15s ease 0s; //Default Transition
+
 * {
-	font-family: "Manrope", sans-serif;
-	transition: 0.3s;
-	box-sizing: border-box;
-	position: relative;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  transition: $transition;
+  position: relative;
+
+  &::selection {
+    background: $purpure;
+    color: $white;
+  }
 }
+
 //TODO
 .hoverMenuItems {
   color:#fff;
@@ -68,70 +95,69 @@
 	background: #6333ff;
 }
 
-html {
-	height: 100%;
-	width: 100%;
-	overflow-x: hidden;
-}
 body {
-	height: 100%;
-	width: 100%;
-}
-body {
-	margin: 0;
-	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-		"Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-		sans-serif;
+	font-family: "Manrope";
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
-}
-code {
-	font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-		monospace;
-}
-.react-app {
+	height: 100%;
 	width: 100%;
+	color: $white;
 }
+
+code {
+	font-family: "Consolas", "Courier New", monospace;
+}
+
 #root {
 	height: 100%;
 	width: 100%;
-	background: #0d0d0d;
+	background: $black;
+	max-width: 100%;
+	overflow-x: hidden;
 }
+
 .App {
 	background: url(./images/img/main-bg.png), #070707;
 	background-size: cover;
 	background-repeat: no-repeat;
 	background-position: center center;
+
+	&2 {
+		background-image: none;
+	}
 }
-.App2 {
-	background: #0d0d0d;
-}
+
 .App-error {
 	height: 100vh;
 	overflow-y: hidden;
 }
+
 .hide {
 	display: none !important;
 }
+
 a {
-	text-decoration: none !important;
-	color: #fff !important;
+	text-decoration: none;
+	color: $white;
+
+	&:hover {
+		color: $light;
+	}
 }
-a:hover {
-	color: inherit !important;
-}
+
 .lds-dual-ring {
 	display: flex;
 	position: absolute;
 	width: 100%;
 	height: 100%;
-	background: #282a2d;
+	background: $gray;
 	border-radius: 10px;
 	align-items: center;
 	justify-content: center;
 	top: 0;
 	z-index: 5;
 }
+
 .lds-dual-ring:after {
 	content: " ";
 	display: block;
@@ -139,7 +165,7 @@ a:hover {
 	height: 64px;
 	margin: 8px;
 	border-radius: 50%;
-	border: 6px solid #fff;
+	border: 6px solid $white;
 	border-color: #3569f0 transparent #3569f0;
 	animation: lds-dual-ring 1.2s linear infinite;
 }
@@ -153,7 +179,7 @@ a:hover {
 }
 .error-bg {
 	width: 100vw;
-	height: 100vh;
+	height: 100%;
 	background: rgba(0, 0, 0, 0.7);
 	z-index: 10;
 	position: absolute;
@@ -164,10 +190,10 @@ a:hover {
 	position: absolute;
 	top: 100px;
 	right: 100px;
-	color: #fff;
+	color: $white;
 	width: 50px;
 	height: 50px;
-	border: 1px solid #fff;
+	border: 1px solid $white;
 	border-radius: 50%;
 	cursor: pointer;
 }
@@ -176,7 +202,7 @@ a:hover {
 	display: block;
 	width: 90%;
 	height: 1px;
-	background: #fff;
+	background: $white;
 	position: absolute;
 	left: 50%;
 	top: 50%;
@@ -187,31 +213,32 @@ a:hover {
 	display: block;
 	width: 90%;
 	height: 1px;
-	background: #fff;
+	background: $white;
 	position: absolute;
 	left: 50%;
 	top: 50%;
 	transform: translate(-50%, -50%) rotate(-45deg);
 }
 .error-modal {
-	position: absolute;
+	position: fixed;
 	width: 350px;
 	height: 200px;
-	background: #282a2d;
-	border: 1px solid #444;
-	color: #fff;
+	background: $gray;
+	border: 1px solid $lightGray;
+	color: $white;
 	z-index: 11;
 	border-radius: 4px;
 	left: 50%;
-	top: 300px;
+	top: 50%;
 	transform: translate(-50%, -50%);
 }
+
 .error-modal-img {
 	padding: 25px;
 	position: absolute;
-	background: #282a2d;
-	border: 1px solid #444;
-	color: #fff;
+	background: $gray;
+	border: 1px solid $lightGray;
+	color: $white;
 	z-index: 11;
 	border-radius: 4px;
 	left: 50%;
@@ -228,23 +255,23 @@ a:hover {
 	z-index: 3;
 }
 .error-modal > .message {
-	color: #fff;
+	color: $white;
 }
 .input {
-	background: #282a2d;
+	background: $gray;
 	color: #bcc4ca80;
 	border: none;
 	border-radius: 2px;
 	padding: 10px;
 }
 input {
-	color: #fff !important;
+	color: $white !important;
 }
 .btn-main {
 	border: none;
 	border-radius: 4px;
 	padding: 5px 20px;
-	color: #fff;
+	color: $white;
 	cursor: pointer;
 }
 .near-sign {
@@ -257,11 +284,11 @@ input {
 .video-start {
 	width: 100%;
 	padding: 15px;
-	background: #282a2d;
-	border: 1px solid #444444;
-	color: #fff;
+	background: $gray;
+	border: 1px solid $lightGray;
+	color: $white;
 	font-size: 14px;
-	margin-bottom: 20px;
+	margin-bottom: 15px;
 	border-radius: 2px;
 	text-align: center;
 	display: flex;
@@ -282,7 +309,7 @@ input {
 .header {
 	position: relative;
 	z-index: 2;
-	color: #fff;
+	color: $white;
 }
 .header > .container-header > .acc-info {
 	border-bottom: 1px solid #3d3d3d;
@@ -331,7 +358,7 @@ input {
 	position: fixed;
 	padding: 20px;
 	background: #09a061;
-	color: #fff;
+	color: $white;
 	bottom: 5px;
 	right: 0;
 	border-radius: 10px;
@@ -344,11 +371,11 @@ input {
 	background: #3569f0;
 	border-radius: 5px;
 	padding: 5px;
-	color: #fff;
+	color: $white;
 	margin-bottom: 5px;
 }
 .title {
-	color: #fff;
+	color: $white;
 	font-size: 48px;
 	font-weight: bold;
 	line-height: 115%;
@@ -356,13 +383,12 @@ input {
 }
 .text {
 	font-size: 16px;
-	white-space: pre-line;
-	font-weight: 300;
-	line-height: 150%;
-	color: #6f7376;
+	font-weight: 400;
+	line-height: 115%;
+	color: $text;
 }
 .button-1 {
-	color: #fff;
+	color: $white;
 	background: #6a3ccd;
 	border: 1px solid transparent;
 	padding: 20px 85px;
@@ -376,7 +402,7 @@ input {
 
 .button-2 {
 	color: #6a3ccd;
-	background: #fff;
+	background: $white;
 	border: 2px solid transparent;
 	font-weight: bold;
 	padding: 20px 85px;
@@ -388,14 +414,14 @@ input {
 }
 .button-1:hover {
 	background-color: #4421b6;
-	color: #fff;
+	color: $white;
 }
 .button-2:hover {
 	background-color: #d8d8d8;
 }
 .button-1-square {
-	color: #fff;
-	background: #6333ff;
+	color: $white;
+	background: $purpure;
 	border: none;
 	font-size: 14px;
 	border-radius: 4px;
@@ -403,20 +429,21 @@ input {
 	text-align: center;
 }
 .button-1-square-disabled {
-	color: #fff !important;
-	background: grey !important;
+	background: $darkGray !important;
+	color: $lightGray;
 	border: none;
 	font-size: 14px;
 	border-radius: 4px;
-	cursor: auto;
+	cursor: not-allowed;
 	text-align: center;
 }
 .button-1-square-disabled:hover {
-	background-color: grey !important;
+	background-color: $darkGray !important;
+	color: $lightGray;
 }
 .button-2-square {
 	color: #6a3ccd;
-	background: #fff;
+	background: $white;
 	border: none;
 	font-size: 14px;
 	border-radius: 4px;
@@ -424,7 +451,7 @@ input {
 	text-align: center;
 }
 .button-3-square {
-	color: #fff;
+	color: $white;
 	background: #09a061;
 	border: none;
 	font-size: 14px;
@@ -433,8 +460,8 @@ input {
 	text-align: center;
 }
 .button-4-square {
-	color: #fff;
-	background: #282a2d;
+	color: $white;
+	background: $gray;
 	border: none;
 	font-size: 16px;
 	border-radius: 4px;
@@ -468,7 +495,7 @@ input {
 	display: block;
 	width: 4px;
 	height: 40px;
-	background-color: #fff;
+	background-color: $white;
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -503,8 +530,8 @@ input {
 }
 .steps {
 	width: 100%;
-
-	margin-bottom: 40px;
+	margin-bottom: 30px;
+	margin-top: 8px;
 }
 .steps > .line {
 	width: 50px;
@@ -515,12 +542,14 @@ input {
 	display: flex;
 	cursor: pointer;
 	opacity: 0.6;
+	align-items: center;
 }
-.steps > .step:hover {
+.steps > .step-hov:hover {
 	opacity: 1;
+	cursor: pointer;
 }
-.steps > .step:hover > .img {
-	background: #6333ff;
+.steps > .step-hov:hover > .img {
+	background: $purpure;
 	background-position: center center;
 	background-repeat: no-repeat;
 }
@@ -544,44 +573,63 @@ input {
 	background-image: url("./images/img/Save_light.png") !important;
 }
 .steps > .step > .img {
-	width: 46px;
+	width: 100%;
+	max-width: 46px;
+	min-width: 46px;
 	height: 46px;
-	background: #282a2d;
+	max-height: 46px;
+	background: $gray;
 	background-position: center center;
 	background-repeat: no-repeat;
-	border: 1px solid #444444;
+	border: 1px solid $lightGray;
 	border-radius: 50%;
 	margin-right: 10px;
+}
+.steps .text {
+	width: 100%;
+	max-width: 100%;
+	min-width: 100%;
 }
 .steps > .active {
 	opacity: 1;
 }
 .steps > .active > .img {
-	background: #6333ff;
+	background: $purpure;
 	background-position: center center;
 	background-repeat: no-repeat;
 }
 .steps > .step > .text > .name {
 	font-weight: 600;
 	font-size: 16px;
-	color: #ffffff;
+	color: $white;
+	margin-bottom: 4px;
+	line-height: 100%;
 }
 .steps > .step > .text > .desc {
 	font-size: 14px;
-	color: #ffffff;
+	color: $white;
 	opacity: 0.7;
 }
 .acc-info {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	padding: 50px 0px;
+	padding: 40px 0px;
 }
 .acc-info > .acc-info1 {
 	display: flex;
 	column-gap: 60px;
 	justify-content: space-between;
 	align-items: center;
+
+	& a {
+		color: $white;
+		text-decoration: none !important;
+
+		&:hover {
+			opacity: 0.7;
+		}
+	}
 }
 .acc-info > .acc-info1 > .name {
 	cursor: pointer;
@@ -603,20 +651,23 @@ input {
 	font-weight: 400;
 }
 .acc-info > .acc-info1 > .wallet > .acc-wallet {
-	width: 100px;
+	width: 150px;
+	font-weight: 500;
+	font-size: 14px;
 	white-space: nowrap;
 	overflow: hidden;
 	color: #09a061;
 }
 .acc-info > .acc-info1 > .wallet > .btn-menu {
-	// background: #fff;
+	// background: $white;
 	position: relative;
 }
 .acc-info > .acc-info1 > .wallet > .btn-menu::after {
 	content: "▼";
-	color: #fff;
+	color: $white;
 	position: absolute;
-	left: 17px;
+	font-size: 14px;
+	left: 15px;
 	top: 50%;
 	transform: translate(-50%, -50%);
 	cursor: pointer;
@@ -627,21 +678,33 @@ input {
 .acc-info > .acc-info1 > .wallet > .menu-info {
 	width: 100%;
 	display: flex;
-  top: 63px;
-
-	//flex-wrap: wrap;
+	flex-wrap: wrap;
 	align-items: center;
 	justify-content: center;
 	position: absolute;
-	bottom: -15px;
-  flex-direction: column;
+	background-color: $gray;
+
+	border-radius: 4px;
+	border: 1px solid $lightGray;
+	top: 40px;
 }
 .acc-info > .acc-info1 > .wallet > .menu-info > a {
 	width: 100%;
 	position: relative;
-	//top: 20px;
-	text-align: center;
+	text-align: left;
 	cursor: pointer;
+	font-size: 16px;
+	padding: 10px 12px;
+	background-color: $gray;
+	transition: $transition;
+
+	& + a {
+		border-top: 1px solid $lightGray;
+	}
+
+	&:hover {
+		background-color: $darkGray;
+	}
 }
 .acc-info > .pages {
 	display: flex;
@@ -652,10 +715,22 @@ input {
 	color: rgba(256, 256, 256, 0.3);
 	cursor: pointer;
 	transition: 0.1s linear;
+	font-size: 18px;
+	text-decoration: none;
+
+	&:hover {
+		text-decoration: none;
+	}
+}
+.acc-info > .pages a {
+	transition: $transition;
+	&:hover {
+		text-decoration: none;
+	}
 }
 .acc-info > .pages > a > .active,
 .acc-info > .pages > a > .page-element:hover {
-	color: #fff;
+	color: $white;
 }
 .acc > .content {
 	height: 100%;
@@ -673,7 +748,7 @@ input {
 	padding-bottom: 20px;
 }
 .seed-enter > textarea {
-	border: 1px solid #6333ff;
+	border: 1px solid $purpure;
 	padding: 10px;
 	background: transparent;
 	color: #bcc4ca80;
@@ -707,7 +782,11 @@ input {
 	line-height: 115%;
 }
 .main-screen > .container > .content > .text {
-	margin-bottom: 50px;
+	margin-bottom: 40px;
+	font-size: 18px;
+	font-weight: 400;
+	line-height: 150%;
+	max-width: 400px;
 }
 .main-screen > .container > .content > .buttons {
 	display: flex;
@@ -763,7 +842,7 @@ input {
 	border: 1px solid rgba(256, 256, 256, 0.2);
 	backdrop-filter: blur(34px);
 	border-radius: 12px;
-	color: #fff;
+	color: $white;
 	padding: 30px;
 	transition: 0.1s linear;
 }
@@ -799,7 +878,7 @@ input {
 	position: relative;
 	background: url(./images/img/screenbg3.png) no-repeat;
 	background-position: 0 center;
-	padding: 100px 0px;
+	padding: 200px 0px;
 }
 .video-screen::before {
 	content: "";
@@ -838,22 +917,11 @@ input {
 }
 .footer {
 	padding: 150px 0px 100px 0px;
-    //
-    //background: url(./images/img/main-bg.png), #070707;
-    //background-size: cover;
-    //background-repeat: no-repeat;
-    //background-position: center center;
-    //
-    //
-    //background: #0d0d0d;
-
-  
-  
 }
 .footer > .container-header {
 	display: flex;
 	justify-content: space-between;
-	color: #fff;
+	color: $white;
 }
 button,
 .button-1-square {
@@ -891,7 +959,7 @@ button,
 }
 .footer > .container-header > .footer-2 > .pages > .active,
 .footer > .container-header > .footer-2 > .pages > .page-element:hover {
-	color: #fff;
+	color: $white;
 }
 .footer > .container-header > .footer-2 > .email > span {
 	font-size: 14px;
@@ -901,7 +969,7 @@ button,
 }
 .footer > .container-header > .footer-2 > .email > .text {
 	font-size: 25px;
-	color: #fff;
+	color: $white;
 	font-weight: bold;
 	cursor: pointer;
 	transition: 0.1s linear;
@@ -973,7 +1041,7 @@ button,
 }
 .start-screen > .container-header > .content-generator > div {
 	width: 49%;
-	background: #282a2d;
+	background: $gray;
 	opacity: 0.5;
 	padding: 30px 69px;
 	height: 540px;
@@ -1011,7 +1079,7 @@ button,
 	width: 100%;
 }
 .start-screen > .container-header > .content-generator > div > .desc > .text {
-	color: #ffffff;
+	color: $white;
 	opacity: 0.7;
 	font-size: 14px;
 	width: 100%;
@@ -1057,7 +1125,7 @@ button,
 }
 .start-screen > .container-header > .content-1 > .modes > div {
 	cursor: pointer;
-	border: 1px solid #444;
+	border: 1px solid $lightGray;
 	border-radius: 4px;
 	position: relative;
 }
@@ -1066,24 +1134,24 @@ button,
 	height: 25px;
 	width: 90px;
 	display: flex;
-	color: #fff;
+	color: $white;
 	justify-content: center;
 	align-items: center;
 	font-size: 11px;
-	background: #6333ff;
+	background: $purpure;
 	border-radius: 4px;
 	right: 10px;
 	top: 10px;
 }
 .start-screen > .container-header > .content-1 > .modes > div > span {
-	color: #fff;
+	color: $white;
 	width: 100%;
 	height: 25px;
 	text-align: center;
 	margin-bottom: 20px;
 }
 .start-screen > .container-header > .content-1 > .modes > .mode-generator {
-	background: #282a2d;
+	background: $gray;
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: center;
@@ -1104,7 +1172,7 @@ button,
 	height: 110px;
 }
 .start-screen > .container-header > .content-1 > .modes > .mode-constructor {
-	background: #282a2d;
+	background: $gray;
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: center;
@@ -1201,7 +1269,7 @@ button,
 	width: 105px;
 	height: 105px;
 	background: transparent;
-	border: 1px solid #444;
+	border: 1px solid $lightGray;
 	border-radius: 4px;
 	width: 45%;
 	margin-bottom: 20px;
@@ -1218,22 +1286,34 @@ button,
 	margin-bottom: 10px;
 }
 .modal-constructor-layers > .price > .title {
-	font-weight: 400;
-	font-size: 14px;
-	line-height: 100%;
-	color: #6f7376;
+	font-size: 15px;
+	color: $text;
+	font-weight: 500;
 	margin-bottom: 5px;
+	display: flex;
+	line-height: 105%;
 }
 .modal-constructor-layers > .price > input {
 	width: 100%;
-	padding: 12px;
-	border: 1px solid #444444;
-	border-radius: 4px;
+	padding: 16px 12px;
+	border: 1px solid $lightGray;
+	border-radius: 3px;
 	color: #bcc4ca80;
-	background: url(./images/img/ever.png) #282a2d no-repeat 95% center;
+	background: url(./images/img/ever.png) $gray no-repeat 95% center;
 	background-size: 16px;
-	border: 1px solid #282a2d;
+	border: 1px solid $gray;
 	border-radius: 2px;
+	outline: none;
+	outline-offset: 0px;
+	font-size: 17px;
+
+	&:hover {
+		border-color: $lightHover;
+	}
+
+	&:focus {
+		border-color: $purpure;
+	}
 }
 .modal-constructor-layers > .price > input::-webkit-outer-spin-button,
 .modal-constructor-layers > .price > input::-webkit-inner-spin-button {
@@ -1250,7 +1330,7 @@ button,
 	justify-content: space-between;
 	pointer-events: none;
 	font-size: 15px;
-	color: #6f7376;
+	color: $text;
 }
 .modal-constructor-layers > .royalty > input[type="range"] {
 	width: 100%;
@@ -1259,7 +1339,7 @@ button,
 	height: 5px;
 	border-radius: 4px;
 	outline: 0;
-	background: #6333ff;
+	background: $purpure;
 }
 .modal-constructor-layers
 	> .royalty
@@ -1268,8 +1348,8 @@ button,
 	width: 23px;
 	height: 23px;
 	border-radius: 50%;
-	background: #282a2d;
-	border: 1px solid #444444;
+	background: $gray;
+	border: 1px solid $lightGray;
 	cursor: pointer;
 	transition: 0.3s ease-in-out;
 }
@@ -1277,7 +1357,7 @@ button,
 	.modal-constructor-layers
 	> .royalty
 	> input[type="range"]::-webkit-slider-thumb:hover {
-	background-color: #fff;
+	background-color: $white;
 	border: 1px solid #6a3ccd;
 }
 .modal-constructor-layers
@@ -1293,23 +1373,25 @@ button,
 	margin-bottom: 15px;
 	flex-wrap: nowrap;
 }
-.modal-constructor-layers > .title-1 {
-	font-size: 32px;
-	color: #fff;
-	margin-bottom: 54px;
+.modal-constructor > .title-1 {
+	font-size: 1.7vw;
+	color: $white;
+	padding-bottom: 25px;
+	margin-bottom: 0px;
 	font-weight: 700;
+	border-bottom: 1px solid $light;
 }
 .modal-constructor-layers > .randomize-many > input {
 	width: 40%;
 	padding: 12px;
-	background: #282a2d;
-	border: 1px solid #444;
+	background: $gray;
+	border: 1px solid $lightGray;
 	border-radius: 4px;
 	color: #bcc4ca80;
 	outline: none;
 }
 .modal-constructor-layers > .randomize-many > input:focus {
-	border-color: #6333ff;
+	border-color: $purpure;
 }
 .modal-constructor-layers > .randomize-many > .button-1-square {
 	width: 60%;
@@ -1414,13 +1496,13 @@ button,
 .collection > .nft-collection > .nft-element > img {
 	width: 100%;
 	max-height: 124px;
-	border: 1px solid #444;
+	border: 1px solid $lightGray;
 	border-radius: 4px;
 	cursor: pointer;
 }
 .collection > .nft-collection > .nft-element > .title {
 	text-align: center;
-	color: #fff;
+	color: $white;
 	font-size: 15px;
 }
 .collection > .nft-avatar {
@@ -1470,7 +1552,7 @@ button,
 }
 .collection > .nft-avatar > .nft-img > label > span:hover {
 	opacity: 0.9;
-	border: 1px solid #6333ff;
+	border: 1px solid $purpure;
 }
 .collection > .nft-avatar > .nft-img > label > span::before {
 	content: "";
@@ -1516,8 +1598,8 @@ button,
 .collection-preview > .preview-item > input {
 	width: 100%;
 	padding: 5px;
-	background: #282a2d;
-	border: 1px solid #444;
+	background: $gray;
+	border: 1px solid $lightGray;
 	border-radius: 4px;
 	color: #bcc4ca80;
 	outline: none;
@@ -1527,14 +1609,14 @@ button,
 	background-color: #fb4b4b;
 	border: none;
 	border-radius: 50px;
-	color: #fff;
+	color: $white;
 	padding: 14px 20px;
 	font-size: 15px;
 	margin-left: 10px;
 	height: 100%;
 }
 .modal-connect {
-	background-color: #282a2d;
+	background-color: $gray;
 	border-radius: 10px;
 	padding: 30px 0px;
 	width: 550px;
@@ -1549,7 +1631,7 @@ button,
 	font-size: 16px;
 	width: 460px;
 	height: auto;
-	color: #fff;
+	color: $white;
 	// max-width: 620px;
 	// max-height: 840px;
 }
@@ -1562,7 +1644,7 @@ button,
 .modal-connect-sale > .menu-sale > .menu-item {
 	margin: 10px;
 	padding: 10px;
-	border-bottom: 3px solid #6333ff;
+	border-bottom: 3px solid $purpure;
 	cursor: pointer;
 }
 .modal-connect-sale > .content {
@@ -1586,17 +1668,17 @@ button,
 .modal-connect-sale > .content > .input-sale > input {
 	width: 100%;
 	padding: 14px;
-	border: 1px solid #444444;
+	border: 1px solid $lightGray;
 	border-radius: 4px;
-	background: #282a2d;
-	color: #fff;
+	background: $gray;
+	color: $white;
 }
 .modal-connect-sale > .content > .sale {
 	margin-top: 10px;
 	width: 100%;
 	padding: 20px;
 	text-align: center;
-	background: #6333ff;
+	background: $purpure;
 	border-radius: 4px;
 }
 
@@ -1634,11 +1716,11 @@ button,
 }
 .modal-connect > .mint {
 	text-align: center;
-	color: #fff;
+	color: $white;
 	margin-bottom: 5px;
 }
 .modal-connect > .mint > span {
-	color: #6333ff;
+	color: $purpure;
 }
 .modal-connect > .button-1-square {
 	padding: 17px;
@@ -1653,7 +1735,7 @@ button,
 	display: block;
 	width: 2px;
 	height: 20px;
-	background-color: #fff;
+	background-color: $white;
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -1698,7 +1780,7 @@ button,
 	display: block;
 	width: 2px;
 	height: 20px;
-	background-color: #fff;
+	background-color: $white;
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -1726,7 +1808,7 @@ button,
 	margin-bottom: 10px;
 }
 .page > .message {
-	color: #fff;
+	color: $white;
 	position: relative;
 	top: 50%;
 	left: 50%;
@@ -1746,10 +1828,10 @@ button,
 	margin-top: 30px;
 }
 .page > .content > .text-address {
-	color: #fff;
+	color: $white;
 }
 .page > .content > .text-address > span {
-	color: #6333ff;
+	color: $purpure;
 }
 .content-first {
 	background-color: transparent !important;
@@ -1775,15 +1857,15 @@ button,
 	padding: 0px 30px;
 }
 .page > .text > span {
-	color: #6333ff;
+	color: $purpure;
 }
 .page > .content > .text-seed {
 	text-align: center;
 	background: transparent;
-	border: 1px solid #6333ff;
+	border: 1px solid $purpure;
 	border-radius: 4px;
 	width: 300px;
-	color: #fff;
+	color: $white;
 	padding: 12px;
 }
 .seed {
@@ -1792,7 +1874,7 @@ button,
 	width: 300px;
 	margin-top: 20px;
 	padding: 10px;
-	background-color: #fff;
+	background-color: $white;
 }
 .page > .content > .text-address {
 	width: 370px;
@@ -1828,7 +1910,7 @@ button,
 .connect-btn {
 	background: #3569f0;
 	border-radius: 10px;
-	color: #fff;
+	color: $white;
 	padding: 10px 40px;
 	border: none;
 }
@@ -1843,7 +1925,7 @@ button,
 	width: 45px;
 	height: 50px;
 	border: none;
-	border: 1px solid #444;
+	border: 1px solid $lightGray;
 	border-radius: 4px;
 	color: #bcc4ca80;
 	background: transparent;
@@ -1879,8 +1961,8 @@ button,
 	width: 200px;
 }
 .pin-board > .board > button {
-	background: #fff;
-	color: #6333ff;
+	background: $white;
+	color: $purpure;
 	border: none;
 	border-radius: 50%;
 	width: 60px;
@@ -1893,7 +1975,7 @@ button,
 	opacity: 0;
 }
 .pin-board > .board > .backspace {
-	border: 1px solid #444;
+	border: 1px solid $lightGray;
 	background: transparent;
 	display: flex;
 	align-items: center;
@@ -1907,7 +1989,7 @@ button,
 	border: 2px solid #3569f0;
 }
 .message {
-	color: #fff;
+	color: $white;
 	font-size: 24px;
 	position: absolute;
 	top: 40%;
@@ -1920,7 +2002,7 @@ button,
 	left: 50%;
 	max-width: 450px;
 	transform: translate(-50%, -50%);
-	background-color: #fff;
+	background-color: $white;
 	border-radius: 50px;
 	padding: 35px 35px;
 	white-space: pre-wrap;
@@ -1956,7 +2038,7 @@ button,
 	margin-top: 20px;
 }
 .menu {
-	background-color: #fff;
+	background-color: $white;
 	border-radius: 50px;
 	text-align: center;
 	display: inline-block !important;
@@ -1986,7 +2068,7 @@ button,
 }
 .menu-services > .title {
 	font-size: 24px;
-	color: #fff;
+	color: $white;
 	margin-bottom: 20px;
 }
 .menu-services > .services {
@@ -1995,7 +2077,7 @@ button,
 }
 .menu-services > .services > .service {
 	width: 30%;
-	background-color: #fff;
+	background-color: $white;
 	border-radius: 50px;
 	margin-bottom: 30px;
 	text-align: center;
@@ -2032,20 +2114,24 @@ button,
 	justify-content: space-between;
 	position: relative;
 	padding: 50px 15px 100px 15px;
-	// border-top: 1px solid rgba(256, 256, 256, 0.2);
 }
 .constructors-col > .container-header {
 	display: grid;
-	grid-template-columns: 5% 25% 40%;
-	justify-content: space-around;
+	grid-template-columns: 5% 25% 55%;
+	justify-content: space-between;
 	position: relative;
 	padding: 50px 15px 100px 15px;
 }
+
+.constructors-col .title-1 {
+	margin-bottom: 40px;
+}
+
 .constructors > a > .next,
 .constructors > .next {
 	margin-top: 20px;
-	background: #692ee5;
-	color: #fff;
+	background: $purpure;
+	color: $white;
 	padding: 20px 60px;
 	border-radius: 10px;
 	cursor: pointer;
@@ -2055,28 +2141,14 @@ button,
 }
 .modal-constructor > .desc > .title {
 	font-size: 16px;
-	color: #ffffff;
+	color: $white;
 	margin-bottom: 10px;
 }
 .modal-constructor > .desc {
-	color: #ffffff;
+	color: $white;
 	opacity: 0.7;
 }
-// .modal-constructor .import {
-// 	background: #01824c;
-// 	color: #fff;
-// 	border-radius: 2px;
-// 	font-weight: 700;
-// 	font-size: 16px;
-// 	width: 100%;
-// 	padding: 16px 10px;
-// 	background-image: url("./images/img/Download_circle_light.png");
-// 	background-size: 28px 28px;
-// 	background-position: bottom 50% right 15px;
-// 	background-repeat: no-repeat;
-// 	margin-bottom: 28px;
-// 	cursor: pointer;
-// }
+
 .modal-constructor .import-buttons {
 	margin-bottom: 30px;
 }
@@ -2097,7 +2169,7 @@ button,
 		width: 56px;
 		height: 56px;
 		display: inline-block;
-		background: #6333ff;
+		background: $purpure;
 		background-repeat: no-repeat;
 		background-position: center;
 		cursor: pointer;
@@ -2106,14 +2178,12 @@ button,
 
 		.form-item__input:focus + &,
 		&:hover {
-			//box-shadow: 0 1px 3px #b8cdf9;
-			background-color: #7747f7;
+			background-color: $purpure;
 		}
 	}
 
 	// List files
 	.list-files {
-		// стили для списка фалов
 		font-size: 0.85em;
 		list-style: none;
 		margin: 0;
@@ -2122,7 +2192,7 @@ button,
 
 		li {
 			padding: 5px 10px;
-			background-color: #fff27e;
+			background-color: $white;
 			margin-bottom: 5px;
 			text-overflow: ellipsis;
 			overflow: hidden;
@@ -2135,7 +2205,7 @@ button,
 	height: 56px;
 	display: inline-block;
 	margin-right: 15px;
-	background: #6333ff;
+	background: $purpure;
 	background-repeat: no-repeat;
 	background-position: center;
 	cursor: pointer;
@@ -2146,7 +2216,7 @@ button,
 	height: 56px;
 	display: inline-block;
 	margin-right: 15px;
-	background: #6333ff;
+	background: $purpure;
 	background-repeat: no-repeat;
 	background-position: center;
 	cursor: pointer;
@@ -2159,8 +2229,14 @@ button,
 	background-image: url("./images/img/Folder_open_light.png");
 }
 .modal-constructor .import-buttons > .save {
-	background: #01824c;
+	background: #707171;
 	background-image: url("./images/img/Save_light.png");
+	background-repeat: no-repeat;
+	background-position: center;
+}
+.modal-constructor .import-buttons > .save-active {
+	background: $green;
+	background-image: url("./image/img/Save_light.png");
 	background-repeat: no-repeat;
 	background-position: center;
 }
@@ -2171,10 +2247,9 @@ button,
 	font-size: 20px;
 	font-weight: 600;
 	margin-bottom: 10px;
+	position: relative;
 }
-.modal-constructor > .text {
-	font-size: 14px;
-}
+
 .text-nonline::after {
 	display: none !important;
 	width: 0 !important;
@@ -2192,63 +2267,119 @@ button,
 .layers-list_layer {
 	width: 100%;
 	display: flex;
-	background: #282a2d;
-	color: #fff;
+	background: $gray;
+	color: $white;
 	align-items: center;
 	font-size: 14px;
 	margin-bottom: 8px;
 	border-radius: 2px;
 	padding: 20px 15px;
-	border: 1px solid #444;
+	border: 1px solid $lightGray;
 	cursor: pointer;
-	transition: 0.1s linear;
+	transition: $transition;
 	font-weight: 700;
+
+	&:hover {
+		border-color: $lightHover;
+	}
 }
 .layers-list_layer-active {
-	border: 1px solid #6333ff;
+	border-color: $purpure;
+
+	&:hover {
+		border-color: $darkPurpure;
+	}
 }
 .layers-list_layer > .index {
 	margin-right: 5px;
 }
 .layers-list_layer-input {
-	// margin-top: 40px;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	flex-wrap: wrap;
-	background: #282a2d;
-	border: 1px solid #444444;
+	background: $gray;
+	border: 1px solid $lightGray;
 	border-radius: 2px;
-	padding: 12px;
+	padding: 12px 12px 10px 12px;
 	margin-bottom: 40px;
+
+	&:hover {
+		border-color: $lightHover;
+	}
+
+	&:focus,
+	&:focus-visible {
+		border-color: $purpure;
+	}
+
+	& .group {
+		display: flex;
+		width: 100%;
+		align-items: flex-start;
+		column-gap: 10px;
+
+		& input {
+			flex: 1 1 auto;
+			border: none;
+			padding: 6px 0px;
+			width: 100%;
+			font-size: 17px;
+		}
+
+		& button {
+			width: 18px;
+			height: 18px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 25px;
+			background-color: $lightGray;
+			border-radius: 4px;
+			font-weight: 400;
+			transition: $transition;
+
+			&:hover {
+				background-color: $darkGray;
+			}
+		}
+	}
 }
 .layers-list_layer-input > .title {
 	font-size: 12px;
-	color: #6f7376;
-	margin-bottom: 5px;
+	color: $text;
+	margin-bottom: 2px;
+	line-height: 100%;
+	display: block;
+	font-weight: 500;
 	width: 100%;
 }
-.layers-list_layer-input > input {
-	background: #282a2d;
-	color: #fff;
-	border: 1px solid #444;
-	border-radius: 4px;
-	padding: 1px;
-	padding-left: 3px;
-	width: 80%;
-	outline: none;
-}
+
 input[type="text"] {
-	transition: 0.1s linear;
+	transition: $transition;
 	outline: none;
+	outline-offset: 0px;
+
+	background-color: $gray;
+	border: 1px solid $lightGray;
+	border-radius: 3px;
+	padding: 16px 12px;
+	line-height: 115%;
+	font-size: 15px;
+	font-weight: 400;
+	color: $white;
 }
-// input[type="text"]:focus {
-// 	border-color: #6333ff;
-// }
-// .layers-list_layer-input > input:focus,
-// .setting > input:focus {
-// 	border-color: #6333ff;
-// }
+
+.layers-list_layer-input > input {
+	background: $gray;
+	color: $white;
+	border: none;
+	padding: 3px 0px;
+	width: 85%;
+	font-weight: 400;
+	font-size: 17px;
+}
+
 .layers-list_layer-input > button {
 	width: 18px;
 	height: 18px;
@@ -2256,14 +2387,16 @@ input[type="text"] {
 	align-items: center;
 	justify-content: center;
 	font-size: 25px;
-	background: #444444;
+	background-color: $lightGray;
 	border-radius: 4px;
 	font-weight: 400;
+	transition: $transition;
+
+	&:hover {
+		background-color: $darkGray;
+	}
 }
-// .layers-list_layer-input > button:hover {
-// 	background-color: #4421b6;
-// 	font-weight: bold;
-// }
+
 .layers-list_layer > .info {
 	display: flex;
 	margin-left: auto;
@@ -2291,7 +2424,7 @@ input[type="text"] {
 	display: block;
 	width: 20px;
 	height: 2px;
-	background: #fff;
+	background: $white;
 	position: absolute;
 	top: 50%;
 	left: 50%;
@@ -2320,14 +2453,18 @@ input[type="text"] {
 	transition: 0.1s linear;
 }
 .modal-constructor-upload > .unactive {
-	background: #282a2d;
+	background: $gray;
+	color: $lightGray;
 }
-.modal-constructor-upload > .unactive:hover {
-	background: #282a2d !important;
-}
+
 .modal-constructor-upload > .button-1-square:hover {
 	background-color: #4421b6;
 }
+.modal-constructor-upload > .button-1-square.unactive:hover {
+	background-color: $gray;
+	cursor: not-allowed;
+}
+
 .imgs-list {
 	display: flex;
 	column-gap: 20px;
@@ -2341,8 +2478,8 @@ input[type="text"] {
 	margin-bottom: 20px;
 }
 .imgs-list > .img-element {
-	background-color: #282a2d;
-	border: 2px solid #444444;
+	background-color: $gray;
+	border: 2px solid $lightGray;
 	border-radius: 2px;
 	position: relative;
 	cursor: pointer;
@@ -2360,11 +2497,11 @@ input[type="text"] {
 	justify-content: center;
 }
 .imgs-list > .img-element-active {
-	border: 2px solid #6333ff;
+	border: 2px solid $purpure;
 }
 .imgs-list > .img-element > .close {
-	// border: 2px solid #fff;
-	color: #fff;
+	// border: 2px solid $white;
+	color: $white;
 	opacity: 1;
 }
 .imgs-list > .img-element > img {
@@ -2376,17 +2513,15 @@ input[type="text"] {
 	border-radius: 4px;
 	background: #09a061;
 	padding: 6px;
-	color: #fff;
+	color: $white;
 	bottom: 10px;
 	left: 10px;
 }
 .drop-img {
 	text-align: center;
 	width: 100%;
-	background: #282a2d;
-	border-radius: 10px;
-	padding: 40px 0px;
-	border: 1px solid #444;
+	background: $gray;
+	border: 1px solid $lightGray;
 	border-radius: 4px;
 	padding: 30px;
 	display: flex;
@@ -2400,17 +2535,17 @@ input[type="text"] {
 }
 .drop-img > label {
 	width: 100%;
-	border: 1px solid #6f7376;
+	border: 1px solid $text;
 	border-radius: 4px;
 	padding: 50px 10px;
 	margin-bottom: 25px;
 	cursor: pointer;
 	transition: 0.1s linear;
-	background: #6f7376;
-	color: #fff;
+	background: $text;
+	color: $white;
 }
 .drop-img > label:hover {
-	border-color: #fff;
+	border-color: $white;
 }
 .drop-img > label > .input__file-icon-wrapper {
 	width: 30px;
@@ -2421,7 +2556,7 @@ input[type="text"] {
 	margin: auto;
 }
 .drop-img > label > .input__file-text {
-	color: #fff;
+	color: $white;
 	font-size: 16px;
 	margin-bottom: 6px;
 	display: block;
@@ -2431,7 +2566,7 @@ input[type="text"] {
 }
 .drop-img > label > .input__file-text2 {
 	font-size: 12px;
-	color: #fff;
+	color: $white;
 	display: block;
 	margin: auto;
 	margin-top: 3px;
@@ -2439,9 +2574,11 @@ input[type="text"] {
 .modal-constructor-settings > .project-settings > .title {
 	font-size: 20px;
 	font-weight: 700;
-	margin-bottom: 10px;
+	margin-bottom: 8px;
 	position: relative;
 	box-sizing: border-box;
+	line-height: 115%;
+	cursor: pointer;
 }
 .modal-constructor-settings > .project-settings > .title > .hint {
 	display: inline-block;
@@ -2472,9 +2609,18 @@ input[type="text"] {
 	right: 0px;
 	top: 50%;
 	transform: translateY(-50%);
+	cursor: pointer;
+	transition: $transition;
+
+	&:hover {
+		opacity: 0.7;
+	}
 }
 .modal-constructor-settings > .project-settings > .title > .hidden {
 	transform: translateY(-50%) rotate(180deg);
+}
+.modal-constructor > .title {
+	cursor: pointer;
 }
 .modal-constructor > .title > span {
 	width: 15px;
@@ -2485,14 +2631,20 @@ input[type="text"] {
 	right: 0px;
 	top: 50%;
 	transform: translateY(-50%);
+	cursor: pointer;
+
+	&:hover {
+		opacity: 0.7;
+	}
 }
 .modal-constructor > .title > .hidden {
 	transform: translateY(-50%) rotate(180deg);
 }
 .modal-constructor-settings > .project-settings > .text {
-	font-weight: 300;
+	font-weight: 400;
 	font-size: 16px;
-	color: #6f7376;
+	color: $text;
+	position: relative;
 }
 .modal-constructor-settings > .project-settings > .text::after {
 	content: "";
@@ -2519,7 +2671,7 @@ input[type="text"] {
 	margin: 0 auto;
 	outline: 0;
 	padding: 0;
-	background: #6333ff;
+	background: $purpure;
 	margin-top: 15px;
 }
 .modal-constructor-settings
@@ -2527,12 +2679,12 @@ input[type="text"] {
 	> .setting
 	> input[type="range"]::-webkit-slider-thumb {
 	-webkit-appearance: none;
-	background: #282a2d;
-	border: 1px solid #444444;
+	background: $gray;
+	border: 1px solid $lightGray;
 	width: 23px;
 	height: 23px;
 	border-radius: 50%;
-	border: 1px solid #444;
+	border: 1px solid $lightGray;
 	cursor: pointer;
 	transition: 0.3s ease-in-out;
 }
@@ -2542,7 +2694,7 @@ input[type="text"] {
 	> .project-settings
 	> .setting
 	> input[type="range"]::-webkit-slider-thumb:hover {
-	background-color: #fff;
+	background-color: $white;
 	border: 1px solid #6a3ccd;
 }
 .modal-constructor-settings
@@ -2562,7 +2714,7 @@ input[type="text"] {
 	text-align: center;
 }
 .modal-constructor-settings > .project-settings > .setting > .grades > .common {
-	color: #fff;
+	color: $white;
 }
 .modal-constructor-settings
 	> .project-settings
@@ -2593,19 +2745,19 @@ input[type="text"] {
 	margin: 0 auto;
 	outline: 0;
 	padding: 0;
-	background: #6333ff;
+	background: $purpure;
 	margin-top: 15px;
 }
 .modal-constructor-layers
 	> .setting
 	> input[type="range"]::-webkit-slider-thumb {
 	-webkit-appearance: none;
-	background: #282a2d;
-	border: 1px solid #444444;
+	background: $gray;
+	border: 1px solid $lightGray;
 	width: 23px;
 	height: 23px;
 	border-radius: 50%;
-	border: 1px solid #444;
+	border: 1px solid $lightGray;
 	cursor: pointer;
 	transition: 0.3s ease-in-out;
 }
@@ -2614,7 +2766,7 @@ input[type="text"] {
 	.modal-constructor-layers
 	> .setting
 	> input[type="range"]::-webkit-slider-thumb:hover {
-	background-color: #fff;
+	background-color: $white;
 	border: 1px solid #6a3ccd;
 }
 .modal-constructor-layers
@@ -2633,7 +2785,7 @@ input[type="text"] {
 	text-align: center;
 }
 .modal-constructor-layers > .setting > .grades > .common {
-	color: #fff;
+	color: $white;
 }
 .modal-constructor-layers > .setting > .grades > .uncommon {
 	color: #ccf05b;
@@ -2653,14 +2805,16 @@ input[type="text"] {
 	margin-bottom: 18px;
 }
 .setting > span {
-	color: #fff;
+	color: $white;
 }
-.setting > .title-settings {
-	font-size: 14px;
-	color: #6f7376;
-	font-weight: 400;
+.setting > .title-settings,
+.title-settings {
+	font-size: 15px;
+	color: $text;
+	font-weight: 500;
 	margin-bottom: 5px;
 	display: flex;
+	line-height: 105%;
 }
 .setting > .title-settings > .info {
 	width: 20px;
@@ -2673,15 +2827,28 @@ input[type="text"] {
 }
 .setting > input {
 	width: 100%;
-	border-radius: 2px;
-	// border: 1px solid #444;
-	border: none;
-	background: #282a2d;
-	padding: 12px;
-	color: #bcc4ca;
+	border-radius: 3px;
+	border: 1px solid transparent;
+	background: $gray;
+	padding: 16px 12px;
+	color: $text;
+	transition: $transition;
+	font-size: 17px;
+
+	&:hover {
+		border-color: $lightHover;
+	}
+
+	&:focus {
+		border-color: $purpure;
+	}
 }
 .setting > input:active {
-	border: 1px solid #6333ff;
+	border-color: $purpure;
+
+	&:hover {
+		border-color: $darkPurpure;
+	}
 }
 .setting > .inputL {
 	width: 45%;
@@ -2709,9 +2876,9 @@ input[type="text"] {
 }
 .modal-constructor-position > .nft-img > .img {
 	overflow: hidden;
-	border: 1px solid #444;
+	border: 1px solid $lightGray;
 	border-radius: 4px;
-	background: #282a2d;
+	background: $gray;
 	position: relative;
 	display: flex;
 	justify-content: center;
@@ -2722,191 +2889,202 @@ input[type="text"] {
 	position: absolute;
 }
 .modal-constructor-position > .nft-img > .button-3-square {
-	margin-top: 20px;
-	padding: 17px 47px 17px 17px;
+	padding: 18px;
 	font-weight: bold;
-	transition: 0.1s linear;
-	margin-right: 10px;
+	//transition: 0.1s linear;
 	background-image: url("./images/img/randomize.png");
 	background-position: bottom 50% right 10px;
 	background-repeat: no-repeat;
-	min-width: 130px;
-	width: 20%;
+	width: 100%;
+	transition: $transition;
+	margin-top: 20px;
+
+	&:hover {
+		background-color: $darkGreen;
+	}
 }
 .modal-constructor-position > .nft-img > .button-1-square {
-	margin-top: 20px;
-	padding: 17px;
+	margin-top: 15px;
+	padding: 18px;
 	font-weight: bold;
-	transition: 0.1s linear;
+	transition: $transition;
 	min-width: 250px;
 	width: 70%;
 }
 .modal-constructor-position > .nft-img > .button-1-square:hover {
 	background-color: #4421b6;
 }
-// .modal-constructor-settings > .project-settings > .setting > .inputs {
-// 	display: flex;
-// 	justify-content: space-between;
-// }
+
 .modal-constructor-settings > .project-settings > .setting > .inputs {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	grid-column-gap: 10px;
 	grid-row-gap: 10px;
 }
-.modal-constructor-settings
-	> .project-settings
-	> .setting
-	> .inputs
-	> .title-settings {
-	color: #6f7376;
-	font-size: 14px;
-	margin-bottom: 6px;
-	width: 100%;
-}
-// .modal-constructor-settings > .project-settings > .setting > .inputs > div:nth-child(1) {
-// 	width: 55%;
+// .modal-constructor-settings
+// 	> .project-settings
+// 	> .setting
+// 	> .inputs
+// 	> .title-settings {
+// 	color: $text;
+// 	font-size: 14px;
+// 	margin-bottom: 6px;
+// 	width: 100%;
 // }
-// .modal-constructor-settings > .project-settings > .setting > .inputs > div:nth-child(2) {
-// 	width: 44%;
-// }
+
 .modal-constructor-settings > .project-settings > .setting-grid {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	grid-column-gap: 10px;
-	grid-row-gap: 10px;
+	grid-row-gap: 5px;
 }
 .modal-constructor-settings > .project-settings > .setting > .dim-title {
-	color: #6f7376;
-	font-size: 14px;
+	color: $text;
+	font-size: 15px;
 	display: inline-block;
 	width: 100%;
+	font-weight: 500;
+	line-height: 105%;
 }
-// .modal-constructor-settings > .project-settings > .setting > .dim-title:nth-child(1) {
-// 	width: 55%;
-// }
+
 .inputErr {
-	border: 1px solid #ff3f33 !important;
+	border-color: $red !important;
 }
 .errMsg {
 	font-weight: 300;
 	font-size: 14px;
-	color: #ff5045;
-	position: absolute;
-	bottom: -20px;
-	left: 0;
+	color: $red;
+	position: relative;
+	display: block;
+	margin-top: 4px;
 }
+
 .modal-constructor-settings > .project-settings > .setting > .inputErr {
-	border: 1px solid #ff3f33;
+	border-color: $red;
 }
 .modal-constructor-settings > .project-settings > .setting > div > .inputErr {
-	border: 1px solid #ff3f33;
+	border-color: $red;
 }
 .modal-constructor-layers > .layers-list_layer-input > .inputErr {
-	border: 1px solid #ff3f33;
+	border-color: $red;
 }
 .modal-constructor-layers > .price > .inputErr {
-	border: 1px solid #ff3f33;
+	border-color: $red;
 }
 .modal-constructor-settings > .project-settings > .setting > .errMsg {
 	font-weight: 300;
 	font-size: 14px;
-	color: #ff5045;
-	position: absolute;
-	bottom: -20px;
-	left: 0;
+	color: $red;
+	position: relative;
 }
 .modal-constructor-settings > .project-settings > .setting > div > .errMsg {
 	font-weight: 300;
 	font-size: 14px;
-	color: #ff5045;
-	position: absolute;
-	bottom: -20px;
-	left: 0;
+	color: $red;
+	position: relative;
 }
 .modal-constructor-layers > .layers-list_layer-input > .errMsg {
 	font-weight: 300;
 	font-size: 12px;
-	color: #ff5045;
-	position: absolute;
-	bottom: -4px;
-	left: 10;
+	color: $red;
+	margin-top: 0;
 }
 .modal-constructor-layers > .price > .errMsg {
 	font-weight: 300;
-	font-size: 12px;
-	color: #ff5045;
-	position: absolute;
-	bottom: -18px;
-	left: 10px;
+	font-size: 14px;
+	color: $red;
 }
 .modal-constructor-settings > .project-settings > .setting > .dimensions {
 	width: 100%;
 	display: inline-block;
 }
-// .modal-constructor-settings > .project-settings > .setting>div:nth-child(3) {
-// 	margin-right: 9%;
-// }
+
 .modal-constructor-settings > .project-settings > .setting > .dimensions > div {
-	padding: 12px;
-	border: 1px solid #282a2d;
-	border-radius: 2px;
-	background: #282a2d;
-	color: #bcc4ca80;
-	transition: 0.1s linear;
+	padding: 16px 12px;
+	border: 1px solid $gray;
+	border-radius: 3px;
+	background: $gray;
+	color: $text;
+	transition: $transition;
 	outline: none;
 	width: 100%;
+	font-size: 17px;
+	line-height: 115%;
 }
 .modal-constructor-settings > .project-settings > .setting > div > input {
 	padding: 12px;
-	border: 1px solid #282a2d;
+	border: 1px solid $gray;
 	border-radius: 2px;
-	background: #282a2d;
+	background: $gray;
 	color: #bcc4ca80;
 	transition: 0.1s linear;
 	outline: none;
 	width: 100%;
 }
 .modal-constructor-settings > .project-settings > .setting > textarea {
-	padding: 12px;
+	padding: 12px 12px;
 	width: 100%;
-	// border: 1px solid #444;
-	border-radius: 2px;
-	background: #282a2d;
-	color: #fff;
-	transition: 0.1s linear;
+	border: 1px solid transparent;
+	border-radius: 3px;
+	background: $gray;
+	color: $white;
+	transition: $transition;
 	outline: none;
-	border: none;
+	outline-offset: 0px;
+	font-size: 17px;
+	font-weight: 400;
+	min-height: 80px;
+	resize: vertical;
+
+	&:hover {
+		border-color: $lightHover;
+	}
+
+	&:focus {
+		border-color: $purpure;
+	}
 }
 .modal-constructor-settings > .project-settings > .setting > input:focus {
-	border-color: #6333ff;
+	border-color: $purpure;
+
+	&:hover {
+		border-color: $darkPurpure;
+	}
 }
 .modal-constructor-settings > .project-settings > .setting > .inputs > input {
 	width: 100%;
-	padding: 12px;
-	// border: 1px solid #444;
-	border-radius: 2px;
-	background: #282a2d;
-	color: #bcc4ca80;
+	padding: 16px 12px;
+	line-height: 100%;
+	border-radius: 3px;
+	background: $gray;
+	color: $text;
+	font-size: 17px;
 }
 .modal-constructor-settings > .project-settings > .setting > .inputs > .info {
 	width: 100%;
-	padding: 12px;
-	// border: 1px solid #444;
-	border-radius: 2px;
-	background: #282a2d;
-	color: #bcc4ca80;
+	padding: 16px 12px;
+	line-height: 100%;
+	border-radius: 3px;
+	background: $gray;
+	color: $text;
+	font-size: 17px;
 }
 .modal-constructor-settings > .project-settings > .setting > .inputs > .zIndex {
 	font-size: 14px;
 	text-align: center;
 	color: #f1f1f1;
-	padding: 20px;
-	background: #282a2d;
+	padding: 20px 12px;
+	font-weight: bold;
+	background: $gray;
 	border-radius: 2px;
-	margin-top: 15px;
+	margin-top: 10px;
 	cursor: pointer;
-	margin-bottom: 30px;
+	margin-bottom: 6px;
+	transition: $transition;
+
+	&:hover {
+		background-color: $purpure;
+	}
 }
 .modal-constructor-settings
 	> .project-settings
@@ -2915,8 +3093,20 @@ input[type="text"] {
 	> .zIndex-dis {
 	opacity: 0.3;
 }
+
+.modal-constructor-settings
+	> .project-settings
+	> .setting
+	> .inputs
+	> .zIndex-dis {
+	&:hover {
+		background-color: $gray;
+		cursor: default;
+	}
+}
+
 .modal-constructor-settings > .project-settings > .setting > .inputs > .elem {
-	border: 2px solid #282a2d;
+	border: 2px solid $gray;
 	background: #202224;
 	cursor: pointer;
 }
@@ -2925,7 +3115,7 @@ input[type="text"] {
 	> .setting
 	> .inputs
 	> .img-element-active {
-	border: 2px solid #6333ff;
+	border: 2px solid $purpure;
 }
 .modal-constructor-settings
 	> .project-settings
@@ -2988,7 +3178,7 @@ input[type="text"] {
 .constructor-position > .nft-position > .position > .position-input > button {
 	border: 0;
 	background: #3569f0;
-	color: #fff;
+	color: $white;
 	padding: 5px;
 	border-radius: 5px;
 	cursor: pointer;
@@ -3018,7 +3208,7 @@ input[type="text"] {
 	width: 100px;
 }
 .btn-standart {
-	color: #fff;
+	color: $white;
 	font-weight: 600;
 	background: #3e5fee;
 	padding: 10px;
@@ -3059,7 +3249,7 @@ input[type="text"] {
 	height: 100%;
 }
 .constructor-position > .nft-position > .position > .position-img > .name {
-	color: #fff;
+	color: $white;
 }
 .modal-constructor > .nft-collection {
 	display: flex;
@@ -3110,7 +3300,7 @@ input[type="text"] {
 	display: block;
 	width: 2px;
 	height: 20px;
-	background-color: #fff;
+	background-color: $white;
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -3138,7 +3328,7 @@ input[type="text"] {
 	display: block;
 	width: 2px;
 	height: 20px;
-	background-color: #fff;
+	background-color: $white;
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -3180,7 +3370,7 @@ input[type="text"] {
 	display: block;
 	width: 2px;
 	height: 14px;
-	background-color: #fff;
+	background-color: $white;
 	position: absolute;
 }
 .img-element > .close > span:nth-child(1) {
@@ -3201,12 +3391,12 @@ input[type="text"] {
 }
 .collections > .collection {
 	width: 230px;
-	border: 1px solid #444444;
+	border: 1px solid $lightGray;
 	padding: 0;
 	margin: 0;
 	border-radius: 4px;
 	margin-bottom: 20px;
-	background: #282a2d;
+	background: $gray;
 }
 // .collections > .collection > .img {
 // 	width: 100%;
@@ -3215,8 +3405,8 @@ input[type="text"] {
 // }
 .collections > .collection > .content {
 	padding: 20px;
-	color: #fff;
-	background: #282a2d;
+	color: $white;
+	background: $gray;
 	font-size: 13px;
 }
 .collections > .collection > .content > .name {
@@ -3227,7 +3417,7 @@ input[type="text"] {
 }
 
 .collections > .collection > .content > div > span {
-	color: #6333ff;
+	color: $purpure;
 	margin-right: 5px;
 }
 .collections > .collection > .content > .button-1-square {
@@ -3250,28 +3440,34 @@ input[type="text"] {
 .modal-constructor-back > button {
 	width: 50px;
 	height: 50px;
-	background: #282a2d;
-	border: 1px solid #444444;
+	background: $gray;
+	border: 1px solid $lightGray;
 	border-radius: 50%;
 	background-image: url("./images/img/Vector\ 9.png");
 	background-size: 20px;
-	background-position: center;
+	background-position: 14px 16px;
 	background-repeat: no-repeat;
 	transform: rotate(-90deg);
 	cursor: pointer;
+	transition: $transition;
+
+	&:hover {
+		background-color: $darkGray;
+	}
 }
 .modal-constructor-param > .title {
 	font-size: 42px;
-	color: #ffffff;
+	color: $white;
 	margin-bottom: 10px;
+	font-weight: bold;
 }
 .modal-constructor-param > .desc {
 	font-weight: 400;
 	font-size: 16px;
-	color: #ffffff;
+	color: $white;
 	opacity: 0.7;
-	margin-bottom: 50px;
-	// margin: 10px 0px;
+	margin-bottom: 60px;
+	line-height: 150%;
 	white-space: pre-wrap;
 	white-space: -moz-pre-wrap;
 	white-space: -o-pre-wrap;
@@ -3279,30 +3475,46 @@ input[type="text"] {
 }
 .modal-constructor-param > .mint {
 	display: flex;
-	justify-content: space-between;
+	column-gap: 10px;
 	width: 100%;
 	margin-bottom: 10px;
-	color: #fff;
+	color: $white;
 	font-size: 15px;
+	flex-wrap: nowrap;
 }
 .modal-constructor-param > .mint > input {
 	padding: 20px 5px 20px 15px;
-	background: #282a2d;
-	border: 1px solid #444444;
+	background: $gray;
+	border: 1px solid $lightGray;
 	border-radius: 2px;
-	width: 50%;
+	flex: 1 1 100%;
+	outline: none;
+	outline-offset: 0px;
+
+	&:hover {
+		border-color: $lightHover;
+	}
+
+	&:focus {
+		border-color: $purpure;
+	}
 }
 .modal-constructor-param > .mint > button {
 	padding: 7px 15px;
-	background: #282a2d;
-	border: 1px solid #444444;
+	background: $gray;
+	border: 1px solid $lightGray;
 	border-radius: 2px;
-	color: #fff;
+	color: $white;
 	cursor: pointer;
 	background-size: 16px;
 	background-repeat: no-repeat;
 	background-position: bottom 50% right 7px;
 	padding-right: 30px;
+	transition: $transition;
+
+	&:hover {
+		background-color: $darkGray;
+	}
 }
 .modal-constructor-param > .mint > .min {
 	background-image: url("./images/img/Arrow_top_light.png");
@@ -3317,6 +3529,11 @@ input[type="text"] {
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	transition: $transition;
+
+	&:hover {
+		background-color: $darkGreen;
+	}
 }
 .modal-constructor-param > .button-4-square {
 	width: 100%;
@@ -3330,36 +3547,36 @@ input[type="text"] {
 .owner > .avatar {
 	width: 34px;
 	height: 34px;
-	background: #6333ff;
+	background: $purpure;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	margin-right: 10px;
 	border-radius: 50%;
-	color: #fff;
+	color: $white;
 }
 .owner > .text > span {
 	display: block;
 	font-size: 12px;
-	color: #ffffff;
+	color: $white;
 	opacity: 0.7;
 	// margin-bottom: 4px;
 }
 .owner > .text {
 	font-size: 14px;
-	color: #ffffff;
+	color: $white;
 	padding: 2px;
 }
 .modal-constructor-param > .subtitle {
 	font-size: 16px;
-	color: #ffffff;
+	color: $white;
 	margin-bottom: 10px;
 }
 .modal-constructor-param > .show {
 	cursor: pointer;
 	font-size: 16px;
-	color: #ffffff;
-	border-bottom: 1px solid #fff;
+	color: $white;
+	border-bottom: 1px solid $white;
 	padding-bottom: 5px;
 	margin-bottom: 40px;
 	display: inline-block;
@@ -3368,40 +3585,57 @@ input[type="text"] {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-between;
-	margin-bottom: 20px;
+	margin-bottom: 40px;
+	margin-top: 60px;
+
+	& .title {
+		font-size: 16px;
+		line-height: 120%;
+		margin-bottom: 10px;
+	}
 }
 .modal-constructor-collection > .collection-info > .info-1 {
-	width: 50%;
+	flex: 1 1 50%;
+	display: grid;
+	grid-template-rows: 0.5fr 0.5fr;
+	grid-row-gap: 20px;
 }
+
+.modal-constructor-collection > .collection-info > .info-2 {
+	flex: 1 1 50%;
+	display: grid;
+	grid-template-rows: 0.5fr 0.5fr;
+	grid-row-gap: 20px;
+}
+
 .modal-constructor-collection > .collection-info > .info-1 > .title {
 	font-size: 16px;
-	color: #ffffff;
+	color: $white;
 	margin-bottom: 10px;
 }
-.modal-constructor-collection > .collection-info > .info-1 > .text {
-	margin-bottom: 20px;
-}
-.modal-constructor-collection > .collection-info > .info-2 {
-	width: 40%;
-}
-.modal-constructor-collection > .collection-info > .info-2 > .owner {
-	margin-bottom: 40px;
-}
-.modal-constructor-collection > .collection-info > .info-2 > .price {
-	margin-bottom: 40px;
-}
+
 .modal-constructor-collection
 	> .collection-info
 	> .info-2
 	> .price
 	> .subtitle {
 	font-size: 16px;
-	color: #fff;
+	color: $white;
 	margin-bottom: 10px;
 }
-.modal-constructor-collection > .collection-info > .info-2 > .price > .near {
-	display: flex;
-	align-items: center;
+.modal-constructor-collection > .collection-info > .info-2 > .price {
+	& .subtitle {
+		font-size: 16px;
+		color: $white;
+		margin-bottom: 10px;
+	}
+
+	& .near {
+		display: flex;
+		flex-direction: row;
+		column-gap: 8px;
+		align-items: center;
+	}
 }
 .modal-constructor-collection
 	> .collection-info
@@ -3414,7 +3648,7 @@ input[type="text"] {
 	height: 26px;
 	background: url("./images/img/Ellipse\ 57.png");
 	background-size: contain;
-	margin-right: 8px;
+	margin-right: 0;
 }
 .modal-constructor-collection
 	> .collection-info
@@ -3422,13 +3656,14 @@ input[type="text"] {
 	> .price
 	> .near
 	> .price {
-	font-size: 28px;
-	color: #fff;
+	font-size: 26px;
+	color: $white;
+	line-height: 100%;
 }
 
 .modal-constructor .price > .subtitle {
 	font-size: 16px;
-	color: #fff;
+	color: $white;
 	margin-bottom: 10px;
 }
 .modal-constructor .price > .near {
@@ -3445,7 +3680,7 @@ input[type="text"] {
 }
 .modal-constructor .price > .near > .price {
 	font-size: 28px;
-	color: #fff;
+	color: $white;
 }
 
 .modal-constructor-collection > .button-4-square {
@@ -3455,21 +3690,32 @@ input[type="text"] {
 	display: flex;
 	align-items: center;
 	justify-content: center;
+
+	font-weight: bold;
+	line-height: 115%;
+	column-gap: 8px;
+	padding: 20px;
+	transition: $transition;
+
+	&:hover {
+		background-color: $darkGray;
+	}
 }
 .modal-constructor-collection > .button-4-square > span {
 	width: 24px;
 	height: 24px;
 	display: block;
-	margin-right: 8px;
+	margin-right: 0px;
 	background: url("./images/img/save.png");
 	background-size: contain;
 	background-position: center;
 	position: relative;
-	top: -2px;
 }
 .modal-constructor-param > .button-1-square {
-	padding: 21px;
+	padding: 20px;
 	width: 100%;
+	line-height: 130%;
+	margin-bottom: 10px;
 }
 .modal-constructor-param > .button-arrow {
 	background-image: url("./images/img/Arrow_left_light.png");
@@ -3494,25 +3740,25 @@ input[type="text"] {
 }
 .modal-constructor > .progress > .title {
 	font-size: 16px;
-	color: #fff;
+	color: $white;
 	font-weight: 400;
 	margin-bottom: 10px;
 }
 .modal-constructor > .progress > .bar {
 	width: 100%;
 	height: 6px;
-	background: #444444;
+	background: $lightGray;
 	margin-bottom: 10px;
 	border-radius: 5px;
 }
 .modal-constructor > .progress > .bar > span {
-	background: #6333ff;
+	background: $purpure;
 	height: 100%;
 	display: block;
 	border-radius: 5px;
 }
 .modal-constructor > .progress > span {
-	color: #ffffff;
+	color: $white;
 	opacity: 0.7;
 }
 .modal-constructor-collection > .collection {
@@ -3535,7 +3781,7 @@ input[type="text"] {
 	max-height: 100%;
 }
 .modal-constructor-collection > .collection > .element > .nameCol {
-	color: #ffffff;
+	color: $white;
 	opacity: 0.7;
 	font-size: 14px;
 	margin-bottom: 5px;
@@ -3543,7 +3789,7 @@ input[type="text"] {
 .modal-constructor-collection > .collection > .element > .name {
 	font-size: 22px;
 	font-weight: 700;
-	color: #fff;
+	color: $white;
 }
 .constructor-market > .container-header {
 	display: grid;
@@ -3555,7 +3801,7 @@ input[type="text"] {
 }
 .modal-constructor-filter > .title-1 {
 	font-size: 32px;
-	color: #fff;
+	color: $white;
 	margin-bottom: 54px;
 	font-weight: 700;
 }
@@ -3568,7 +3814,7 @@ input[type="text"] {
 .modal-constructor-filter > .filter > div {
 	margin-bottom: 8px;
 	font-size: 16px;
-	//color: #6f7376;
+	color: $text;
 	display: flex;
 	align-items: center;
 }
@@ -3585,8 +3831,8 @@ input[type="text"] {
 	border: 1px solid transparent;
 }
 .modal-constructor-market > .grid > .element:hover {
-	background: #282a2d;
-	border: 1px solid #282a2d;
+	background: $gray;
+	border: 1px solid $gray;
 	box-sizing: border-box;
 	box-shadow: 0px 4px 25px rgba(255, 255, 255, 0.1);
 	border-radius: 10px;
@@ -3597,7 +3843,7 @@ input[type="text"] {
 	right: 25px;
 	width: 25px;
 	height: 25px;
-	background: #282a2d;
+	background: $gray;
 	border-radius: 2px;
 	display: flex;
 	align-items: center;
@@ -3622,24 +3868,24 @@ input[type="text"] {
 }
 .modal-constructor-market > .grid > .element > .nameCol {
 	font-size: 11px;
-	color: #ffffff;
+	color: $white;
 	opacity: 0.7;
 	margin-bottom: 2px;
 }
 .modal-constructor-market > .grid > .element > .name {
 	font-size: 20px;
-	color: #ffffff;
+	color: $white;
 	margin-bottom: 10px;
 }
 .modal-constructor-market > .grid > .element > .subtitle {
-	color: #ffffff;
+	color: $white;
 	opacity: 0.7;
 	font-size: 11px;
 	margin-bottom: 4px;
 }
 .modal-constructor-market > .grid > .element > .price {
 	display: flex;
-	color: #6f7376;
+	color: $text;
 	font-size: 15px;
 	font-weight: 600;
 	align-items: center;
@@ -3660,13 +3906,17 @@ input[type="text"] {
 	width: 18px;
 	height: 18px;
 	background: #212121;
-	border: 1px solid #444444;
+	border: 1px solid $lightGray;
 	border-radius: 2px;
 	margin-right: 10px;
 }
-.modal-constructor-filter > .filter > div > input[type=radio]:checked + label {
-	background: #6333ff;
-	border: 1px solid #6333ff;
+.modal-constructor-filter
+	> .filter
+	> div
+	> input[type="radio"]:checked
+	+ label {
+	background: $purpure;
+	border: 1px solid $purpure;
 	border-radius: 2px;
 }
 
@@ -3675,12 +3925,12 @@ input[type="text"] {
 	width: 18px;
 	height: 18px;
 	background: #212121;
-	border: 1px solid #444444;
+	border: 1px solid $lightGray;
 	border-radius: 2px;
 }
 .modal-constructor-filter > .filter > div > .active {
-	background: #6333ff;
-	border: 1px solid #6333ff;
+	background: $purpure;
+	border: 1px solid $purpure;
 	border-radius: 2px;
 }
 
@@ -3695,13 +3945,13 @@ input[type="text"] {
 .pack > .info {
 	font-size: 17px;
 	margin-bottom: 20px;
-	color: #fff;
+	color: $white;
 }
 .pack > .info > div {
 	margin-bottom: 10px;
 }
 .pack > .info > div > span {
-	color: #6333ff;
+	color: $purpure;
 }
 .pack > .text {
 	margin-bottom: 50px;
@@ -3710,16 +3960,21 @@ input[type="text"] {
 	padding: 17px;
 }
 
+.profile {
+	margin-top: 60px;
+	min-height: 60vh;
+}
+
 .profile > .container > .text {
 	font-size: 45px;
 	font-weight: 600;
 	padding-bottom: 20px;
 	margin-bottom: 20px;
 	border-bottom: 1px solid #3d3d3d;
-	color: #fff;
+	color: $white;
 }
 .profile > .container > .addr {
-	color: #fff;
+	color: $white;
 	margin-bottom: 40px;
 }
 .profile > .container > .addr > span {
@@ -3737,7 +3992,7 @@ input[type="text"] {
 	align-items: center;
 }
 .profile > .container > .nfts > .menu-nft > .menu-bar {
-	border: 1px solid #444444;
+	border: 1px solid $lightGray;
 	border-radius: 8px 8px 1px 1px;
 	display: flex;
 }
@@ -3749,15 +4004,15 @@ input[type="text"] {
 	cursor: pointer;
 }
 .profile > .container > .nfts > .menu-nft > .menu-bar > .active {
-	background: #6333ff;
-	color: #fff;
+	background: $purpure;
+	color: $white;
 }
 .profile > .container > .nfts > .menu-nft > .menu-bar > span:nth-child(1) {
-	border-right: 1px solid #444444;
+	border-right: 1px solid $lightGray;
 	border-radius: 6px 1px 1px 0px;
 }
 .profile > .container > .nfts > .menu-nft > .menu-bar > span:nth-child(2) {
-	border-right: 1px solid #444444;
+	border-right: 1px solid $lightGray;
 	border-radius: 1px 6px 0px 1px;
 }
 .profile > .container > .nfts > .menu-nft > .menu-bar > span:nth-child(3) {
@@ -3776,12 +4031,12 @@ input[type="text"] {
 .profile > .container > .nfts > .nft-category > .null-nft {
 	width: 100%;
 	text-align: center;
-	color: #fff;
+	color: $white;
 	font-size: 20px;
 }
 .profile > .container > .nfts > .nft-category > .deposit {
 	width: 100%;
-	color: #fff;
+	color: $white;
 	top: 0px;
 	left: 0px;
 	padding-bottom: 20px;
@@ -3789,16 +4044,16 @@ input[type="text"] {
 }
 .profile > .container > .nfts > .nft-category > .nft {
 	width: 23%;
-	// background: #282a2d;
-	// border: 1px solid #444444;
+	// background: $gray;
+	// border: 1px solid $lightGray;
 	border: 1px solid transparent;
 	border-radius: 10px;
 	margin-bottom: 30px;
 	box-sizing: border-box;
 }
 .profile > .container > .nfts > .nft-category > .nft:hover {
-	background: #282a2d;
-	border: 1px solid #282a2d;
+	background: $gray;
+	border: 1px solid $gray;
 	box-sizing: border-box;
 	box-shadow: 0px 4px 15px rgba(255, 255, 255, 0.1);
 	border-radius: 10px;
@@ -3825,13 +4080,13 @@ input[type="text"] {
 	margin: 10px;
 }
 .profile > .container > .nfts > .nft-category > .nft > .nft-content > .onSale {
-	color: #fff;
+	color: $white;
 	padding: 10px;
 	font-size: 18px;
 }
 .profile > .container > .nfts > .nft-category > .nft > .nft-content > .name {
 	font-size: 11px;
-	color: #ffffff;
+	color: $white;
 	opacity: 0.7;
 	margin-bottom: 5px;
 }
@@ -3843,7 +4098,7 @@ input[type="text"] {
 	> .nft-content
 	> .name-nft {
 	font-size: 20px;
-	color: #ffffff;
+	color: $white;
 }
 .profile
 	> .container
@@ -3852,7 +4107,7 @@ input[type="text"] {
 	> .nft
 	> .nft-content
 	> .name-nft {
-	color: #fff;
+	color: $white;
 	margin-bottom: 10px;
 }
 
@@ -3871,7 +4126,7 @@ input[type="text"] {
 }
 .nft-info > .info-1 {
 	width: 45%;
-	color: #fff;
+	color: $white;
 	margin-bottom: 60px;
 }
 .nft-info > .info-1 > .coll-name {
@@ -3889,17 +4144,17 @@ input[type="text"] {
 	margin-bottom: 30px;
 }
 .nft-info > .info-1 > .price > span {
-	color: #fff;
+	color: $white;
 }
 .nft-info > div > .block-info {
-	border: 1px solid #444444;
+	border: 1px solid $lightGray;
 	border-radius: 8px;
-	background: #282a2d;
+	background: $gray;
 	margin-bottom: 30px;
 }
 .nft-info > div > .block-info > .title {
 	padding: 20px;
-	border-bottom: 1px solid #444444;
+	border-bottom: 1px solid $lightGray;
 	color: #909090;
 	display: flex;
 	align-items: center;
@@ -3953,12 +4208,12 @@ input[type="text"] {
 .auction-sale {
 	display: flex;
 	justify-content: space-between;
-	color: #fff;
+	color: $white;
 	font-size: 16px;
 	margin-top: 60px;
 }
 .auction-sale .title {
-	color: #fff;
+	color: $white;
 	margin-bottom: 10px;
 	font-size: 16px;
 }
@@ -3968,8 +4223,8 @@ input[type="text"] {
 	left: -50px;
 	width: 50px;
 	height: 50px;
-	background: #282a2d;
-	border: 1px solid #444444;
+	background: $gray;
+	border: 1px solid $lightGray;
 	border-radius: 50%;
 	background-image: url("./images/img/Vector\ 9.png");
 	background-size: 20px;
@@ -4040,9 +4295,9 @@ input[type="text"] {
 .auction-sale > .content > .users > .user > .img {
 	width: 34px;
 	height: 34px;
-	background: #6333ff;
+	background: $purpure;
 	border-radius: 50%;
-	color: #fff;
+	color: $white;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -4050,12 +4305,12 @@ input[type="text"] {
 }
 .auction-sale > .content > .users > .user > .text {
 	font-size: 14px;
-	color: #fff;
+	color: $white;
 }
 .auction-sale > .content > .users > .user > .text > span {
 	display: block;
 	font-size: 12px;
-	color: #ffffff;
+	color: $white;
 	opacity: 0.7;
 }
 .auction-sale > .content > .desc {
@@ -4075,8 +4330,8 @@ input[type="text"] {
 }
 .auction-sale > .content > .desc > .show {
 	font-size: 16px;
-	color: #ffffff;
-	border-bottom: 1px solid #fff;
+	color: $white;
+	border-bottom: 1px solid $white;
 	padding-bottom: 5px;
 	display: inline-block;
 }
@@ -4092,15 +4347,15 @@ input[type="text"] {
 	width: 100%;
 	font-size: 28px;
 	padding: 20px 15px;
-	border: 1px solid #444444;
+	border: 1px solid $lightGray;
 	border-radius: 2px;
-	background: url("./images/img/Ellipse\ 57.png") #282a2d no-repeat 15px center;
+	background: url("./images/img/Ellipse\ 57.png") $gray no-repeat 15px center;
 	padding-left: 47px;
 	padding-right: 90px;
 }
 .auction-sale > .content > .price-sale > .price-input > span {
 	font-size: 28px;
-	color: #ffffff;
+	color: $white;
 	position: absolute;
 	top: 50%;
 	transform: translateY(-50%);
@@ -4118,15 +4373,15 @@ input[type="text"] {
 	width: 100%;
 	font-size: 28px;
 	padding: 20px 15px;
-	border: 1px solid #444444;
+	border: 1px solid $lightGray;
 	border-radius: 2px;
-	background: url("./images/img/Ellipse\ 57.png") #282a2d no-repeat 15px center;
+	background: url("./images/img/Ellipse\ 57.png") #$gray no-repeat 15px center;
 	padding-left: 47px;
 	padding-right: 90px;
 }
 .modal-constructor > .price-sale > .price-input > span {
 	font-size: 28px;
-	color: #ffffff;
+	color: $white;
 	position: absolute;
 	top: 50%;
 	transform: translateY(-50%);
@@ -4163,9 +4418,9 @@ input[type="text"] {
 	width: 100%;
 	padding: 21px 0px;
 	text-align: center;
-	// border: 1px solid #444444;
+	// border: 1px solid $lightGray;
 	border-radius: 4px;
-	// background: #282a2d;
+	// background: $gray;
 }
 .auction-sale > .content > .time {
 	margin-bottom: 80px;
@@ -4180,8 +4435,8 @@ input[type="text"] {
 	margin: 0px 15px;
 }
 .auction-sale > .content > .time > .timer > .timer-item > .num {
-	border: 1px solid #444444;
-	background: #282a2d;
+	border: 1px solid $lightGray;
+	background: $gray;
 	padding: 34px 20px;
 	font-size: 28px;
 	margin-bottom: 8px;
@@ -4202,7 +4457,7 @@ input[type="text"] {
 	margin-right: 20px;
 	padding-bottom: 10px;
 	color: rgba(255, 255, 255, 0.7);
-	border-bottom: 3px solid #6333ff;
+	border-bottom: 3px solid $purpure;
 }
 .auction-sale > .content > .history > .content > .item {
 	margin-bottom: 8px;
@@ -4433,11 +4688,11 @@ input[type="text"] {
 		cursor: pointer;
 	}
 	.pages-m > a > .page-element:hover {
-		color: #fff;
+		color: $white;
 	}
 
 	.pages-m > a > .active {
-		color: #fff;
+		color: $white;
 	}
 
 	.pages-m > .menu-m {
@@ -4452,7 +4707,7 @@ input[type="text"] {
 		content: "";
 		width: 100%;
 		height: 1px;
-		background: #fff;
+		background: $white;
 		top: 35%;
 		transform: translateY(-50%);
 	}
@@ -4462,7 +4717,7 @@ input[type="text"] {
 		content: "";
 		width: 100%;
 		height: 1px;
-		background: #fff;
+		background: $white;
 		top: 65%;
 		transform: translateY(-50%);
 	}

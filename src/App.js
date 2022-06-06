@@ -23,6 +23,10 @@ import NftMarketNft from "./components/NftMarketNft/NftMarketNft";
 import Header from "./Pages/Header/Header";
 import Footer from "./Pages/Footer/Footer";
 import LoadNftPage from "./components/LoadNFT/LoadNftPage";
+
+
+
+
 import * as nearAPI from "near-api-js";
 import {Provider, useDispatch} from "react-redux";
 import {getAccountDataAction, requestNFtsUrlsFetchAction} from "./store/actions/app";

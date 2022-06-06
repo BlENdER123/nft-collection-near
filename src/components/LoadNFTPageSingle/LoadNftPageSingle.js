@@ -1,9 +1,6 @@
 import React, {useState, useEffect} from "react";
 import {useNavigate} from "react-router-dom";
 
-// import Header from "../../Pages/Header/Header";
-// import Footer from "../../Pages/Footer/Footer";
-
 import {useDispatch, useSelector} from "react-redux";
 import {Navigate} from "react-router";
 
@@ -631,8 +628,8 @@ function LoadNftPageSingle() {
 							className={errorModal.hidden === true ? "error-modal" : "hide"}
 						>
 							<button className="close" onClick={closeError}>
-								<span></span>
-								<span></span>
+								<span/>
+								<span/>
 							</button>
 							<div className="message">{errorModal.message}</div>
 							<button className="button-3-square" onClick={closeError}>
@@ -821,7 +818,7 @@ function LoadNftPageSingle() {
 								</div>
 							</div>
 						</div>
-						<div className="break"></div>
+						<div className="break"/>
 						{/* <a href="#/nft-customization"><div className="next" onClick={logData}>Next</div></a> */}
 
 						{redirect ? <Navigate to="/nft-customization-single" /> : ""}

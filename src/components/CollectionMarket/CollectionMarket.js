@@ -1,9 +1,6 @@
 import React, {useState, useEffect} from "react";
 import {useNavigate} from "react-router-dom";
 
-import Header from "../../Pages/Header/Header";
-import Footer from "../../Pages/Footer/Footer";
-
 import {useDispatch, useSelector} from "react-redux";
 import {Navigate} from "react-router";
 

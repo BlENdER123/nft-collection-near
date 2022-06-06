@@ -64,12 +64,12 @@ function GettingStarted() {
 
 				<div className="start-screen">
 					<div className="container-header">
-						<div class="content content-market">
-							<div class="content_1">
+						<div className="content content-market">
+							<div className="content_1">
 								<div className="title">Getting Started</div>
 								<div className="text">Select layout type</div>
 							</div>
-							<div class="content_2">
+							<div className="content_2">
 								<button
 									className="button-4-square"
 									onClick={() => {
@@ -89,23 +89,23 @@ function GettingStarted() {
 							</div>
 						</div>
 
-						<div class="video-start">
+						<div className="video-start">
 							Not sure where to start?{" "}
 							<span onClick={() => setVideoPlay(true)}>
 								Check out our intro video here.
 							</span>
 						</div>
 
-						<div class="content content-generator">
+						<div className="content content-generator">
 							<div
-								className={curentMode === 0 ? "content_1 active" : "content_1"}
+								className={curentMode == 0 ? "content_1 active" : "content_1"}
 								onClick={() => setCurentMode(0)}
 							>
-								<div class="hint hint--left" aria-label="Hint"/>
-								<div class="img"/>
-								<div class="desc">
-									<div class="title">NFT Generator Collections</div>
-									<div class="text">
+								<div className="hint hint--left" aria-label="Hint"></div>
+								<div className="img"></div>
+								<div className="desc">
+									<div className="title">NFT Generator Collections</div>
+									<div className="text">
 										Create your own NFT collection in a simple constructor
 									</div>
 								</div>
@@ -114,11 +114,11 @@ function GettingStarted() {
 								className={curentMode === 2 ? "content_2 active" : "content_2"}
 								onClick={() => setCurentMode(2)}
 							>
-								<div class="hint hint--left" aria-label="Hint"/>
-								<div class="img"/>
-								<div class="desc">
-									<div class="title">NFT Generator Single</div>
-									<div class="text">
+								<div className="hint hint--left" aria-label="Hint"></div>
+								<div className="img"></div>
+								<div className="desc">
+									<div className="title">NFT Generator Single</div>
+									<div className="text">
 										Create your own unique NFT in a simple constructor
 									</div>
 								</div>

@@ -1,14 +1,10 @@
 import React, {useState, useEffect} from "react";
-import {useNavigate} from "react-router-dom";
-
-import Header from "../../Pages/Header/Header";
-import Footer from "../../Pages/Footer/Footer";
+import {HashRouter as Router, Redirect, useHistory} from "react-router-dom";
 
 import {useDispatch, useSelector} from "react-redux";
-import {Navigate} from "react-router";
 
 function NftCustomizationSingle() {
-	let navigate = useNavigate();
+	let history = useHistory();
 
 	const dispatch = useDispatch();
 	const connectWallet = useSelector((state) => state.connectWallet);
@@ -214,7 +210,7 @@ function NftCustomizationSingle() {
 		localStorage.setItem("curentLayer", curentLayer);
 
 		// setRedirect(true);
-		navigate("/nft-generate-single");
+		history.push("/nft-generate-single");
 	}
 
 	function closeError() {
@@ -282,10 +278,7 @@ function NftCustomizationSingle() {
 		});
 	}
 
-	function close() {
-		dispatch({type: "closeConnect"});
-		console.log(connectWallet);
-	}
+	
 
 	return (
 		<>
@@ -294,13 +287,13 @@ function NftCustomizationSingle() {
 					errorModal.hidden === true || connectWallet ? "error-bg" : "hide"
 				}
 			>
-				<span onClick={close}/>
 			</div>
 			<div
 				className={
 					errorModal.hidden === true || connectWallet ? "App-error" : "App App2"
 				}
 			>
+				{/*<Header activeCat={1}></Header>*/}
 
 				<div className="constructors">
 					<div className="container-header">
@@ -308,8 +301,8 @@ function NftCustomizationSingle() {
 							className={errorModal.hidden === true ? "error-modal" : "hide"}
 						>
 							<button className="close" onClick={closeError}>
-								<span/>
-								<span/>
+								<span></span>
+								<span></span>
 							</button>
 							<div className="message">{errorModal.message}</div>
 						</div>
@@ -377,12 +370,12 @@ function NftCustomizationSingle() {
 									<div
 										className={classArr[0].src?.length > 0 ? "hide" : "loader"}
 									>
-										<div/>
-										<div/>
-										<div/>
+										<div></div>
+										<div></div>
+										<div></div>
 									</div>
 								</div>
-								<div className="break"/>
+								<div className="break"></div>
 								<div
 									className="button-1-square"
 									style={{width: localStorage.getItem("width") + "px"}}
@@ -457,10 +450,10 @@ function NftCustomizationSingle() {
 							})}
 						</div>
 					</div>
-					{redirect ? <Navigate to="/nft-generate-single" /> : ""}
+					{redirect ? <Redirect to="/nft-generate-single" /> : ""}
 				</div>
 
-
+				{/*<Footer></Footer>*/}
 			</div>
 		</>
 	);
