@@ -26,7 +26,7 @@ deploy:
   stage: deploy
   environment:
     name: production
-    url: never.defispace.com
+    url: nft-art-generator.defispace.com
   script:
     - bash scripts/deploy.sh
   only:
@@ -36,7 +36,7 @@ deployToStaging:
   stage: deploy
   environment:
     name: staging
-    url: test.never.defispace.com
+    url: nft-art-generator.defispace.com
   script:
     - bash scripts/deploy.staging.sh
   only:
