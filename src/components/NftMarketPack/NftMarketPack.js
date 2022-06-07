@@ -174,7 +174,7 @@ function NftMarketPack() {
 
 
   return (
-    <Router>
+    <>
       <div
         className={
           errorModal.hidden === true || connectWallet ? "error-bg" : "hide"
@@ -241,7 +241,7 @@ function NftMarketPack() {
 
         {/*<Footer></Footer>*/}
       </div>
-    </Router>
+    </>
   );
 }
 

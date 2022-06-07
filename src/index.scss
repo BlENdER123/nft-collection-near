@@ -2229,16 +2229,10 @@ button,
 	background-image: url("./images/img/Folder_open_light.png");
 }
 .modal-constructor .import-buttons > .save {
-	background: #707171;
-	background-image: url("./images/img/Save_light.png");
-	background-repeat: no-repeat;
-	background-position: center;
+  background: #707171 url("./images/img/Save_light.png") no-repeat center;
 }
 .modal-constructor .import-buttons > .save-active {
-	background: $green;
-	background-image: url("./image/img/Save_light.png");
-	background-repeat: no-repeat;
-	background-position: center;
+  background: url("./images/img/Save_light.png") no-repeat center;
 }
 .modal-constructor .opacity {
 	opacity: 0;
@@ -4375,7 +4369,7 @@ input[type="text"] {
 	padding: 20px 15px;
 	border: 1px solid $lightGray;
 	border-radius: 2px;
-	background: url("./images/img/Ellipse\ 57.png") #$gray no-repeat 15px center;
+	background: url("./images/img/Ellipse\ 57.png") $gray no-repeat 15px center;
 	padding-left: 47px;
 	padding-right: 90px;
 }

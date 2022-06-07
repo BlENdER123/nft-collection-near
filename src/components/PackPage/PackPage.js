@@ -8,8 +8,10 @@ import * as nearAPI from "near-api-js";
 import {NFTStorage} from "nft.storage";
 
 
-const {contractNft, nearConfig, contractRootNft} = require("./config.json");
-const {parseNearAmount} = require("near-api-js/lib/utils/format");
+import {contractNft, nearConfig, contractRootNft} from "../../config.json";
+import {parseNearAmount} from "near-api-js/lib/utils/format";
+
+// const {parseNearAmount} = require("near-api-js/lib/utils/format");
 
 const {connect, keyStores, WalletConnection} = nearAPI;
 

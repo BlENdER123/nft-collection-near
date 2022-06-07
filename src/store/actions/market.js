@@ -1,22 +1,3 @@
-// import {
-//   ActionError,
-//   AddLiquidityArg,
-//   CreatePairArg,
-//   LimitOrderValuesConfirm,
-//   LpToken,
-//   MakeLimitOrderArg,
-//   MakeSwapArg,
-//   ProvideLiquidityValuesConfirm,
-//   RemoveLiquidityArg,
-//   RemoveLiquidityValuesConfirm,
-//   SetClientDataArg,
-//   SwapValuesConfirm,
-//   ThemeVariant,
-//   Token,
-//   WaitingPopupValues,
-//   CreatePairValuesConfirm,
-//   Pair
-// } from "../types";
 import {
   NFTS_FETCH_REQUESTED,
   NFTS_FETCH_LOADING,

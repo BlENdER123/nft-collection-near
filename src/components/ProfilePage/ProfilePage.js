@@ -2,14 +2,11 @@ import React, {useState, useEffect} from "react";
 import {HashRouter as Router, useParams, useNavigate} from "react-router-dom";
 
 import * as nearAPI from "near-api-js";
-const {parseNearAmount} = require("near-api-js/lib/utils/format");
+import {parseNearAmount} from "near-api-js/lib/utils/format";
 
 import {useDispatch, useSelector} from "react-redux";
 
-const {
-  marketNft,
-} = require("../../sdk/config.json");
-
+import {marketNft,nearConfig} from "../../config.json";
 const keyStore = new nearAPI.keyStores.BrowserLocalStorageKeyStore();
 
 function ProfilePage() {
@@ -69,10 +66,9 @@ function ProfilePage() {
     avail: false,
   });
 
-  let marketrootAddr = config.marketroot;
+
 
   async function getHash() {
-    const {contractNft, nearConfig, contractRootNft} = require("./config.json");
 
     const keyStore = new nearAPI.keyStores.BrowserLocalStorageKeyStore();
 

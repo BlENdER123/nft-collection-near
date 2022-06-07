@@ -11,7 +11,6 @@ import NftCustomizationSingle from "./components/NftCustomizationSingle/NftCusto
 import NftGenerateSingle from "./components/NftGenerateSingle/NftGenerateSingle";
 import NftSingle from "./components/NftSingle/NftSingle";
 import CollectionMarket from "./components/CollectionMarket/CollectionMarket";
-import CollectionMarketPack from "./components/CollectionMarketPack/CollectionMarketPack";
 import NftMarket from "./components/NftMarket/NftMarket";
 import NftMarketPack from "./components/NftMarketPack/NftMarketPack";
 import NftMarketAuction from "./components/NftMarketAuction/NftMarketAuction";
@@ -156,10 +155,6 @@ function App() {
           <Route
             exact path="/collection-market"
             element={<CollectionMarket/>}
-          />
-          <Route
-            exact path="/collection-market-pack/:address"
-            element={<CollectionMarketPack/>}
           />
           <Route
             exact path="/nft-market"

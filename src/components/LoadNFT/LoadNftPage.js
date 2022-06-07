@@ -1,16 +1,17 @@
 import React, {useState, useEffect, useRef} from "react";
-import {useNavigate} from "react-router-dom";
+// import {useNavigate} from "react-router-dom";
 // import Header from "../../Pages/Header/Header";
 // import Footer from "../../Pages/Footer/Footer";
 import {useDispatch, useSelector} from "react-redux";
-import {Navigate} from "react-router";
+import {useNavigate} from "react-router";
 
-import HeaderEditor from "./HeaderEditor";
-import ErrorModal from "./ErrorModal";
-import DropDown from "./DropDown";
-import DoubleField from "./DoubleField";
+import HeaderEditor from "../HeaderEditor/HeaderEditor";
+// import ErrorModal from "../ErrorModal/ErrorModal";
+import DropDown from "../DropDown/DropDown";
+import DoubleField from "../DoubleField/DoubleField";
 
-import {dbDexie} from "./db.js";
+import {dbDexie} from "../../db";
+import {createNewLayer, updateAllData, updateOneLayer} from "../../store/actions/editor";
 
 // layer instance
 class MyClass {
@@ -149,7 +150,7 @@ function LoadNftPage() {
 
 	const dispatch = useDispatch();
 
-	const projectEditorState = useSelector(state => state.reducerEditor.projectState);
+	const projectEditorState = useSelector(state => state.editorReducer.projectState);
 
 	const openError = (text) => {
         dispatch({type: "openError", payload: text});
@@ -545,7 +546,7 @@ function LoadNftPage() {
 		let curImg = curentImages;
 		try{curImg.push(0);}catch{}
 		setCurentImages(curImg);
-		dispatch({type: "newLayer", payload: tempR});
+		dispatch(createNewLayer(tempR))
 		isNextActive(tempArr);
 	}
 
@@ -582,7 +583,7 @@ function LoadNftPage() {
 
 		// updatedLayer.name = tempVal;
 
-		dispatch({type: "updateAllData", payload: updatedProjectState});
+		dispatch(updateAllData(updatedProjectState));
 	}
 
 	// switching active picture
@@ -689,10 +690,10 @@ function LoadNftPage() {
 						};
 
 				
-						dispatch({type: "updateOneLayer", payload: {
-							index: curentLayer,
-							updatedLayer,
-						}});
+						dispatch(updateOneLayer({
+              index: curentLayer,
+              updatedLayer,
+            }));
 
 
 						for (let i = 0; i < classArr1.length; i++) {
@@ -748,7 +749,7 @@ function LoadNftPage() {
 						localStorage.setItem("width", maxW);
 						localStorage.setItem("height", maxH);
 						setClassArr1(tempArr);
-						dispatch({type: "updateAllData", payload: tempArr});
+						dispatch(updateAllData(tempArr));
 						isNextActive(tempArr);
 					};
 				};
@@ -805,10 +806,10 @@ function LoadNftPage() {
 				],
 		};
 
-		dispatch({type: "updateOneLayer", payload: {
-			index: curentLayer,
-			updatedLayer,
-		}});
+		dispatch(updateOneLayer({
+      index: curentLayer,
+      updatedLayer,
+    }))
 
 		for (let i = 0; i < classArr1.length; i++) {
 			let temp = classArr1[i];
@@ -895,11 +896,10 @@ function LoadNftPage() {
 		}
 
 		updatedLayer.name = tempVal;
-
-		dispatch({type: "updateOneLayer", payload: {
-			index: curentLayer,
-			updatedLayer,
-		}});
+    dispatch(updateOneLayer({
+      index: curentLayer,
+      updatedLayer,
+    }))
 	}
 
 	// Loading intermediate data
@@ -1008,7 +1008,7 @@ function LoadNftPage() {
 					<span/>
 					<span/>
 				</button>
-
+      
 				<div className="video">
 					<iframe
 						src="https://www.youtube.com/embed/YHatcktJM8I"
@@ -1022,12 +1022,12 @@ function LoadNftPage() {
 			<div
 				className={"App App2"}
 			>
-				<ErrorModal/>
-
-
+        {/*<ErrorModal/>*/}
+      
+      
 				<div className="constructors">
 					<div className="container-header">
-
+      
 						<HeaderEditor classArr={classArr1} projectData={{
 							width,
 							height,
@@ -1036,9 +1036,9 @@ function LoadNftPage() {
 							projectName,
 							collectionName
 						}} activeStep={1} />
-
+      
 						<div className="modal-constructor modal-constructor-layers">
-
+      
 							<div className="title">Layers</div>
 							<div className="text">Add/Edit layers</div>
 							{classArr1.length > 0 &&
@@ -1058,7 +1058,7 @@ function LoadNftPage() {
 										</div>
 									);
 								})}
-
+      
 							<div className="layers-list_layer-input">
 								<div className="title">Add New Layer</div>
 								<input
@@ -1089,7 +1089,7 @@ function LoadNftPage() {
 									+
 								</button>
 							</div>
-
+      
 							<div className="title">Layer Settings</div>
 							<div className="text">Change layer settings</div>
 							<div className="setting">
@@ -1106,8 +1106,8 @@ function LoadNftPage() {
 							</div>
 						</div>
 						<div className="modal-constructor modal-constructor-upload">
-
-
+      
+      
 							<div className="video-start">
 								Need Help? &nbsp;{" "}
 								<span onClick={() => setVideoPlay(true)}>
@@ -1115,7 +1115,7 @@ function LoadNftPage() {
 									Click to watch the Walkthrough Video.
 								</span>
 							</div>
-
+      
 							<div
 								ref={nftArea}
 								className="drop-img"
@@ -1155,7 +1155,7 @@ function LoadNftPage() {
 											);
 										})}
 								</div>
-
+      
 								<input
 									type="file"
 									id="input_file"
@@ -1166,7 +1166,7 @@ function LoadNftPage() {
 								   }}
 									multiple
 								/>
-
+      
 								<label  htmlFor="input_file" className="input__file-button">
 									<span className="input__file-icon-wrapper"></span>
 									<span className="input__file-text">Browse Images</span>
@@ -1175,9 +1175,9 @@ function LoadNftPage() {
 										You can select multiple images at once
 									</span>
 								</label>
-
+      
 							</div>
-
+      
 							<div
 								className={
 									activeNext ? "button-1-square" : "button-1-square unactive"
@@ -1199,12 +1199,12 @@ function LoadNftPage() {
 								)}
 							</div>
 						</div>
-
+      
 						<div className="modal-constructor modal-constructor-settings">
-
+      
 							<div className="project-settings">
 								<DropDown title={"Project details"} subtitle={"Add project name & description."}>
-
+      
 									<div className={"setting"}>
 										<div className="title-settings">Project Name</div>
 										<input
@@ -1279,22 +1279,22 @@ function LoadNftPage() {
 											Set Collection Description
 										</span>
 									</div>
-
+      
 								</DropDown>
-
+      
 								<DropDown title={"Dimensions"} subtitle={"Canvas dimensions"} hint={"The image resolution are picked from the first image you drag and drop. We expect all images to be the same resolution."}>
 									<DoubleField  firstField={["Width (px)", width]} secondField={["Height (px)", height]}/>
 								</DropDown>
-
+      
 							</div>
 						</div>
 						<div className="break"/>
-
+      
 					</div>
 				</div>
-
+      
 			</div>
-		<>
+		</>
 	);
 }
 
