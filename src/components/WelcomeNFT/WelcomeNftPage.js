@@ -1,47 +1,44 @@
 import React from "react";
 import {HashRouter as Router, useNavigate} from "react-router-dom";
 
-import {
-  Link,
-  Element,
-} from "react-scroll";
+import {Link, Element} from "react-scroll";
 
 function WelcomeNftPage() {
-  let navigate = useNavigate();
+	let navigate = useNavigate();
 
-  return (
-    <>
-      <div className={"App"}>
-        {/*<Header activeCat={0}></Header>*/}
+	return (
+		<>
+			<div className={"App1"}>
+				{/*<Header activeCat={0}></Header>*/}
 
-        <div className="main-screen">
-          <div className="container">
-            <div className="content">
-              <div className="title">
-                Create your own NFT collections easy and fast
-              </div>
-              <div className="text">
-                Download or generate more than 15,000 unique NFT arts with no
-                code in user-friendly interface.
-              </div>
-              <div className="buttons">
-                <a
-                  onClick={(ev) => {
-                    ev.preventDefault();
-                    navigate("/load-nft");
-                  }}
-                >
-                  <button className="button-1">Get started</button>
-                </a>
-                <Link to="video">
-                  <button className="button-2">How it work</button>
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
+				<div className="main-screen">
+					<div className="container">
+						<div className="content">
+							<div className="title">
+								Create your own NFT collections easy and fast
+							</div>
+							<div className="text">
+								Download or generate more than 15,000 unique NFT arts with no
+								code in user-friendly interface.
+							</div>
+							<div className="buttons">
+								<a
+									onClick={(ev) => {
+										ev.preventDefault();
+										navigate("/load-nft");
+									}}
+								>
+									<button className="button-1">Get started</button>
+								</a>
+								<Link to="video">
+									<button className="button-2">How it work</button>
+								</Link>
+							</div>
+						</div>
+					</div>
+				</div>
 
-        {/* <div className="quality-screen">
+				{/* <div className="quality-screen">
 					<div className="container">
 						<div className="content">
 							<div className="title">Pure Creativity</div>
@@ -106,32 +103,32 @@ function WelcomeNftPage() {
 					</div>
 				</div> */}
 
-        <div className="video-screen">
-          <div className="container">
-            <div className="content">
-              <div className="title">Watch how it works</div>
-              <div className="text">
-                NFT art creator’s main goal is to invent, and using NFTour
-                artists
-              </div>
-              <Element name="video" className="element"></Element>
-              <div className="video">
-                <iframe
-                  src="https://www.youtube.com/embed/YHatcktJM8I"
-                  title="YouTube video player"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                ></iframe>
-              </div>
-            </div>
-          </div>
-        </div>
+				<div className="video-screen">
+					<div className="container">
+						<div className="content">
+							<div className="title">Watch how it works</div>
+							<div className="text">
+								NFT art creator’s main goal is to invent, and using NFTour
+								artists
+							</div>
+							<Element name="video" className="element"></Element>
+							<div className="video">
+								<iframe
+									src="https://www.youtube.com/embed/YHatcktJM8I"
+									title="YouTube video player"
+									frameBorder="0"
+									allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+									allowFullScreen
+								></iframe>
+							</div>
+						</div>
+					</div>
+				</div>
 
-        {/*<Footer></Footer>*/}
-      </div>
-    </>
-  );
+				{/*<Footer></Footer>*/}
+			</div>
+		</>
+	);
 }
 
 export default WelcomeNftPage;

@@ -1,14 +1,14 @@
 {
-  "contractRootNftOld": "dev-1651486923877-94015041278311",
-  "contractRootNft": "dev-1654519492584-66660901843724",
-  "contractNft": "dev-1646972874579-36142488542328",
-  "marketNft": "market-nft.testnet",
-  "singleNFt": "dev-1649669626808-71116101604821",
-  "contractRootNftGenral": "collection_nft.testnet",
-  "nearConfig": {
-    "networkId": "testnet",
-    "nodeUrl": "https://rpc.testnet.near.org",
-    "walletUrl": "https://wallet.testnet.near.org",
-    "helperUrl": "https://helper.testnet.near.org"
-  }
+	"contractRootNftOld": "dev-1651486923877-94015041278311",
+	"contractRootNft": "dev-1654656927609-34215585953636",
+	"contractNft": "dev-1646972874579-36142488542328",
+	"marketNft": "market-nft.testnet",
+	"singleNFt": "dev-1649669626808-71116101604821",
+	"contractRootNftGenral": "collection_nft.testnet",
+	"nearConfig": {
+		"networkId": "testnet",
+		"nodeUrl": "https://rpc.testnet.near.org",
+		"walletUrl": "https://wallet.testnet.near.org",
+		"helperUrl": "https://helper.testnet.near.org"
+	}
 }

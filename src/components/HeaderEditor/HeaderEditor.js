@@ -1,8 +1,5 @@
 import React, {useState} from "react";
-import {
-	HashRouter as Router,
-	useNavigate,
-} from "react-router-dom";
+import {HashRouter as Router, useNavigate} from "react-router-dom";
 import {useDispatch} from "react-redux";
 
 Object.defineProperty(window, "indexedDB", {
@@ -14,16 +11,15 @@ Object.defineProperty(window, "indexedDB", {
 });
 
 function Steps({projectData}) {
-
-    let navigate = useNavigate();
+	let navigate = useNavigate();
 
 	const dispatch = useDispatch();
 
-    const openError = (text) => {
-        dispatch({type: "openError", payload: text});
-    }
+	const openError = (text) => {
+		dispatch({type: "openError", payload: text});
+	};
 
-    const checkLimit = () => {
+	const checkLimit = () => {
 		let lim = 1;
 		const imgs = projectData.classArr.map((e) => (lim = e.url.length * lim));
 		// setLimit(lim);
@@ -31,135 +27,166 @@ function Steps({projectData}) {
 		// 	setLimit(1);
 		// }, 2000);
 
-        if (lim > 30) {
-            openError("30 pictures limit exceeded");
-        }
+		if (lim > 30) {
+			openError("30 pictures limit exceeded");
+		}
 
 		return lim != 0 && lim < 30 ? true : false;
 	};
 
-    const checkSize = () => {
+	const checkSize = () => {
+		if (
+			localStorage.getItem("nftAreaSize") == undefined &&
+			localStorage.getItem("nftAreaSize") == null
+		) {
+			return false;
+		}
 
-        if(localStorage.getItem("nftAreaSize") == undefined && localStorage.getItem("nftAreaSize") == null) {
-            return false;
-        }
+		let localSizes = JSON.parse(localStorage.getItem("realSizes"));
 
-        let localSizes = JSON.parse(localStorage.getItem("realSizes"));
+		for (let i = 0; i < projectData.classArr.length; i++) {
+			if (localSizes[i] == undefined || localSizes[i] == null) {
+				return false;
+			}
+			if (localSizes[i].width.length !== projectData.classArr[i].imgs.length) {
+				return false;
+			}
+		}
 
-        for (let i = 0; i < projectData.classArr.length; i++) {
+		return true;
+	};
 
-            if(localSizes[i] == undefined || localSizes[i] == null) {
-                return false;
-            }
-            if(localSizes[i].width.length !== projectData.classArr[i].imgs.length) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    function dataStep1() {
-        for (let i = 0; i < projectData.classArr.length; i++) {
+	function dataStep1() {
+		for (let i = 0; i < projectData.classArr.length; i++) {
 			if (projectData.classArr[i].imgs[0] == undefined) {
 				openError("Each layer must contain at least 1 image.");
 				return false;
 			}
 		}
 
-        localStorage.setItem("class", JSON.stringify(projectData.classArr));
+		localStorage.setItem("class", JSON.stringify(projectData.classArr));
 		localStorage.setItem("width", projectData.projectData.width);
 		localStorage.setItem("height", projectData.projectData.height);
 		localStorage.setItem("curentLayer", projectData.projectData.curentLayer);
 		localStorage.setItem(
 			"details",
 			JSON.stringify({
-				projName: projectData.projectData.collectionName == "" || projectData.projectData.collectionName == undefined ? "No Name" : projectData.projectData.collectionName,
-				projectName: projectData.projectData.projectName == "" || projectData.projectData.projectName == undefined ? "No Name" : projectData.projectData.projectName,
-				projectDescription: projectData.projectData.projectDescription == "" || projectData.projectData.projectDescription == undefined ? "No Description" : projectData.projectData.projectDescription,
+				projName:
+					projectData.projectData.collectionName == "" ||
+					projectData.projectData.collectionName == undefined
+						? "No Name"
+						: projectData.projectData.collectionName,
+				projectName:
+					projectData.projectData.projectName == "" ||
+					projectData.projectData.projectName == undefined
+						? "No Name"
+						: projectData.projectData.projectName,
+				projectDescription:
+					projectData.projectData.projectDescription == "" ||
+					projectData.projectData.projectDescription == undefined
+						? "No Description"
+						: projectData.projectData.projectDescription,
 			}),
 		);
 
 		return true;
+	}
 
-    }
-
-    function dataStep2() {
-        localStorage.setItem("class", JSON.stringify(projectData.classArr));
-		localStorage.setItem("realSizes", JSON.stringify(projectData.projectDataStep2.newSizesArr));
-		localStorage.setItem("nftAreaSize", JSON.stringify(projectData.projectDataStep2.nftAreaSize));
-		localStorage.setItem("sizeIndex", projectData.projectDataStep2.nftSizeIndex);
-		localStorage.setItem("curentLayer", projectData.projectDataStep2.curentLayer);
+	function dataStep2() {
+		localStorage.setItem("class", JSON.stringify(projectData.classArr));
+		localStorage.setItem(
+			"realSizes",
+			JSON.stringify(projectData.projectDataStep2.newSizesArr),
+		);
+		localStorage.setItem(
+			"nftAreaSize",
+			JSON.stringify(projectData.projectDataStep2.nftAreaSize),
+		);
+		localStorage.setItem(
+			"sizeIndex",
+			projectData.projectDataStep2.nftSizeIndex,
+		);
+		localStorage.setItem(
+			"curentLayer",
+			projectData.projectDataStep2.curentLayer,
+		);
 
 		navigate("/nft-generate");
-    }
+	}
 
-
-    return(
-        <>
-            <div
-                className={projectData.activeStep == 1 ?"step  step-hov step1  active" : "step  step-hov step1"}
-                onClick={() => {
-                    navigate("/load-nft");
-                }}
-            >
-                <div className="img"></div>
-                <div className="text">
-                    <div className="name">Step 1</div>
-                    <div className="desc">Upload images</div>
-                </div>
-            </div>
-            <div className="line"></div>
-            <div className={projectData.activeStep == 2 ?"step  step-hov step2  active" : "step  step-hov step2"}
-                onClick={() => {
-                    if(projectData.activeStep == 1) {
-                        let res = dataStep1();
-                    if (res) {
-                      navigate("/nft-customization");
-                    }
-                    } else if (projectData.activeStep == 3) {
-                      navigate("/nft-customization");
-                    }
-                }}
-            >
-                <div className="img"></div>
-                <div className="text">
-                    <div className="name">Step 2</div>
-                    <div className="desc">Customize layers</div>
-                </div>
-            </div>
-            <div className="line"></div>
-            <div className={[projectData.activeStep == 3 ?"step step3  active " : "step step3 ", checkSize()? " step-hov" : ""]}
-                onClick={() => {
-                    if(projectData.activeStep == 1) {
-                        let res = dataStep1();
-                        if (
-                            res &&
-                            checkLimit() &&
-                            checkSize()
-                        ) {
-                          navigate("/nft-generate");
-                        }
-                    } else if (projectData.activeStep == 2) {
-                        dataStep2();
-                    }
-                }}
-            
-                >
-                <div className="img"></div>
-                <div className="text">
-                    <div className="name">Step 3</div>
-                    <div className="desc">Create Collection</div>
-                </div>
-            </div>
-        </>
-    )
+	return (
+		<>
+			<div
+				className={
+					projectData.activeStep == 1
+						? "step  step-hov step1  active"
+						: "step  step-hov step1"
+				}
+				onClick={() => {
+					navigate("/load-nft");
+				}}
+			>
+				<div className="img"></div>
+				<div className="text">
+					<div className="name">Step 1</div>
+					<div className="desc">Upload images</div>
+				</div>
+			</div>
+			<div className="line"></div>
+			<div
+				className={
+					projectData.activeStep == 2
+						? "step  step-hov step2  active"
+						: "step  step-hov step2"
+				}
+				onClick={() => {
+					if (projectData.activeStep == 1) {
+						let res = dataStep1();
+						if (res) {
+							navigate("/nft-customization");
+						}
+					} else if (projectData.activeStep == 3) {
+						navigate("/nft-customization");
+					}
+				}}
+			>
+				<div className="img"></div>
+				<div className="text">
+					<div className="name">Step 2</div>
+					<div className="desc">Customize layers</div>
+				</div>
+			</div>
+			<div className="line"></div>
+			<div
+				className={[
+					projectData.activeStep == 3 ? "step step3  active " : "step step3 ",
+					checkSize() ? " step-hov" : "",
+				]}
+				onClick={() => {
+					if (projectData.activeStep == 1) {
+						let res = dataStep1();
+						if (res && checkLimit() && checkSize()) {
+							navigate("/nft-generate");
+						}
+					} else if (projectData.activeStep == 2) {
+						dataStep2();
+					}
+				}}
+			>
+				<div className="img"></div>
+				<div className="text">
+					<div className="name">Step 3</div>
+					<div className="desc">Create Collection</div>
+				</div>
+			</div>
+		</>
+	);
 }
 
 function HeaderEditor({classArr, projectData, projectDataStep2, activeStep}) {
 	let navigate = useNavigate();
 
-    function newProject() {
+	function newProject() {
 		navigate("/load-nft");
 		// localStorage.clear();
 
@@ -206,6 +233,10 @@ function HeaderEditor({classArr, projectData, projectDataStep2, activeStep}) {
 			localStorage.setItem("class", JSON.stringify(data.classArr));
 			localStorage.setItem("width", data.width);
 			localStorage.setItem("height", data.height);
+			localStorage.setItem(
+				"colPrice",
+				JSON.stringify(Number(data.collectionPrice)),
+			);
 
 			//setFiles(e.target.result);
 
@@ -222,7 +253,8 @@ function HeaderEditor({classArr, projectData, projectDataStep2, activeStep}) {
 				localStorage.setItem("class", JSON.stringify(result));
 				//setClassArr1(result);
 			});
-			await history.go("/load-nft");
+			// await history.go("/load-nft");
+			await navigate("/load-nft");
 		};
 	}
 
@@ -240,7 +272,7 @@ function HeaderEditor({classArr, projectData, projectDataStep2, activeStep}) {
 
 		try {
 			const openRequest = await window.indexedDB.open("imgsStore", 10);
-            console.log(URL.createObjectURL(file));
+			console.log(URL.createObjectURL(file));
 			openRequest.onsuccess = async (event) => {
 				const store = event.target.result
 					.transaction("imgs", "readwrite")
@@ -267,7 +299,7 @@ function HeaderEditor({classArr, projectData, projectDataStep2, activeStep}) {
 							new Promise((resolve, reject) => {
 								console.log(i, j);
 								store.get(localClass[i].imgs[j]).onsuccess = (event) => {
-                                    console.log(event.target);
+									console.log(event.target);
 									localClass[i].url[j] = URL.createObjectURL(
 										event.target.result.value,
 									);
@@ -285,7 +317,6 @@ function HeaderEditor({classArr, projectData, projectDataStep2, activeStep}) {
 	}
 
 	function saveProject(e) {
-		
 		let idBlobObj = {};
 
 		let tempArr = [];
@@ -293,9 +324,7 @@ function HeaderEditor({classArr, projectData, projectDataStep2, activeStep}) {
 		const openRequest = window.indexedDB.open("imgsStore", 10);
 
 		openRequest.onsuccess = async (event) => {
-			const store = event.target.result
-				.transaction("imgs")
-				.objectStore("imgs");
+			const store = event.target.result.transaction("imgs").objectStore("imgs");
 			store.getAll().onsuccess = (event) => {
 				console.log(event.target.result);
 				const store_data = event.target.result;
@@ -310,7 +339,7 @@ function HeaderEditor({classArr, projectData, projectDataStep2, activeStep}) {
 
 					tempArr.push(tempFile);
 
-                    console.log(URL.createObjectURL(tempFile.value));
+					console.log(URL.createObjectURL(tempFile.value));
 
 					let reader = new FileReader();
 					reader.readAsDataURL(tempFile.value);
@@ -325,16 +354,18 @@ function HeaderEditor({classArr, projectData, projectDataStep2, activeStep}) {
 
 		setTimeout(() => {
 			console.log(idBlobObj);
-			let data ;
+			let data;
 
 			try {
 				data = {
 					projectName: JSON.parse(localStorage.getItem("details")).projectName,
 					collectionName: JSON.parse(localStorage.getItem("details")).projName,
-					projectDescription: JSON.parse(localStorage.getItem("details")).projectDescription,
+					projectDescription: JSON.parse(localStorage.getItem("details"))
+						.projectDescription,
 					width: localStorage.getItem("width"),
 					height: localStorage.getItem("height"),
 					classArr: classArr,
+					collectionPrice: localStorage.getItem("colPrice"),
 					indexedData: idBlobObj,
 				};
 			} catch {
@@ -345,6 +376,7 @@ function HeaderEditor({classArr, projectData, projectDataStep2, activeStep}) {
 					width: localStorage.getItem("width"),
 					height: localStorage.getItem("height"),
 					classArr: classArr,
+					collectionPrice: 0,
 					indexedData: idBlobObj,
 				};
 			}
@@ -355,11 +387,12 @@ function HeaderEditor({classArr, projectData, projectDataStep2, activeStep}) {
 			a.href = URL.createObjectURL(file);
 
 			try {
-				a.download = JSON.parse(localStorage.getItem("details")).projectName + ".json";
+				a.download =
+					JSON.parse(localStorage.getItem("details")).projectName + ".json";
 			} catch {
 				a.download = "No Name.json";
 			}
-			
+
 			a.click();
 
 			URL.revokeObjectURL(a.href);
@@ -385,48 +418,58 @@ function HeaderEditor({classArr, projectData, projectDataStep2, activeStep}) {
 		});
 		return JSON.stringify(res);
 	};
-	
+
 	return (
 		<>
-            
 			<div className="modal-constructor modal-constructor-layers ">
-                <div className="title-1">NFT Collection Editor</div>
+				<div className="title-1">NFT Collection Editor</div>
 
-                <div className="steps mobile-steps">
-                    <Steps projectData={{classArr, projectData, projectDataStep2, activeStep}} />
-                </div>
-               
-            </div>
+				<div className="steps mobile-steps">
+					<Steps
+						projectData={{classArr, projectData, projectDataStep2, activeStep}}
+					/>
+				</div>
+			</div>
 
-            <div className="modal-constructor modal-constructor-position">
-                <div className="steps steps-desk">
-                    <Steps projectData={{classArr, projectData, projectDataStep2, activeStep}} />
-                </div>
-                
-            </div>
+			<div className="modal-constructor modal-constructor-position">
+				<div className="steps steps-desk">
+					<Steps
+						projectData={{classArr, projectData, projectDataStep2, activeStep}}
+					/>
+				</div>
+			</div>
 
-            <div className="modal-constructor modal-constructor-settings">
-                <div className="import-buttons">
-                    <div onClick={newProject} className="new hint hint--top hint--small" aria-label="New project"
-					 ></div>
-                    <div className="form-item hint--top hint--small" aria-label="Open project">
-                        <input
-                            className="form-item__input"
-                            type="file"
-                            id="files"
-                            accept=".json"
-                            onChange={loadProject}
-                        />
-                        <label className="form-item__label" for="files"></label>
-                    </div>
-                    <div
-                        onClick={!savedProject ? saveProject : undefined}
-                        className={savedProject ? "save hint--top hint--small" : "save-active hint--top hint--small"}
+			<div className="modal-constructor modal-constructor-settings">
+				<div className="import-buttons">
+					<div
+						onClick={newProject}
+						className="new hint hint--top hint--small"
+						aria-label="New project"
+					></div>
+					<div
+						className="form-item hint--top hint--small"
+						aria-label="Open project"
+					>
+						<input
+							className="form-item__input"
+							type="file"
+							id="files"
+							accept=".json"
+							onChange={loadProject}
+						/>
+						<label className="form-item__label" for="files"></label>
+					</div>
+					<div
+						onClick={!savedProject ? saveProject : undefined}
+						className={
+							savedProject
+								? "save hint--top hint--small"
+								: "save-active hint--top hint--small"
+						}
 						aria-label="Save project"
-                    ></div>
-                </div>
-                
-            </div>
+					></div>
+				</div>
+			</div>
 		</>
 	);
 }

@@ -1,8 +1,9 @@
 import React, {useState, useEffect} from "react";
 import {useNavigate} from "react-router-dom";
 import mergeImages from "merge-images";
-import Header from "../../Pages/Header/Header";
-import Footer from "../../Pages/Footer/Footer";
+// import Header from "../../Pages/Header/Header";
+// import Footer from "../../Pages/Footer/Footer";
+import HeaderEditor from "../HeaderEditor/HeaderEditor";
 import {useDispatch, useSelector} from "react-redux";
 import {Navigate} from "react-router";
 
@@ -18,7 +19,6 @@ const axios = require("axios");
 //const fs = require('fs');
 const FormData = require("form-data");
 
-
 function NftCustomization() {
 	useEffect(() => {
 		if (document.location.href.split("transactionHashes=")[1]) {
@@ -29,8 +29,7 @@ function NftCustomization() {
 			localStorage.getItem("colPrice") !== undefined &&
 			localStorage.getItem("colPrice") !== null
 		) {
-			setColPrice(localStorage.getItem("colPrice"));
-			// console.log(colPrice, localStorage.getItem("colPrice"));
+			setColPrice(Number(localStorage.getItem("colPrice")));
 		}
 	}, []);
 
@@ -265,7 +264,6 @@ function NftCustomization() {
 	}
 
 	function saveProject(e) {
-
 		let idBlobObj = {};
 
 		let tempArr = [];
@@ -273,9 +271,7 @@ function NftCustomization() {
 		const openRequest = window.indexedDB.open("imgsStore", 1);
 
 		openRequest.onsuccess = async (event) => {
-			const store = event.target.result
-				.transaction("imgs")
-				.objectStore("imgs");
+			const store = event.target.result.transaction("imgs").objectStore("imgs");
 			store.getAll().onsuccess = (event) => {
 				console.log(event.target.result);
 				const store_data = event.target.result;
@@ -306,7 +302,8 @@ function NftCustomization() {
 			const data = {
 				projectName: JSON.parse(localStorage.getItem("details")).projectName,
 				collectionName: JSON.parse(localStorage.getItem("details")).projName,
-				projectDescription: JSON.parse(localStorage.getItem("details")).projectDescription,
+				projectDescription: JSON.parse(localStorage.getItem("details"))
+					.projectDescription,
 				width: localStorage.getItem("width"),
 				height: localStorage.getItem("height"),
 				classArr: classArr,
@@ -317,7 +314,8 @@ function NftCustomization() {
 			const a = document.createElement("a");
 			const file = new Blob([JSON.stringify(data)], {type: "text/json"});
 			a.href = URL.createObjectURL(file);
-			a.download = JSON.parse(localStorage.getItem("details")).projectName + ".json";
+			a.download =
+				JSON.parse(localStorage.getItem("details")).projectName + ".json";
 			a.click();
 
 			URL.revokeObjectURL(a.href);
@@ -330,23 +328,20 @@ function NftCustomization() {
 		}, 1000);
 	}
 
-    function openProject() {
+	function openProject() {}
 
-    }
-
-    function handleFile(e) {
+	function handleFile(e) {
 		const fileReader = new FileReader();
 		fileReader.readAsText(e.target.files[0], "UTF-8");
 		fileReader.onload = (e) => {
 			const data = JSON.parse(e.target.result);
-            console.log(data.indexedData);
-
-
-
+			console.log(data.indexedData);
 
 			const openRequest = window.indexedDB.open("imgsStore", 1);
 			openRequest.onsuccess = async (event) => {
-				const store = event.target.result.transaction("imgs", "readwrite").objectStore("imgs");
+				const store = event.target.result
+					.transaction("imgs", "readwrite")
+					.objectStore("imgs");
 
 				// let request = store.put({id:2, name:"123"});
 
@@ -355,12 +350,11 @@ function NftCustomization() {
 
 					var image = new Image();
 
-					image.onload = function(){
+					image.onload = function () {
 						console.log(image);
 						store.put(image);
-					}
+					};
 					image.src = data.indexedData[key];
-
 				}
 
 				// request.onsuccess = () => {
@@ -638,7 +632,6 @@ function NftCustomization() {
 			let temp = [];
 			console.log(classArr[i].rarity);
 			for (let j = 0; j < classArr[i].rarity.length; j++) {
-
 				for (let k = 0; k < Number(classArr[i].rarity[j]) + 1; k++) {
 					temp.push(j);
 				}
@@ -803,6 +796,7 @@ function NftCustomization() {
 		} else {
 			if (input == "colPrice") {
 				setErrorInput("");
+				localStorage.setItem("colPrice", value);
 				setColPrice(value);
 			}
 		}
@@ -891,73 +885,18 @@ function NftCustomization() {
 					errorModal.hidden === true || connectWallet ? "error-bg" : "hide"
 				}
 			>
-				<span className={connectWallet ? "" : "hide"} onClick={close}/>
+				<span className={connectWallet ? "" : "hide"} onClick={close} />
 			</div>
 			<div
 				className={
 					errorModal.hidden === true || connectWallet ? "App-error" : "App App2"
 				}
 			>
-
 				<div className="constructors">
 					<div className="container-header">
-						<div
-							className={errorModal.hidden === true ? "error-modal" : "hide"}
-						>
-							<button className="close" onClick={closeError}>
-								<span/>
-								<span/>
-							</button>
-							<div className="message">{errorModal.message}</div>
-							<button className="button-3-square" onClick={closeError}>
-								OK
-							</button>
-						</div>
+						<HeaderEditor classArr={classArr} activeStep={3} />
 
 						<div className="modal-constructor modal-constructor-layers ">
-							<div className="title-1">NFT Editor</div>
-							<div class="steps mobile-steps">
-								<div class="step step1">
-									<div class="img"/>
-									<div class="text">
-										<div class="name">Step 1</div>
-										<div class="desc">Upload images</div>
-									</div>
-								</div>
-								<div class="line"/>
-								<div
-									class="step step2"
-									onClick={() => {
-										let res = logData();
-										if (res) {
-											navigate("/nft-customization");
-										}
-									}}
-								>
-									<div class="img"/>
-									<div class="text">
-										<div class="name">Step 2</div>
-										<div class="desc">Customize layers</div>
-									</div>
-								</div>
-								<div class="line"/>
-								<div
-									class="step step3 active"
-									onClick={() => {
-										let res = logData();
-										if (res) {
-											navigate("/nft-generate");
-										}
-									}}
-								>
-									<div class="img"/>
-									<div class="text">
-										<div class="name">Step 3</div>
-										<div class="desc">Create Collection</div>
-									</div>
-								</div>
-							</div>
-
 							<div className="title">
 								Mint Price{" "}
 								<span
@@ -986,7 +925,10 @@ function NftCustomization() {
 							</div>
 							<div style={{margin: "40px 0px 10px 0px"}} className="title">
 								Resale Royalty{" "}
-								<div aria-label="Scroll the slider to set the author's percentage of sales" className="hint hint--top"></div>{" "}
+								<div
+									aria-label="Scroll the slider to set the author's percentage of sales"
+									className="hint hint--top"
+								></div>{" "}
 								<span
 									className={accordionHidden[1] ? "hidden" : ""}
 									onClick={() => {
@@ -1060,41 +1002,6 @@ function NftCustomization() {
 						</div>
 
 						<div className="modal-constructor modal-constructor-position">
-							<div class="steps steps-desk">
-								<div
-									class="step step1"
-									onClick={() => {
-										navigate("/load-nft");
-									}}
-								>
-									<div class="img"/>
-									<div class="text">
-										<div class="name">Step 1</div>
-										<div class="desc">Upload images</div>
-									</div>
-								</div>
-								<div class="line"/>
-								<div
-									class="step step2"
-									onClick={() => {
-										navigate("/nft-customization");
-									}}
-								>
-									<div class="img"/>
-									<div class="text">
-										<div class="name">Step 2</div>
-										<div class="desc">Customize layers</div>
-									</div>
-								</div>
-								<div class="line"/>
-								<div class="step step3 active">
-									<div class="img"/>
-									<div class="text">
-										<div class="name">Step 3</div>
-										<div class="desc">Create Collection</div>
-									</div>
-								</div>
-							</div>
 							<div className="nft-img">
 								<div
 									className={contrBg ? "img img-contrast" : "img"}
@@ -1128,7 +1035,7 @@ function NftCustomization() {
 										  })
 										: copySrc()}
 								</div>
-								<div className="break"/>
+								<div className="break" />
 								<div className="button-3-square" onClick={random}>
 									Preview
 								</div>
@@ -1168,36 +1075,6 @@ function NftCustomization() {
 						</div>
 
 						<div className="modal-constructor modal-constructor-elements">
-							{/* <div className="import opacity">Import Project</div> */}
-							{/* <div class="import-buttons">
-							<div class="new" onClick={newProject}></div>
-								<Box className="import" type="button" component="label">
-									<input
-										type="file"
-										accept=".json"
-										hidden
-										onChange={handleFile}
-									/>
-								</Box>
-								<div class="save"></div>
-							</div> */}
-							{/* <ImportButtons/> */}
-							<div class="import-buttons">
-								<div onClick={newProject} class="new"/>
-								{/* <div onClick={loadProject} class="import"></div> */}
-								<div class="form-item">
-									<input
-										className="form-item__input"
-										type="file"
-										id="files"
-										accept=".json"
-										onChange={loadProject}
-									/>
-									<label class="form-item__label" for="files"/>
-								</div>
-								<div onClick={saveProject} class="save"/>
-							</div>
-
 							<div className="title">
 								Elements{" "}
 								<span
@@ -1277,7 +1154,6 @@ function NftCustomization() {
 						})
 					)}
 				</div> */}
-
 			</div>
 		</>
 	);

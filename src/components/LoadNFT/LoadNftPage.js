@@ -6,13 +6,16 @@ import {useDispatch, useSelector} from "react-redux";
 import {useNavigate} from "react-router";
 
 import HeaderEditor from "../HeaderEditor/HeaderEditor";
-// import ErrorModal from "../ErrorModal/ErrorModal";
+import ErrorModal from "../ErrorModal/ErrorModal";
 import DropDown from "../DropDown/DropDown";
 import DoubleField from "../DoubleField/DoubleField";
 
 import {dbDexie} from "../../db";
-import {createNewLayer, updateAllData, updateOneLayer} from "../../store/actions/editor";
-
+import {
+	createNewLayer,
+	updateAllData,
+	updateOneLayer,
+} from "../../store/actions/editor";
 // layer instance
 class MyClass {
 	constructor(
@@ -133,11 +136,10 @@ function LoadNftPage() {
 		console.log(db);
 		db.createObjectStore("imgs", {keyPath: "id", autoIncrement: true});
 
-		db.onversionchange = function (event) { 
+		db.onversionchange = function (event) {
 			console.log(event);
-			event.target.close(); 
-
-		}
+			event.target.close();
+		};
 	};
 
 	let nftArea = useRef();
@@ -150,11 +152,13 @@ function LoadNftPage() {
 
 	const dispatch = useDispatch();
 
-	const projectEditorState = useSelector(state => state.editorReducer.projectState);
+	const projectEditorState = useSelector(
+		(state) => state.editorReducer.projectState,
+	);
 
 	const openError = (text) => {
-        dispatch({type: "openError", payload: text});
-    }
+		dispatch({type: "openError", payload: text});
+	};
 
 	const [newLayer, setNewLayer] = useState();
 
@@ -381,9 +385,7 @@ function LoadNftPage() {
 							new Promise((resolve, reject) => {
 								console.log(i, j);
 								store.get(localClass[i].imgs[j]).onsuccess = (event) => {
-									console.log(URL.createObjectURL(
-										event.target.result.value,
-									));
+									console.log(URL.createObjectURL(event.target.result.value));
 									localClass[i].url[j] = URL.createObjectURL(
 										event.target.result.value,
 									);
@@ -401,8 +403,6 @@ function LoadNftPage() {
 	}
 
 	useEffect(() => {
-		
-
 		if (
 			localStorage.getItem("class") !== undefined &&
 			localStorage.getItem("class") !== null
@@ -432,7 +432,6 @@ function LoadNftPage() {
 
 			localWidth = localStorage.getItem("width");
 			localHeight = localStorage.getItem("height");
-
 		} else {
 			setClassArr1([
 				new MyClass("background", true, [], [], [], 0, 0, 0, 0, 0),
@@ -450,7 +449,6 @@ function LoadNftPage() {
 			setCollectionName("No Name");
 			setProjectName("No Name");
 			setProjectDescription("No Description");
-
 		}
 	}, []);
 
@@ -488,10 +486,7 @@ function LoadNftPage() {
 
 			setWidth(localStorage.getItem("width"));
 			setHeight(localStorage.getItem("height"));
-
 		}
-
-		
 	}, []);
 
 	function isNextActive(arr) {
@@ -516,27 +511,25 @@ function LoadNftPage() {
 
 		let temp = new MyClass(name, active, imgsL, [], [], x, y, z);
 
-
 		let tempR = {
-			name, 
-            active, 
-            imgs: imgsL,
-            src: [],
-            url: [],
-            x: x,
-            y: y,
-            width: 0,
-            height: 0,
-            z_index: z,
-            names: [],
-            rarity: [],
-            sizes: {
-                width: [],
-                height: [],
-            },
-            rarityLayer: "4"
+			name,
+			active,
+			imgs: imgsL,
+			src: [],
+			url: [],
+			x: x,
+			y: y,
+			width: 0,
+			height: 0,
+			z_index: z,
+			names: [],
+			rarity: [],
+			sizes: {
+				width: [],
+				height: [],
+			},
+			rarityLayer: "4",
 		};
-
 
 		let tempArr = Object.values(classArr1);
 		tempArr.push(temp);
@@ -544,9 +537,11 @@ function LoadNftPage() {
 		setClassArr1(tempArr);
 
 		let curImg = curentImages;
-		try{curImg.push(0);}catch{}
+		try {
+			curImg.push(0);
+		} catch {}
 		setCurentImages(curImg);
-		dispatch(createNewLayer(tempR))
+		dispatch(createNewLayer(tempR));
 		isNextActive(tempArr);
 	}
 
@@ -570,7 +565,7 @@ function LoadNftPage() {
 		let updatedProjectState = [...projectEditorState];
 
 		for (let i = 0; i < updatedProjectState.length; i++) {
-			if(updatedProjectState[i].name == item.name) {
+			if (updatedProjectState[i].name == item.name) {
 				updatedProjectState[i].active = true;
 			} else {
 				updatedProjectState[i].active = false;
@@ -624,14 +619,16 @@ function LoadNftPage() {
 
 			console.log(openRequest);
 
-			openRequest.onerror = event => {
+			openRequest.onerror = (event) => {
 				console.log(event);
 				// return;
 			};
 
 			openRequest.onsuccess = async (event) => {
 				console.log(event);
-				const store = event.target.result.transaction("imgs", "readwrite").objectStore("imgs");
+				const store = event.target.result
+					.transaction("imgs", "readwrite")
+					.objectStore("imgs");
 				console.log(store);
 				// const testres = store.add(file);
 
@@ -653,10 +650,9 @@ function LoadNftPage() {
 
 				console.log(resRequest);
 
-
-				try{
+				try {
 					lastId = id;
-				}catch {
+				} catch {
 					lastId = 0;
 				}
 				tempBlob = URL.createObjectURL(file);
@@ -669,7 +665,6 @@ function LoadNftPage() {
 					image.src = e.target.result;
 					image.onload = async function () {
 						let name = file.name.substring(0, file.name.indexOf("."));
-						
 
 						let newWidth = this.width;
 						let newHeight = this.height;
@@ -677,42 +672,55 @@ function LoadNftPage() {
 						let tempArr = [];
 
 						let updatedLayer = {
-							...projectEditorState[curentLayer]
-						}
-				
-						updatedLayer.imgs = [...projectEditorState[curentLayer].imgs,lastId];
-						updatedLayer.url = [...projectEditorState[curentLayer].url, tempBlob];
-						updatedLayer.names = [...projectEditorState[curentLayer].names, name];
-						updatedLayer.rarity = [...projectEditorState[curentLayer].rarity,"4"];
-						updatedLayer.sizes = {
-							width: [...projectEditorState[curentLayer].sizes.width,newWidth],
-							height: [...projectEditorState[curentLayer].sizes.height,newHeight],
+							...projectEditorState[curentLayer],
 						};
 
-				
-						dispatch(updateOneLayer({
-              index: curentLayer,
-              updatedLayer,
-            }));
+						updatedLayer.imgs = [
+							...projectEditorState[curentLayer].imgs,
+							lastId,
+						];
+						updatedLayer.url = [
+							...projectEditorState[curentLayer].url,
+							tempBlob,
+						];
+						updatedLayer.names = [
+							...projectEditorState[curentLayer].names,
+							name,
+						];
+						updatedLayer.rarity = [
+							...projectEditorState[curentLayer].rarity,
+							"4",
+						];
+						updatedLayer.sizes = {
+							width: [...projectEditorState[curentLayer].sizes.width, newWidth],
+							height: [
+								...projectEditorState[curentLayer].sizes.height,
+								newHeight,
+							],
+						};
 
+						dispatch(
+							updateOneLayer({
+								index: curentLayer,
+								updatedLayer,
+							}),
+						);
 
 						for (let i = 0; i < classArr1.length; i++) {
-
 							let temp = classArr1[i];
-							
-							if (classArr1[curentLayer].name == classArr1[i].name) {
 
-								temp.imgs = [...temp.imgs,lastId];
+							if (classArr1[curentLayer].name == classArr1[i].name) {
+								temp.imgs = [...temp.imgs, lastId];
 								temp.names = [...temp.names, name];
 								temp.url = [...temp.url, tempBlob];
 
 								temp.width = newWidth;
 								temp.height = newHeight;
-								temp.rarity = [...temp.rarity,"4"];
+								temp.rarity = [...temp.rarity, "4"];
 
 								temp.sizes = {
-									width: [...temp.sizes.width,newWidth],
-									height: [...temp.sizes.height,newHeight],
+									width: [...temp.sizes.width, newWidth],
+									height: [...temp.sizes.height, newHeight],
 								};
 
 								// temp.imgs = [...temp.imgs];
@@ -727,17 +735,12 @@ function LoadNftPage() {
 								// 	width: [...temp.sizes.width],
 								// 	height: [...temp.sizes.height],
 								// };
-
-								
 							}
 							tempArr.push(temp);
 						}
 
 						let maxW = Math.max.apply(null, tempArr[curentLayer].sizes.width);
-						let maxH = Math.max.apply(
-							null,
-							tempArr[curentLayer].sizes.height,
-						);
+						let maxH = Math.max.apply(null, tempArr[curentLayer].sizes.height);
 
 						if (width < maxW) {
 							setWidth(maxW);
@@ -753,11 +756,8 @@ function LoadNftPage() {
 						isNextActive(tempArr);
 					};
 				};
-				
 			};
-
 		}
-		
 	}
 
 	// Removing an image from a layer
@@ -775,41 +775,41 @@ function LoadNftPage() {
 			store.delete(idDel);
 		};
 
-		let updatedLayer = {
-			...projectEditorState[curentLayer]
-		}
+		// let updatedLayer = {
+		// 	...projectEditorState[curentLayer]
+		// }
 
-		updatedLayer.imgs = [
-			...projectEditorState[curentLayer].imgs.slice(0, index),
-			...projectEditorState[curentLayer].imgs.slice(index+1),
-			];
-		updatedLayer.url = [
-			...projectEditorState[curentLayer].url.slice(0, index),
-			...projectEditorState[curentLayer].url.slice(index+1),
-			];
-		updatedLayer.names = [
-			...projectEditorState[curentLayer].names.slice(0, index),
-			...projectEditorState[curentLayer].names.slice(index+1),
-			];
-		updatedLayer.rarity = [
-			...projectEditorState[curentLayer].rarity.slice(0, index),
-			...projectEditorState[curentLayer].rarity.slice(index+1),
-			];
-		updatedLayer.sizes = {
-			width: [
-				...projectEditorState[curentLayer].sizes.width.slice(0, index),
-				...projectEditorState[curentLayer].sizes.width.slice(index+1),
-				],
-			height: [
-				...projectEditorState[curentLayer].sizes.height.slice(0, index),
-				...projectEditorState[curentLayer].sizes.height.slice(index+1),
-				],
-		};
+		// updatedLayer.imgs = [
+		// 	...projectEditorState[curentLayer].imgs.slice(0, index),
+		// 	...projectEditorState[curentLayer].imgs.slice(index+1),
+		// 	];
+		// updatedLayer.url = [
+		// 	...projectEditorState[curentLayer].url.slice(0, index),
+		// 	...projectEditorState[curentLayer].url.slice(index+1),
+		// 	];
+		// updatedLayer.names = [
+		// 	...projectEditorState[curentLayer].names.slice(0, index),
+		// 	...projectEditorState[curentLayer].names.slice(index+1),
+		// 	];
+		// updatedLayer.rarity = [
+		// 	...projectEditorState[curentLayer].rarity.slice(0, index),
+		// 	...projectEditorState[curentLayer].rarity.slice(index+1),
+		// 	];
+		// updatedLayer.sizes = {
+		// 	width: [
+		// 		...projectEditorState[curentLayer].sizes.width.slice(0, index),
+		// 		...projectEditorState[curentLayer].sizes.width.slice(index+1),
+		// 		],
+		// 	height: [
+		// 		...projectEditorState[curentLayer].sizes.height.slice(0, index),
+		// 		...projectEditorState[curentLayer].sizes.height.slice(index+1),
+		// 		],
+		// };
 
-		dispatch(updateOneLayer({
-      index: curentLayer,
-      updatedLayer,
-    }))
+		// dispatch(updateOneLayer({
+		// index: curentLayer,
+		// updatedLayer,
+		// }));
 
 		for (let i = 0; i < classArr1.length; i++) {
 			let temp = classArr1[i];
@@ -822,9 +822,7 @@ function LoadNftPage() {
 			let tempArrImgSizeH = [];
 			if (classArr1[curentLayer].name == classArr1[i].name) {
 				for (let j = 0; j < classArr1[i].imgs.length; j++) {
-					
 					if (classArr1[i].imgs[j] != classArr1[i].imgs[index]) {
-
 						tempArrImg.push(classArr1[curentLayer].imgs[j]);
 						tempArrUrl.push(classArr1[curentLayer].url[j]);
 						tempArrNames.push(classArr1[curentLayer].names[j]);
@@ -892,14 +890,16 @@ function LoadNftPage() {
 		setClassArr1(tempArr);
 
 		let updatedLayer = {
-			...projectEditorState[curentLayer]
-		}
+			...projectEditorState[curentLayer],
+		};
 
 		updatedLayer.name = tempVal;
-    dispatch(updateOneLayer({
-      index: curentLayer,
-      updatedLayer,
-    }))
+		dispatch(
+			updateOneLayer({
+				index: curentLayer,
+				updatedLayer,
+			}),
+		);
 	}
 
 	// Loading intermediate data
@@ -913,13 +913,13 @@ function LoadNftPage() {
 
 		if (width <= 0 || width == undefined || width != parseInt(width, 10)) {
 			setErrorInput("width");
-			
+
 			return false;
 		}
 
 		if (height <= 0 || height == undefined || height != parseInt(height, 10)) {
 			setErrorInput("height");
-			
+
 			return false;
 		}
 
@@ -1002,13 +1002,12 @@ function LoadNftPage() {
 
 	return (
 		<>
-			
 			<div className={videoPlay ? "video-player" : "hide"}>
 				<button className="close" onClick={() => setVideoPlay(false)}>
-					<span/>
-					<span/>
+					<span />
+					<span />
 				</button>
-      
+
 				<div className="video">
 					<iframe
 						src="https://www.youtube.com/embed/YHatcktJM8I"
@@ -1019,26 +1018,25 @@ function LoadNftPage() {
 					/>
 				</div>
 			</div>
-			<div
-				className={"App App2"}
-			>
-        {/*<ErrorModal/>*/}
-      
-      
+			<div className={"App App2"}>
+				<ErrorModal />
+
 				<div className="constructors">
 					<div className="container-header">
-      
-						<HeaderEditor classArr={classArr1} projectData={{
-							width,
-							height,
-							curentLayer,
-							projectDescription,
-							projectName,
-							collectionName
-						}} activeStep={1} />
-      
+						<HeaderEditor
+							classArr={classArr1}
+							projectData={{
+								width,
+								height,
+								curentLayer,
+								projectDescription,
+								projectName,
+								collectionName,
+							}}
+							activeStep={1}
+						/>
+
 						<div className="modal-constructor modal-constructor-layers">
-      
 							<div className="title">Layers</div>
 							<div className="text">Add/Edit layers</div>
 							{classArr1.length > 0 &&
@@ -1058,7 +1056,7 @@ function LoadNftPage() {
 										</div>
 									);
 								})}
-      
+
 							<div className="layers-list_layer-input">
 								<div className="title">Add New Layer</div>
 								<input
@@ -1089,7 +1087,7 @@ function LoadNftPage() {
 									+
 								</button>
 							</div>
-      
+
 							<div className="title">Layer Settings</div>
 							<div className="text">Change layer settings</div>
 							<div className="setting">
@@ -1106,8 +1104,6 @@ function LoadNftPage() {
 							</div>
 						</div>
 						<div className="modal-constructor modal-constructor-upload">
-      
-      
 							<div className="video-start">
 								Need Help? &nbsp;{" "}
 								<span onClick={() => setVideoPlay(true)}>
@@ -1115,7 +1111,7 @@ function LoadNftPage() {
 									Click to watch the Walkthrough Video.
 								</span>
 							</div>
-      
+
 							<div
 								ref={nftArea}
 								className="drop-img"
@@ -1147,27 +1143,27 @@ function LoadNftPage() {
 														className="close"
 														onClick={() => removeImg(index)}
 													>
-														<span/>
-														<span/>
+														<span />
+														<span />
 													</div>
-													<img src={classArr1[curentLayer].url[index]}/>
+													<img src={classArr1[curentLayer].url[index]} />
 												</div>
 											);
 										})}
 								</div>
-      
+
 								<input
 									type="file"
 									id="input_file"
 									accept=".png,.jpg,.jpeg"
 									onChange={download}
-									onClick={(event)=> {
-										event.target.value = null
-								   }}
+									onClick={(event) => {
+										event.target.value = null;
+									}}
 									multiple
 								/>
-      
-								<label  htmlFor="input_file" className="input__file-button">
+
+								<label htmlFor="input_file" className="input__file-button">
 									<span className="input__file-icon-wrapper"></span>
 									<span className="input__file-text">Browse Images</span>
 									<span className="input__file-text2">
@@ -1175,9 +1171,8 @@ function LoadNftPage() {
 										You can select multiple images at once
 									</span>
 								</label>
-      
 							</div>
-      
+
 							<div
 								className={
 									activeNext ? "button-1-square" : "button-1-square unactive"
@@ -1199,12 +1194,13 @@ function LoadNftPage() {
 								)}
 							</div>
 						</div>
-      
+
 						<div className="modal-constructor modal-constructor-settings">
-      
 							<div className="project-settings">
-								<DropDown title={"Project details"} subtitle={"Add project name & description."}>
-      
+								<DropDown
+									title={"Project details"}
+									subtitle={"Add project name & description."}
+								>
 									<div className={"setting"}>
 										<div className="title-settings">Project Name</div>
 										<input
@@ -1234,18 +1230,22 @@ function LoadNftPage() {
 													: "input-settings"
 											}
 											onBlur={() =>
-												collectionName == "" ? setCollectionName("No Name") : null
+												collectionName == ""
+													? setCollectionName("No Name")
+													: null
 											}
 											onFocus={() =>
 												collectionName == "No Name"
-												? setCollectionName("")
-												: null
+													? setCollectionName("")
+													: null
 											}
 											onChange={(event) =>
 												changeError("colName", event.target.value)
 											}
 										/>
-										<span className={errorInput == "colName" ? "errMsg" : "hide"}>
+										<span
+											className={errorInput == "colName" ? "errMsg" : "hide"}
+										>
 											Set Collection Name
 										</span>
 									</div>
@@ -1262,37 +1262,44 @@ function LoadNftPage() {
 											}
 											onBlur={() =>
 												projectDescription == ""
-												? setProjectDescription("No Description")
-												: null
+													? setProjectDescription("No Description")
+													: null
 											}
 											onFocus={() =>
 												projectDescription == "No Description"
-												? setProjectDescription("")
-												: null
+													? setProjectDescription("")
+													: null
 											}
 											onChange={(event) =>
 												// changeError("colDesc", event.target.value);
 												setProjectDescription(event.target.value)
 											}
 										/>
-										<span className={errorInput == "colDesc" ? "errMsg" : "hide"}>
+										<span
+											className={errorInput == "colDesc" ? "errMsg" : "hide"}
+										>
 											Set Collection Description
 										</span>
 									</div>
-      
 								</DropDown>
-      
-								<DropDown title={"Dimensions"} subtitle={"Canvas dimensions"} hint={"The image resolution are picked from the first image you drag and drop. We expect all images to be the same resolution."}>
-									<DoubleField  firstField={["Width (px)", width]} secondField={["Height (px)", height]}/>
+
+								<DropDown
+									title={"Dimensions"}
+									subtitle={"Canvas dimensions"}
+									hint={
+										"The image resolution are picked from the first image you drag and drop. We expect all images to be the same resolution."
+									}
+								>
+									<DoubleField
+										firstField={["Width (px)", width]}
+										secondField={["Height (px)", height]}
+									/>
 								</DropDown>
-      
 							</div>
 						</div>
-						<div className="break"/>
-      
+						<div className="break" />
 					</div>
 				</div>
-      
 			</div>
 		</>
 	);

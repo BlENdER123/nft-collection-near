@@ -3,6 +3,7 @@ import {useNavigate} from "react-router-dom";
 
 // import Header from "../../Pages/Header/Header";
 // import Footer from "../../Pages/Footer/Footer";
+import HeaderEditor from "../HeaderEditor/HeaderEditor";
 
 import {useDispatch, useSelector} from "react-redux";
 
@@ -10,6 +11,8 @@ import {useDispatch, useSelector} from "react-redux";
 import {FabricJSCanvas, useFabricJSEditor} from "fabricjs-react";
 import {fabric} from "fabric";
 import {Navigate} from "react-router";
+
+import ListDraggable from "../ListDraggable/ListDraggable";
 //end fabric
 
 Object.defineProperty(window, "indexedDB", {
@@ -170,6 +173,27 @@ function NftCustomization() {
 	// 	});
 	// };
 
+	function callbackChangeActive(index) {
+		setActive(classArr[index]);
+	}
+	function callbackChangePosition(clas) {
+		setClassArr(clas);
+		updateZ(editor.canvas, clas);
+		console.log("DRAG AND DROP LAYER EVENT");
+
+		dispatch({type: "updateAllData", payload: clas});
+	}
+	function callbackRemoveLayer(index) {
+		setActive(classArr[0]);
+		let tempArr = classArr.slice();
+		tempArr.splice(index, 1);
+		console.log("DELETE LAYER", tempArr);
+		localStorage.setItem("class", JSON.stringify(tempArr));
+		setClassArr(tempArr);
+
+		dispatch({type: "updateAllData", payload: tempArr});
+	}
+
 	//end fabric
 
 	const [curentImages, setCurentImages] = useState(curImg);
@@ -184,14 +208,14 @@ function NftCustomization() {
 	const [newSizesArr, setNewSizesArr] = useState();
 
 	function newProject() {
-    navigate("/load-nft");
+		navigate("/load-nft");
 		localStorage.clear();
 		let deleteRequest = window.indexedDB.deleteDatabase("imgsStore");
 		location.reload();
 	}
 
 	function loadProject(e) {
-    navigate("/load-nft");
+		navigate("/load-nft");
 		const fileReader = new FileReader();
 		fileReader.readAsText(e.target.files[0], "UTF-8");
 		fileReader.onload = async (e) => {
@@ -292,7 +316,6 @@ function NftCustomization() {
 	}
 
 	function saveProject(e) {
-		
 		let idBlobObj = {};
 
 		let tempArr = [];
@@ -300,9 +323,7 @@ function NftCustomization() {
 		const openRequest = window.indexedDB.open("imgsStore", 1);
 
 		openRequest.onsuccess = async (event) => {
-			const store = event.target.result
-				.transaction("imgs")
-				.objectStore("imgs");
+			const store = event.target.result.transaction("imgs").objectStore("imgs");
 			store.getAll().onsuccess = (event) => {
 				console.log(event.target.result);
 				const store_data = event.target.result;
@@ -333,7 +354,8 @@ function NftCustomization() {
 			const data = {
 				projectName: JSON.parse(localStorage.getItem("details")).projectName,
 				collectionName: JSON.parse(localStorage.getItem("details")).projName,
-				projectDescription: JSON.parse(localStorage.getItem("details")).projectDescription,
+				projectDescription: JSON.parse(localStorage.getItem("details"))
+					.projectDescription,
 				width: localStorage.getItem("width"),
 				height: localStorage.getItem("height"),
 				classArr: classArr,
@@ -344,7 +366,8 @@ function NftCustomization() {
 			const a = document.createElement("a");
 			const file = new Blob([JSON.stringify(data)], {type: "text/json"});
 			a.href = URL.createObjectURL(file);
-			a.download = JSON.parse(localStorage.getItem("details")).projectName + ".json";
+			a.download =
+				JSON.parse(localStorage.getItem("details")).projectName + ".json";
 			a.click();
 
 			URL.revokeObjectURL(a.href);
@@ -803,7 +826,7 @@ function NftCustomization() {
 		localStorage.setItem("curentLayer", curentLayer);
 
 		// setRedirect(true);
-    navigate("/nft-generate");
+		navigate("/nft-generate");
 	}
 
 	function closeError() {
@@ -924,7 +947,7 @@ function NftCustomization() {
 		});
 
 		updateZ(editor.canvas, classArr);
-		
+
 		editor.canvas.renderAll();
 
 		//end fabric
@@ -1000,54 +1023,21 @@ function NftCustomization() {
 
 				<div className="constructors">
 					<div className="container-header">
-						<div
-							className={errorModal.hidden === true ? "error-modal" : "hide"}
-						>
-							<button className="close" onClick={closeError}>
-								<span></span>
-								<span></span>
-							</button>
-							<div className="message">{errorModal.message}</div>
-						</div>
+						<HeaderEditor
+							classArr={classArr}
+							projectDataStep2={{
+								newSizesArr,
+								nftAreaSize,
+								nftSizeIndex,
+								curentLayer,
+							}}
+							activeStep={2}
+						/>
 
 						<div className="modal-constructor modal-constructor-layers ">
-							<div className="title-1">NFT Editor</div>
-							<div class="steps mobile-steps">
-								<div class="step step1">
-									<div class="img"></div>
-									<div class="text">
-										<div class="name">Step 1</div>
-										<div class="desc">Upload images</div>
-									</div>
-								</div>
-								<div class="line"></div>
-								<div
-									class="step step2  active"
-									onClick={() => {
-										let res = logData();
-										if (res) {
-                      navigate("/nft-customization");
-										}
-									}}
-								>
-									<div class="img"></div>
-									<div class="text">
-										<div class="name">Step 2</div>
-										<div class="desc">Customize layers</div>
-									</div>
-								</div>
-								<div class="line"></div>
-								<div class="step step3" onClick={logData}>
-									<div class="img"></div>
-									<div class="text">
-										<div class="name">Step 3</div>
-										<div class="desc">Create Collection</div>
-									</div>
-								</div>
-							</div>
 							<div className="title">Layers</div>
 							<div className="text">Select a layer to Edit</div>
-							{classArr.map((item, index) => {
+							{/* {classArr.map((item, index) => {
 								return (
 									<div
 										key={"uniqueId" + index}
@@ -1062,7 +1052,14 @@ function NftCustomization() {
 										<span>{item.name}</span>
 									</div>
 								);
-							})}
+							})} */}
+
+							<ListDraggable
+								list={classArr}
+								callbackChangeActive={callbackChangeActive}
+								callbackChangePosition={callbackChangePosition}
+								callbackRemoveLayer={callbackRemoveLayer}
+							/>
 
 							<div style={{margin: "40px 0px 0px 0px"}} className="title">
 								Layer Settings
@@ -1134,37 +1131,6 @@ function NftCustomization() {
 						</div>
 
 						<div className="modal-constructor modal-constructor-position">
-							<div class="steps steps-desk">
-								<div
-									class="step step1"
-									onClick={() => {
-                    navigate("/load-nft");
-									}}
-								>
-									<div class="img"></div>
-									<div class="text">
-										<div class="name">Step 1</div>
-										<div class="desc">Upload images</div>
-									</div>
-								</div>
-								<div class="line"></div>
-								<div class="step step2 active">
-									<div class="img"></div>
-									<div class="text">
-										<div class="name">Step 2</div>
-										<div class="desc">Customize layers</div>
-									</div>
-								</div>
-								<div class="line"></div>
-								<div class="step step3" onClick={logData}>
-									<div class="img"></div>
-									<div class="text">
-										<div class="name">Step 3</div>
-										<div class="desc">Create Collection</div>
-									</div>
-								</div>
-							</div>
-
 							<div class="video-start">
 								<span className="info"></span>Move layers to appropriate
 								position
@@ -1199,22 +1165,6 @@ function NftCustomization() {
 						</div>
 
 						<div className="modal-constructor modal-constructor-settings">
-							{/* <div className="import opacity">Import Project</div> */}
-							<div class="import-buttons">
-								<div onClick={newProject} class="new"></div>
-								{/* <div onClick={loadProject} class="import"></div> */}
-								<div class="form-item">
-									<input
-										className="form-item__input"
-										type="file"
-										id="files"
-										accept=".json"
-										onChange={loadProject}
-									/>
-									<label class="form-item__label" for="files"></label>
-								</div>
-								<div onClick={saveProject} class="save"></div>
-							</div>
 							{classArr.map((item, index) => {
 								return (
 									<div
