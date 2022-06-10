@@ -9,14 +9,7 @@ import * as nearAPI from "near-api-js";
 import {useLocation} from "react-router";
 const {connect} = nearAPI;
 
-const linkIsActive = (loc) => {
-	if (location.pathname === loc) {
-		return "active";
-	} else {
-		return "";
-	}
-};
-import {connectWalletAction} from "../../store/actions/app";
+import {connectWalletAction, setLocation} from "../../store/actions/app";
 
 function Header() {
 	// let history = useHistory();
@@ -32,6 +25,15 @@ function Header() {
 	);
 
 	// const connectWallet = useSelector((state) => state.connectWallet);
+	const linkIsActive = (loc) => {
+		console.log("location.pathname === loc", location.pathname, loc);
+		if (location.pathname === loc) {
+			dispatch(setLocation(loc));
+			return "active";
+		} else {
+			return "";
+		}
+	};
 
 	// const [nearInit, setNearInit] = useState(false);
 	// const [walletAddress, setWalletAddress] = useState();

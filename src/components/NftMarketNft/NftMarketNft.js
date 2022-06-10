@@ -12,7 +12,9 @@ const {
 import * as nearAPI from "near-api-js";
 const {parseNearAmount} = require("near-api-js/lib/utils/format");
 
-function NftMarketNft() {
+function NftMarketNft(props) {
+	console.log(props);
+
 	let navigate = useNavigate();
 	const dispatch = useDispatch();
 	const connectWallet = useSelector((state) => state.connectWallet);

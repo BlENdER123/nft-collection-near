@@ -115,9 +115,9 @@ code {
 }
 
 .App {
-	background: url(./images/img/main-bg.png), #0d0d0d;
+	background-color: $black;
+	background-image: url("./images/img/main-bg.png");
 	background-size: cover;
-	background-repeat: no-repeat;
 	background-position: center center;
 
 	&2 {

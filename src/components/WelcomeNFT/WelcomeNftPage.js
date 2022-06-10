@@ -8,7 +8,7 @@ function WelcomeNftPage() {
 
 	return (
 		<>
-			<div className={"App1"}>
+			<div className={"App2"}>
 				{/*<Header activeCat={0}></Header>*/}
 
 				<div className="main-screen">

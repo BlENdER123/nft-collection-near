@@ -1,7 +1,6 @@
 import React, {useState} from "react";
 import {HashRouter as Router, useNavigate} from "react-router-dom";
 
-
 import {useDispatch, useSelector} from "react-redux";
 
 function GettingStarted() {
@@ -15,19 +14,19 @@ function GettingStarted() {
 
 	function next() {
 		if (curentMode === 0) {
-      navigate("/load-nft");
+			navigate("/load-nft");
 		}
 
 		if (curentMode === 1) {
-      navigate("/collection-market");
+			navigate("/collection-market");
 		}
 
 		if (curentMode === 2) {
-      navigate("/load-nft-single");
+			navigate("/load-nft-single");
 		}
 
 		if (curentMode === 3) {
-      navigate("/nft-market");
+			navigate("/nft-market");
 		}
 	}
 
@@ -39,13 +38,13 @@ function GettingStarted() {
 	return (
 		<div>
 			<div className={connectWallet ? "error-bg" : "hide"}>
-				<span onClick={close}/>
+				<span onClick={close} />
 			</div>
 
 			<div className={videoPlay ? "video-player" : "hide"}>
 				<button className="close" onClick={() => setVideoPlay(false)}>
-					<span/>
-					<span/>
+					<span />
+					<span />
 				</button>
 
 				<div className="video">
@@ -59,7 +58,7 @@ function GettingStarted() {
 				</div>
 			</div>
 
-			<div className={connectWallet ? "App-error" : "App App2"}>
+			<div>
 				{/*<Header activeCat={0}/>*/}
 
 				<div className="start-screen">
@@ -73,18 +72,20 @@ function GettingStarted() {
 								<button
 									className="button-4-square"
 									onClick={() => {
-                    navigate("/collection-market");
+										navigate("/collection-market");
 									}}
 								>
-									<span/>Collection Market
+									<span />
+									Collection Market
 								</button>
 								<button
 									className="button-4-square"
 									onClick={() => {
-                    navigate("/nft-market");
+										navigate("/nft-market");
 									}}
 								>
-									<span/>NFT Market
+									<span />
+									NFT Market
 								</button>
 							</div>
 						</div>

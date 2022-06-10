@@ -14,7 +14,7 @@ module.exports = {
 		compress: true,
 		port: process.env.WEBPACK_DEV_SERVER_PORT || 3006,
 		disableHostCheck: true,
-		historyApiFallback: true,
+		// historyApiFallback: true,
 		hot: true,
 	},
 	entry: ["babel-polyfill", path.join(__dirname, "./src/")],
