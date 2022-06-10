@@ -2,7 +2,8 @@ import React, {useState, useEffect, useRef} from "react";
 // import {useNavigate} from "react-router-dom";
 // import Header from "../../Pages/Header/Header";
 // import Footer from "../../Pages/Footer/Footer";
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch, useSelector, connect} from "react-redux";
+
 import {useNavigate} from "react-router";
 
 import HeaderEditor from "../HeaderEditor/HeaderEditor";
@@ -120,7 +121,7 @@ function getData() {
 	let store = db.transaction("myObjStore").objectStore("myObjStore");
 }
 
-function LoadNftPage() {
+function LoadNftPage(props) {
 	var db;
 
 	if (!window.indexedDB) {
@@ -195,7 +196,7 @@ function LoadNftPage() {
 	const checkLimit = () => {
 		let lim = 1;
 		// const imgs = classArr1.map((e) => (lim = e.url.length * lim));
-		const imgs = projectEditorState.map((e) => (lim = e.imgs.length * lim));
+		//const imgs = projectEditorState.map((e) => (lim = e.imgs.length * lim));
 		setLimit(lim);
 		setTimeout(() => {
 			setLimit(1);
@@ -284,9 +285,9 @@ function LoadNftPage() {
 			const localClass = JSON.parse(localStorage.getItem("class"));
 			request(openRequest, localClass).then((result) => {
 				// setClassArr1(result);
-				dispatch(updateAllData(result));
+				//dispatch(updateAllData(result));
 
-				console.log(projectEditorState);
+				//console.log(projectEditorState);
 
 				isNextActive(result);
 			});
@@ -336,6 +337,7 @@ function LoadNftPage() {
 			let href = document.location.origin + document.location.hash;
 			document.location.href = href;
 		}
+		console.log("PROPS.CLAS", props.clas);
 
 		// loading project from localStorage
 		if (
@@ -947,7 +949,7 @@ function LoadNftPage() {
 									);
 							})} */}
 
-							{projectEditorState.map((item, index) => {
+							{props.clas.map((item, index) => {
 								return (
 									<div
 										key={"uniqueId" + index}
@@ -1009,17 +1011,18 @@ function LoadNftPage() {
 									/>
 								)} */}
 
-								{projectEditorState.map((item) => {
-									console.log(projectEditorState);
-									console.log(classArr1);
-								})}
+								{props.clas.length > 0 &&
+									props.clas.map((item) => {
+										//console.log(projectEditorState);
+										//console.log(classArr1);
+									})}
 
-								{projectEditorState.length >= curentLayer && (
+								{props.clas.length > 0 && props.clas.map.length >= curentLayer && (
 									<input
 										type="text"
 										className="input-settings"
-										value={projectEditorState[curentLayer].name}
-										placeholder={projectEditorState[curentLayer].name}
+										//value={projectEditorState[curentLayer].name}
+										//placeholder={projectEditorState[curentLayer].name}
 										onChange={setNewLayerName}
 									/>
 								)}
@@ -1073,9 +1076,9 @@ function LoadNftPage() {
 											);
 										})
 									} */}
-
-									{projectEditorState.length > 0 &&
-										projectEditorState[curentLayer].imgs.map((item, index) => {
+									{/* 
+									{props.clas.length > 0 &&
+										props.clas[curentLayer].imgs.map((item, index) => {
 											console.log(projectEditorState[curentLayer], curentLayer);
 											return (
 												<div
@@ -1097,7 +1100,7 @@ function LoadNftPage() {
 													<img src={item.url} />
 												</div>
 											);
-										})}
+										})} */}
 								</div>
 
 								<input
@@ -1253,16 +1256,18 @@ function LoadNftPage() {
 	);
 }
 function mapStateToProps(state) {
+	console.log("mapStateToProps", state.editorReducer);
 	return {
-		walletAddress: state.reducerWallet.address,
+		//walletAddress: state.reducerWallet.address,
+		clas: state.editorReducer,
 	};
 }
 
 function mapDispatchToProps(dispatch) {
 	return {
-		asyncConnectWallet: () => dispatch(asyncConnectWallet()),
-		asynDisconnectWallet: () => dispatch(asynDisconnectWallet()),
-		asyncGetAddressWallet: () => dispatch(asyncGetAddressWallet()),
+		//asyncConnectWallet: () => dispatch(asyncConnectWallet()),
+		//asynDisconnectWallet: () => dispatch(asynDisconnectWallet()),
+		//asyncGetAddressWallet: () => dispatch(asyncGetAddressWallet()),
 	};
 }
 

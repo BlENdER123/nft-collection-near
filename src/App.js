@@ -1,12 +1,13 @@
 import React, {useEffect, useState, useMemo} from "react";
 import {Routes, Route, BrowserRouter as Router} from "react-router-dom";
+
 import WelcomeNftPage from "./components/WelcomeNFT/WelcomeNftPage";
 // import ConnectWalletPage from "./components/ConnectWallet/ConnectWallet";
 import GettingStarted from "./components/GettingStarted/GetttingStartedPage";
 import NftCustomization from "./components/NFTCustomization/NftCustomization";
 import NftGenerate from "./components/NFTGenerate/NftGenerate";
 import NftCollection from "./components/NFTCollection/NftCollection";
-import LoadNftPageSingle from "./components/LoadNFTPageSingle/LoadNftPageSingle";
+// import LoadNftPageSingle from "./components/LoadNFTPageSingle/LoadNftPageSingle";
 import NftCustomizationSingle from "./components/NftCustomizationSingle/NftCustomizationSingle";
 import NftGenerateSingle from "./components/NftGenerateSingle/NftGenerateSingle";
 import NftSingle from "./components/NftSingle/NftSingle";
@@ -50,13 +51,13 @@ function App() {
 
 	const walletInReducer = useSelector((state) => state.appReducer.account);
 
-	useMemo(async () => {
+	const wallet = useMemo(async () => {
 		if ("accountId" in walletInReducer)
 			initWebSocket(dispatch, walletInReducer.accountId);
 	}, [walletInReducer]);
 
 	useEffect(async () => {
-		// dispatch(requestNFtsUrlsFetchAction());
+		dispatch(requestNFtsUrlsFetchAction());
 
 		if (typeof walletAccount != undefined) {
 			console.log("getAccountDataAction??");
@@ -101,7 +102,10 @@ function App() {
 	//
 	// }
 
+	console.log("App");
 	useEffect(async () => {
+		console.log("App useeff");
+
 		window.nearConfig = {
 			networkId: "default",
 			nodeUrl: "https://rpc.testnet.near.org",
@@ -124,96 +128,86 @@ function App() {
 			<div className={"hide"}>
 				<span onClick={close} />
 			</div>
-			<div
-				className={
-					location.href.split("http://localhost:3006/")[1] == ""
-						? "App"
-						: "App App2"
-				}
-			>
-				<Router>
-					<Header />
+			<div className={location == "/" ? "App" : "App2"}>
+				<Header />
 
-					<Routes>
-						{/*<Switch>*/}
+				<Routes>
+					{/*<Switch>*/}
+					<Route path="profile">
+						<Route path=":address" element={<ProfilePage />} />
+					</Route>
 
-						<Route path="/profile/:address" element={<ProfilePage />} />
-						{/*<Route exact path="/connect-wallet" element={ConnectWalletPage}/> */}
-						<Route exact path="/welcome-nft" element={<WelcomeNftPage />} />
-						<Route exact path="/get-start" element={<GettingStarted />} />
-						<Route exact path="/load-nft" element={<LoadNftPage />} />
-						<Route
-							exact
-							path="/nft-customization"
-							element={<NftCustomization />}
-						/>
-						<Route exact path="/nft-generate" element={<NftGenerate />} />
-						<Route exact path="/nft-collection" element={<NftCollection />} />
-						<Route
-							exact
-							path="/load-nft-single"
-							element={<LoadNftPageSingle />}
-						/>
-						<Route
-							exact
-							path="/nft-customization-single"
-							element={<NftCustomizationSingle />}
-						/>
-						<Route
-							exact
-							path="/nft-generate-single"
-							element={<NftGenerateSingle />}
-						/>
-						<Route exact path="/nft-single" element={<NftSingle />} />
-						<Route
-							exact
-							path="/collection-market"
-							element={<CollectionMarket />}
-						/>
-						<Route
-							exact
-							path="/nft-market"
-							element={
-								<NftMarket
-									collections={collections}
-									loader={loader}
-									sales={sales}
-								/>
-							}
-						/>
+					{/*<Route exact path="/connect-wallet" element={ConnectWalletPage}/> */}
+					<Route exact path="/welcome-nft" element={<WelcomeNftPage />} />
+					<Route exact path="/get-start" element={<GettingStarted />} />
+					<Route exact path="/load-nft" element={<LoadNftPage />} />
+					<Route
+						exact
+						path="/nft-customization"
+						element={<NftCustomization />}
+					/>
+					<Route exact path="/nft-generate" element={<NftGenerate />} />
+					<Route exact path="/nft-collection" element={<NftCollection />} />
+					{/* <Route
+              exact path="/load-nft-single"
+              element={<LoadNftPageSingle/>}
+            /> */}
+					<Route
+						exact
+						path="/nft-customization-single"
+						element={<NftCustomizationSingle />}
+					/>
+					<Route
+						exact
+						path="/nft-generate-single"
+						element={<NftGenerateSingle />}
+					/>
+					<Route exact path="/nft-single" element={<NftSingle />} />
+					<Route
+						exact
+						path="/collection-market"
+						element={<CollectionMarket />}
+					/>
+					<Route
+						exact
+						path="/nft-market"
+						element={
+							<NftMarket
+								collections={collections}
+								loader={loader}
+								sales={sales}
+							/>
+						}
+					/>
 
-						<Route
-							exact
-							path="/nft-market-pack/:address"
-							element={<NftMarketPack />}
-						/>
-						<Route
-							exact
-							path="/nft-market-auction"
-							element={<NftMarketAuction />}
-						/>
-						<Route
-							exact
-							path="/nft-market-nft/:address"
-							element={<NftMarketNft />}
-						/>
-						<Route exact path="/pack/:address" element={<PackPage />} />
-						<Route
-							exact
-							path="/nft-details/:address"
-							element={<NftDetails />}
-						/>
-						<Route exact path="/how" element={<HowPage />} />
-						<Route exact path="/" element={<WelcomeNftPage />} />
-						{/* <Route exact path="/open-pack" element={OpenPack}></Route> */}
-						{/* <Route exact path="/login" element={LoginPage}></Route> */}
-						{/* <Route exact path="/app" element={AppPage}></Route> */}
+					<Route
+						exact
+						path="/nft-market-pack/:address"
+						element={<NftMarketPack />}
+					/>
+					<Route
+						exact
+						path="/nft-market-auction"
+						element={<NftMarketAuction />}
+					/>
+					<Route
+						exact
+						path="/nft-market-nft/:address"
+						element={<NftMarketNft />}
+					/>
+					<Route exact path="/pack/:address" element={<PackPage />} />
+					<Route exact path="/nft-details/:address" element={<NftDetails />} />
+					<Route exact path="/how" element={<HowPage />} />
+					<Route exact path="/" element={<WelcomeNftPage />} />
+					{/* <Route exact path="/open-pack" element={OpenPack}></Route> */}
+					{/* <Route exact path="/login" element={LoginPage}></Route> */}
+					{/* <Route exact path="/app" element={AppPage}></Route> */}
 
-						{/*</Switch>*/}
-					</Routes>
+					{/*</Switch>*/}
+				</Routes>
 
-					<Footer />
-				</Router>
+				<Footer />
+				{/*</Router>*/}
 			</div>
 		</>
 	);
