@@ -125,7 +125,7 @@ function Header() {
 					zIndex: "10",
 				}}
 			>
-				V28.04/23:00
+				V10.06/22:00
 			</span>
 			<div className="header header2">
 				<div className="container-header">
