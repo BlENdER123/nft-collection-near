@@ -916,7 +916,7 @@ function LoadNftPage(props) {
 					<div className="container-header">
 						<HeaderEditor
 							// classArr={classArr1}
-							classArr={projectEditorState}
+							classArr={props.clas}
 							projectData={{
 								width,
 								height,
