@@ -50,7 +50,7 @@ function App() {
 
 	const walletInReducer = useSelector((state) => state.appReducer.account);
 
-	const wallet = useMemo(async () => {
+	useMemo(async () => {
 		if ("accountId" in walletInReducer)
 			initWebSocket(dispatch, walletInReducer.accountId);
 	}, [walletInReducer]);

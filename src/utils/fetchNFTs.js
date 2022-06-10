@@ -27,7 +27,7 @@ export default async function fetchNFTs() {
 		body: JSON.stringify({
 			query: `
     					{
-    						getRecipes(receipt_receiver_account_id: "dev-1648581158866-16348149344133"){
+    						getRecipes(receipt_receiver_account_id: "${marketNft}"){
     						  receipt_predecessor_account_id,
     						  receipt_id,
     						  args

@@ -672,6 +672,27 @@ function ProfilePage() {
 								) : (
 									nftCol.map((i) => {
 										return (
+											// <div
+											// 	className="nft"
+											// 	onClick={() => {
+											// 		navigate(
+											// 			"/nft-market-nft/" +
+											// 				i.addrCol +
+											// 				"!token!" +
+											// 				i.token_id,
+											// 		);
+											// 	}}
+											// >
+											// 	<div className="nft-image">
+											// 		<img
+											// 			src={i.image} // "https://gateway.pinata.cloud/ipfs/"
+											// 		/>
+											// 	</div>
+											// 	<div className="nft-content">
+											// 		<div className="name">{i.name}</div>
+											// 		<div className="name-nft">{i.name}</div>
+											// 	</div>
+											// </div>
 											<div
 												className="nft"
 												onClick={() => {

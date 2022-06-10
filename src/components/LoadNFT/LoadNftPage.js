@@ -143,9 +143,6 @@ function LoadNftPage() {
 	};
 
 	let nftArea = useRef();
-	// setClassArr1([
-	// 	new MyClass("background", true, [], [], [], 0, 0, 0, 0, 0),
-	// ]);
 
 	//const {status} = useContext(Context);
 	let navigate = useNavigate();
@@ -197,7 +194,8 @@ function LoadNftPage() {
 
 	const checkLimit = () => {
 		let lim = 1;
-		const imgs = classArr1.map((e) => (lim = e.url.length * lim));
+		// const imgs = classArr1.map((e) => (lim = e.url.length * lim));
+		const imgs = projectEditorState.map((e) => (lim = e.imgs.length * lim));
 		setLimit(lim);
 		setTimeout(() => {
 			setLimit(1);
@@ -220,57 +218,6 @@ function LoadNftPage() {
 	const [projectDescription, setProjectDescription] = useState();
 
 	const [classArr1, setClassArr1] = useState([]);
-
-	function newProject() {
-		navigate("/load-nft");
-		localStorage.clear();
-		let deleteRequest = window.indexedDB.deleteDatabase("imgsStore");
-		location.reload();
-	}
-
-	async function loadProject(e) {
-		const fileReader = new FileReader();
-		fileReader.readAsText(e.target.files[0], "UTF-8");
-		fileReader.onload = async (e) => {
-			localStorage;
-			const data = JSON.parse(e.target.result);
-
-			setProjectName(data.projectName || "");
-			setCollectionName(data.collectionName || "");
-			setProjectDescription(data.projectDescription || "");
-			setWidth(data.width);
-			setHeight(data.height);
-			setClassArr1(data.classArr);
-			// localStorage.setItem(
-			// 	"project",
-			// 	JSON.stringify({
-			// 		name: projectName,
-			// 		collectionName: collectionName,
-			// 		description: projectDescription,
-			// 	}),
-			// );
-			localStorage.setItem("class", JSON.stringify(data.classArr));
-			localStorage.setItem("width", data.width);
-			localStorage.setItem("height", data.height);
-
-			//setFiles(e.target.result);
-
-			const imgs = Object.values(data.indexedData);
-			await imgs.reduce((previousPromise, nextID) => {
-				return previousPromise.then(() => {
-					return addFileInDB(nextID, 1);
-				});
-			}, Promise.resolve());
-
-			const openRequest = window.indexedDB.open("imgsStore", 1);
-			const localClass = JSON.parse(localStorage.getItem("class"));
-			await request(openRequest, localClass).then((result) => {
-				localStorage.setItem("class", JSON.stringify(result));
-				//setClassArr1(result);
-			});
-			await history.go("/load-nft");
-		};
-	}
 
 	async function addFileInDB(dataURL, index) {
 		var arr = dataURL.split(",");
@@ -298,79 +245,6 @@ function LoadNftPage() {
 		}
 	}
 
-	function saveProject(e) {
-		if (projectName === undefined) {
-			setErrorModal({
-				hidden: true,
-				message: "Project name is empty!",
-			});
-			return;
-		} else {
-			let idBlobObj = {};
-
-			let tempArr = [];
-
-			const openRequest = window.indexedDB.open("imgsStore", 1);
-
-			openRequest.onsuccess = async (event) => {
-				const store = event.target.result
-					.transaction("imgs")
-					.objectStore("imgs");
-				store.getAll().onsuccess = (event) => {
-					console.log(event.target.result);
-					const store_data = event.target.result;
-
-					for (let i = 0; i < store_data.length; i++) {
-						let tempFile = store_data[i];
-
-						console.log(tempFile);
-						// tempFile.arrayBuffer().then((data)=>{
-						//   console.log(data);
-						// })
-
-						tempArr.push(tempFile);
-
-						let reader = new FileReader();
-						reader.readAsDataURL(tempFile);
-						reader.onload = (e) => {
-							console.log(e.currentTarget.result);
-							let tempId = tempFile.id;
-							idBlobObj[tempId] = e.currentTarget.result;
-						};
-					}
-				};
-			};
-
-			setTimeout(() => {
-				console.log(idBlobObj);
-				const data = {
-					projectName: projectName,
-					collectionName: collectionName,
-					projectDescription: projectDescription,
-					width: localStorage.getItem("width"),
-					height: localStorage.getItem("height"),
-					classArr: classArr1,
-					indexedData: idBlobObj,
-				};
-
-				e.preventDefault();
-				const a = document.createElement("a");
-				const file = new Blob([JSON.stringify(data)], {type: "text/json"});
-				a.href = URL.createObjectURL(file);
-				a.download = projectName + ".json";
-				a.click();
-
-				URL.revokeObjectURL(a.href);
-
-				// downloadFile({
-				// 	data: JSON.stringify(data),
-				// 	fileName: projectName + ".json",
-				// 	fileType: "text/json",
-				// });
-			}, 1000);
-		}
-	}
-
 	function request(openRequest, localClass) {
 		return new Promise((resolve, reject) => {
 			openRequest.onsuccess = async (event) => {
@@ -383,10 +257,9 @@ function LoadNftPage() {
 					for (let j = 0; j < localClass[i].imgs.length; j++) {
 						functionsToWait.push(
 							new Promise((resolve, reject) => {
-								console.log(i, j);
-								store.get(localClass[i].imgs[j]).onsuccess = (event) => {
-									console.log(URL.createObjectURL(event.target.result.value));
-									localClass[i].url[j] = URL.createObjectURL(
+								store.get(localClass[i].imgs[j].src).onsuccess = (event) => {
+									console.log(i, j, localClass[i].imgs[j].src);
+									localClass[i].imgs[j].url = URL.createObjectURL(
 										event.target.result.value,
 									);
 									resolve(true);
@@ -410,7 +283,11 @@ function LoadNftPage() {
 			const openRequest = window.indexedDB.open("imgsStore", 10);
 			const localClass = JSON.parse(localStorage.getItem("class"));
 			request(openRequest, localClass).then((result) => {
-				setClassArr1(result);
+				// setClassArr1(result);
+				dispatch(updateAllData(result));
+
+				console.log(projectEditorState);
+
 				isNextActive(result);
 			});
 
@@ -436,6 +313,7 @@ function LoadNftPage() {
 			setClassArr1([
 				new MyClass("background", true, [], [], [], 0, 0, 0, 0, 0),
 			]);
+
 			localWidth = 0;
 			localHeight = 0;
 			projDet = {
@@ -502,8 +380,15 @@ function LoadNftPage() {
 
 	// new layer instance
 	function newClass(name, active, imgsL, x, y, z) {
-		for (let i = 0; i < classArr1.length; i++) {
-			if (classArr1[i].name == name) {
+		// for (let i = 0; i < classArr1.length; i++) {
+		// 	if (classArr1[i].name == name) {
+		// 		openError("Give a unique name.");
+		// 		return;
+		// 	}
+		// }
+
+		for (let i = 0; i < projectEditorState.length; i++) {
+			if (projectEditorState[i].name == name) {
 				openError("Give a unique name.");
 				return;
 			}
@@ -514,20 +399,12 @@ function LoadNftPage() {
 		let tempR = {
 			name,
 			active,
-			imgs: imgsL,
-			src: [],
-			url: [],
-			x: x,
-			y: y,
+			imgs: [],
+			x: 0,
+			y: 0,
 			width: 0,
 			height: 0,
-			z_index: z,
-			names: [],
-			rarity: [],
-			sizes: {
-				width: [],
-				height: [],
-			},
+			z_index: 0,
 			rarityLayer: "4",
 		};
 
@@ -548,15 +425,22 @@ function LoadNftPage() {
 	// switching active layer
 	function setActive(item) {
 		let tempArr = [];
-		for (let i = 0; i < classArr1.length; i++) {
-			let temp = classArr1[i];
+		// for (let i = 0; i < classArr1.length; i++) {
+		// 	let temp = classArr1[i];
+		// 	if (temp == item) {
+		// 		temp.active = true;
+		// 		tempArr.push(temp);
+		// 		setCurenLayer(i);
+		// 	} else {
+		// 		temp.active = false;
+		// 		tempArr.push(temp);
+		// 	}
+		// }
+
+		for (let i = 0; i < projectEditorState.length; i++) {
+			let temp = projectEditorState[i];
 			if (temp == item) {
-				temp.active = true;
-				tempArr.push(temp);
 				setCurenLayer(i);
-			} else {
-				temp.active = false;
-				tempArr.push(temp);
 			}
 		}
 		console.log(tempArr);
@@ -612,6 +496,7 @@ function LoadNftPage() {
 
 	// Download image from input
 	async function download(event) {
+		console.log(event.target.files.length);
 		for (let i = 0; i < event.target.files.length; i++) {
 			let file = event.target.files[i];
 
@@ -675,29 +560,14 @@ function LoadNftPage() {
 							...projectEditorState[curentLayer],
 						};
 
-						updatedLayer.imgs = [
-							...projectEditorState[curentLayer].imgs,
-							lastId,
-						];
-						updatedLayer.url = [
-							...projectEditorState[curentLayer].url,
-							tempBlob,
-						];
-						updatedLayer.names = [
-							...projectEditorState[curentLayer].names,
-							name,
-						];
-						updatedLayer.rarity = [
-							...projectEditorState[curentLayer].rarity,
-							"4",
-						];
-						updatedLayer.sizes = {
-							width: [...projectEditorState[curentLayer].sizes.width, newWidth],
-							height: [
-								...projectEditorState[curentLayer].sizes.height,
-								newHeight,
-							],
-						};
+						updatedLayer.imgs.push({
+							src: lastId,
+							url: tempBlob,
+							name: name,
+							rarity: "4",
+							width: newWidth,
+							height: newHeight,
+						});
 
 						dispatch(
 							updateOneLayer({
@@ -705,6 +575,8 @@ function LoadNftPage() {
 								updatedLayer,
 							}),
 						);
+
+						console.log(updatedLayer);
 
 						for (let i = 0; i < classArr1.length; i++) {
 							let temp = classArr1[i];
@@ -739,8 +611,20 @@ function LoadNftPage() {
 							tempArr.push(temp);
 						}
 
-						let maxW = Math.max.apply(null, tempArr[curentLayer].sizes.width);
-						let maxH = Math.max.apply(null, tempArr[curentLayer].sizes.height);
+						let widths = [];
+						let heights = [];
+
+						for (
+							let i = 0;
+							i < projectEditorState[curentLayer].imgs.length;
+							i++
+						) {
+							widths.push(projectEditorState[curentLayer].imgs[i].width);
+							heights.push(projectEditorState[curentLayer].imgs[i].height);
+						}
+
+						let maxW = Math.max.apply(null, widths);
+						let maxH = Math.max.apply(null, heights);
 
 						if (width < maxW) {
 							setWidth(maxW);
@@ -748,11 +632,13 @@ function LoadNftPage() {
 						if (height < maxH) {
 							setHeight(maxH);
 						}
-						localStorage.setItem("class", JSON.stringify(tempArr));
+
+						// localStorage.setItem("class", JSON.stringify(tempArr));
+						localStorage.setItem("class", JSON.stringify(projectEditorState));
 						localStorage.setItem("width", maxW);
 						localStorage.setItem("height", maxH);
 						setClassArr1(tempArr);
-						dispatch(updateAllData(tempArr));
+						// dispatch(updateAllData(tempArr));
 						isNextActive(tempArr);
 					};
 				};
@@ -761,12 +647,15 @@ function LoadNftPage() {
 	}
 
 	// Removing an image from a layer
-	function removeImg(index) {
+	async function removeImg(index) {
 		let tempArr = [];
 
 		const openRequest = window.indexedDB.open("imgsStore", 10);
 
-		let idDel = classArr1[curentLayer].imgs[index];
+		// let idDel = classArr1[curentLayer].imgs[index];
+		let idDel = projectEditorState[curentLayer].imgs[index].src;
+
+		console.log(idDel);
 
 		openRequest.onsuccess = async (event) => {
 			const store = event.target.result
@@ -775,41 +664,23 @@ function LoadNftPage() {
 			store.delete(idDel);
 		};
 
-		// let updatedLayer = {
-		// 	...projectEditorState[curentLayer]
-		// }
+		let updatedLayer = {
+			...projectEditorState[curentLayer],
+		};
 
-		// updatedLayer.imgs = [
-		// 	...projectEditorState[curentLayer].imgs.slice(0, index),
-		// 	...projectEditorState[curentLayer].imgs.slice(index+1),
-		// 	];
-		// updatedLayer.url = [
-		// 	...projectEditorState[curentLayer].url.slice(0, index),
-		// 	...projectEditorState[curentLayer].url.slice(index+1),
-		// 	];
-		// updatedLayer.names = [
-		// 	...projectEditorState[curentLayer].names.slice(0, index),
-		// 	...projectEditorState[curentLayer].names.slice(index+1),
-		// 	];
-		// updatedLayer.rarity = [
-		// 	...projectEditorState[curentLayer].rarity.slice(0, index),
-		// 	...projectEditorState[curentLayer].rarity.slice(index+1),
-		// 	];
-		// updatedLayer.sizes = {
-		// 	width: [
-		// 		...projectEditorState[curentLayer].sizes.width.slice(0, index),
-		// 		...projectEditorState[curentLayer].sizes.width.slice(index+1),
-		// 		],
-		// 	height: [
-		// 		...projectEditorState[curentLayer].sizes.height.slice(0, index),
-		// 		...projectEditorState[curentLayer].sizes.height.slice(index+1),
-		// 		],
-		// };
+		updatedLayer.imgs = [
+			...projectEditorState[curentLayer].imgs.slice(0, index),
+			...projectEditorState[curentLayer].imgs.slice(index + 1),
+		];
 
-		// dispatch(updateOneLayer({
-		// index: curentLayer,
-		// updatedLayer,
-		// }));
+		dispatch(
+			updateOneLayer({
+				index: curentLayer,
+				updatedLayer,
+			}),
+		);
+
+		console.log(projectEditorState[curentLayer]);
 
 		for (let i = 0; i < classArr1.length; i++) {
 			let temp = classArr1[i];
@@ -845,33 +716,42 @@ function LoadNftPage() {
 			tempArr.push(temp);
 		}
 
-		let maxWidth = 0;
-		let maxHeight = 0;
+		let widths = [];
+		let heights = [];
 
-		for (let i = 0; i < tempArr.length; i++) {
-			let newMaxW = Math.max.apply(null, tempArr[i].sizes.width);
-			let newMaxH = Math.max.apply(null, tempArr[i].sizes.height);
-
-			if (maxWidth < newMaxW) {
-				maxWidth = newMaxW;
-			}
-			if (maxHeight < newMaxH) {
-				maxHeight = newMaxH;
-			}
+		//TODO Поменять updatedLayer на projectEditorState[curentLayer], но не обновляет данные в стейте
+		for (let i = 0; i < updatedLayer.imgs.length; i++) {
+			widths.push(updatedLayer.imgs[i].width);
+			heights.push(updatedLayer.imgs[i].height);
 		}
 
-		setWidth(maxWidth);
-		setHeight(maxHeight);
+		let maxW = Math.max.apply(null, widths);
+		let maxH = Math.max.apply(null, heights);
 
-		localStorage.setItem("class", JSON.stringify(tempArr));
+		setWidth(maxW);
+		setHeight(maxH);
+
+		// localStorage.setItem("class", JSON.stringify(tempArr));
+		setTimeout(() => {
+			localStorage.setItem("class", JSON.stringify(projectEditorState));
+		}, 1000);
+		localStorage.setItem("width", maxW);
+		localStorage.setItem("height", maxH);
 		setClassArr1(tempArr);
 		isNextActive(tempArr);
 	}
 
 	// Changing the name of a layer
 	function setNewLayerName(event) {
-		for (let i = 0; i < classArr1.length; i++) {
-			if (classArr1[i].name == event.target.value) {
+		// for (let i = 0; i < classArr1.length; i++) {
+		// 	if (classArr1[i].name == event.target.value) {
+		// 		openError("Give a unique name");
+		// 		return;
+		// 	}
+		// }
+
+		for (let i = 0; i < projectEditorState.length; i++) {
+			if (projectEditorState[i].name == event.target.value) {
 				openError("Give a unique name");
 				return;
 			}
@@ -904,8 +784,15 @@ function LoadNftPage() {
 
 	// Loading intermediate data
 	function logData() {
-		for (let i = 0; i < classArr1.length; i++) {
-			if (classArr1[i].imgs[0] == undefined) {
+		// for (let i = 0; i < classArr1.length; i++) {
+		// 	if (classArr1[i].imgs[0] == undefined) {
+		// 		openError("Each layer must contain at least 1 image.");
+		// 		return;
+		// 	}
+		// }
+
+		for (let i = 0; i < projectEditorState.length; i++) {
+			if (projectEditorState[i].imgs[0] == undefined) {
 				openError("Each layer must contain at least 1 image.");
 				return;
 			}
@@ -948,7 +835,9 @@ function LoadNftPage() {
 			tempProjectDescription = projectDescription;
 		}
 
-		localStorage.setItem("class", JSON.stringify(classArr1));
+		// localStorage.setItem("class", JSON.stringify(classArr1));
+
+		localStorage.setItem("class", JSON.stringify(projectEditorState));
 		localStorage.setItem("width", width);
 		localStorage.setItem("height", height);
 		localStorage.setItem("curentLayer", curentLayer);
@@ -1024,7 +913,8 @@ function LoadNftPage() {
 				<div className="constructors">
 					<div className="container-header">
 						<HeaderEditor
-							classArr={classArr1}
+							// classArr={classArr1}
+							classArr={projectEditorState}
 							projectData={{
 								width,
 								height,
@@ -1039,7 +929,7 @@ function LoadNftPage() {
 						<div className="modal-constructor modal-constructor-layers">
 							<div className="title">Layers</div>
 							<div className="text">Add/Edit layers</div>
-							{classArr1.length > 0 &&
+							{/* {classArr1.length > 0 &&
 								classArr1.map((item, index) => {
 									return (
 										<div
@@ -1055,7 +945,24 @@ function LoadNftPage() {
 											<span>{item.name.slice(0, 27)}</span>
 										</div>
 									);
-								})}
+							})} */}
+
+							{projectEditorState.map((item, index) => {
+								return (
+									<div
+										key={"uniqueId" + index}
+										className={
+											item.active
+												? "layers-list_layer layers-list_layer-active"
+												: "layers-list_layer"
+										}
+										onClick={() => setActive(item)}
+									>
+										<div className="index">{index + 1}. </div>
+										<span>{item.name.slice(0, 27)}</span>
+									</div>
+								);
+							})}
 
 							<div className="layers-list_layer-input">
 								<div className="title">Add New Layer</div>
@@ -1092,12 +999,27 @@ function LoadNftPage() {
 							<div className="text">Change layer settings</div>
 							<div className="setting">
 								<div className="title-settings">Layer Name</div>
-								{classArr1.length > 0 && (
+								{/* {classArr1.length > 0 && (
 									<input
 										type="text"
 										className="input-settings"
 										value={classArr1[curentLayer].name}
 										placeholder={classArr1[curentLayer].name}
+										onChange={setNewLayerName}
+									/>
+								)} */}
+
+								{projectEditorState.map((item) => {
+									console.log(projectEditorState);
+									console.log(classArr1);
+								})}
+
+								{projectEditorState.length >= curentLayer && (
+									<input
+										type="text"
+										className="input-settings"
+										value={projectEditorState[curentLayer].name}
+										placeholder={projectEditorState[curentLayer].name}
 										onChange={setNewLayerName}
 									/>
 								)}
@@ -1127,7 +1049,7 @@ function LoadNftPage() {
 								}}
 							>
 								<div className="imgs-list">
-									{classArr1.length > 0 &&
+									{/* {classArr1.length > 0 &&
 										classArr1[curentLayer].imgs.map((item, index) => {
 											return (
 												<div
@@ -1147,6 +1069,32 @@ function LoadNftPage() {
 														<span />
 													</div>
 													<img src={classArr1[curentLayer].url[index]} />
+												</div>
+											);
+										})
+									} */}
+
+									{projectEditorState.length > 0 &&
+										projectEditorState[curentLayer].imgs.map((item, index) => {
+											console.log(projectEditorState[curentLayer], curentLayer);
+											return (
+												<div
+													key={"uniqueId" + index}
+													className={
+														curentImages[curentLayer] == index
+															? "img-element img-element-active"
+															: "img-element"
+													}
+													onClick={() => setImgActive(index)}
+												>
+													<div
+														className="close"
+														onClick={() => removeImg(index)}
+													>
+														<span />
+														<span />
+													</div>
+													<img src={item.url} />
 												</div>
 											);
 										})}
@@ -1304,5 +1252,18 @@ function LoadNftPage() {
 		</>
 	);
 }
+function mapStateToProps(state) {
+	return {
+		walletAddress: state.reducerWallet.address,
+	};
+}
 
-export default LoadNftPage;
+function mapDispatchToProps(dispatch) {
+	return {
+		asyncConnectWallet: () => dispatch(asyncConnectWallet()),
+		asynDisconnectWallet: () => dispatch(asynDisconnectWallet()),
+		asyncGetAddressWallet: () => dispatch(asyncGetAddressWallet()),
+	};
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(LoadNftPage);
