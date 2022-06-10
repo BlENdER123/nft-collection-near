@@ -45,6 +45,8 @@ function App() {
 	//   );
 	// }, [dispatch]);
 
+	let loc = useSelector((state) => state.appReducer.location);
+
 	const [collections, setCollections] = useState([]);
 	const [loader, setLoader] = useState(true);
 	const [sales, setSales] = useState([]);
@@ -128,7 +130,7 @@ function App() {
 			<div className={"hide"}>
 				<span onClick={close} />
 			</div>
-			<div className={location == "/" ? "App" : "App2"}>
+			<div className={loc == "/" ? "App" : "App2"}>
 				<Header />
 
 				<Routes>

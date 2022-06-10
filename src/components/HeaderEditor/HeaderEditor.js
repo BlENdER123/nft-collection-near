@@ -11,6 +11,8 @@ Object.defineProperty(window, "indexedDB", {
 });
 
 function Steps({projectData}) {
+	console.log(projectData);
+
 	let navigate = useNavigate();
 
 	const dispatch = useDispatch();

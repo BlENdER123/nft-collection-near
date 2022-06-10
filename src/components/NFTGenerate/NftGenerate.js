@@ -4,8 +4,14 @@ import mergeImages from "merge-images";
 // import Header from "../../Pages/Header/Header";
 // import Footer from "../../Pages/Footer/Footer";
 import HeaderEditor from "../HeaderEditor/HeaderEditor";
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch, useSelector, connect} from "react-redux";
 import {Navigate} from "react-router";
+
+import {
+	createNewLayer,
+	updateAllData,
+	updateOneLayer,
+} from "../../store/actions/editor";
 
 Object.defineProperty(window, "indexedDB", {
 	value:
@@ -19,7 +25,7 @@ const axios = require("axios");
 //const fs = require('fs');
 const FormData = require("form-data");
 
-function NftCustomization() {
+function NftCustomization(props) {
 	useEffect(() => {
 		if (document.location.href.split("transactionHashes=")[1]) {
 			let href = document.location.origin + document.location.hash;
@@ -79,7 +85,8 @@ function NftCustomization() {
 		copySrc();
 		setTimeout(() => {
 			console.log("useEff 3");
-			setClassArr(localClass);
+			// setClassArr(localClass);
+			props.updateData(localClass);
 			console.log(localClass);
 		}, 1000);
 	}, []);
@@ -127,8 +134,8 @@ function NftCustomization() {
 
 	let allComb = 1;
 
-	for (let i = 0; i < classArr.length; i++) {
-		allComb = allComb * classArr[i].imgs.length;
+	for (let i = 0; i < props.project.length; i++) {
+		allComb = allComb * props.project[i].imgs.length;
 	}
 
 	console.log(allComb);
@@ -145,66 +152,15 @@ function NftCustomization() {
 		asyncFunction().then((res) => {
 			let tempArr = [];
 			console.log(res);
-			for (let i = 0; i < classArr.length; i++) {
-				let temp = classArr[i];
+			for (let i = 0; i < props.project.length; i++) {
+				let temp = props.project[i];
 				temp.src = res[i];
 				tempArr.push(temp);
 			}
 			console.log(tempArr);
-			setClassArr(tempArr);
+			// setClassArr(tempArr);
+			props.updateData(tempArr);
 		});
-	}
-
-	function newProject() {
-		navigate("/load-nft");
-		localStorage.clear();
-		let deleteRequest = window.indexedDB.deleteDatabase("imgsStore");
-		location.reload();
-	}
-
-	function loadProject(e) {
-		navigate("/load-nft");
-		const fileReader = new FileReader();
-		fileReader.readAsText(e.target.files[0], "UTF-8");
-		fileReader.onload = async (e) => {
-			localStorage;
-			const data = JSON.parse(e.target.result);
-
-			// setProjectName(data.projectName || "");
-			// setCollectionName(data.collectionName || "");
-			// setProjectDescription(data.projectDescription || "");
-			// setWidth(data.width);
-			// setHeight(data.height);
-			// setClassArr1(data.classArr);
-			// localStorage.setItem(
-			// 	"project",
-			// 	JSON.stringify({
-			// 		name: projectName,
-			// 		collectionName: collectionName,
-			// 		description: projectDescription,
-			// 	}),
-			// );
-			localStorage.setItem("class", JSON.stringify(data.classArr));
-			localStorage.setItem("width", data.width);
-			localStorage.setItem("height", data.height);
-
-			//setFiles(e.target.result);
-
-			const imgs = Object.values(data.indexedData);
-			await imgs.reduce((previousPromise, nextID) => {
-				return previousPromise.then(() => {
-					return addFileInDB(nextID, 1);
-				});
-			}, Promise.resolve());
-
-			const openRequest = window.indexedDB.open("imgsStore", 1);
-			const localClass = JSON.parse(localStorage.getItem("class"));
-			await request(openRequest, localClass).then((result) => {
-				localStorage.setItem("class", JSON.stringify(result));
-				//setClassArr1(result);
-			});
-			await history.go("/load-nft");
-		};
 	}
 
 	async function addFileInDB(dataURL, index) {
@@ -262,73 +218,6 @@ function NftCustomization() {
 			};
 		});
 	}
-
-	function saveProject(e) {
-		let idBlobObj = {};
-
-		let tempArr = [];
-
-		const openRequest = window.indexedDB.open("imgsStore", 1);
-
-		openRequest.onsuccess = async (event) => {
-			const store = event.target.result.transaction("imgs").objectStore("imgs");
-			store.getAll().onsuccess = (event) => {
-				console.log(event.target.result);
-				const store_data = event.target.result;
-
-				for (let i = 0; i < store_data.length; i++) {
-					let tempFile = store_data[i];
-
-					console.log(tempFile);
-					// tempFile.arrayBuffer().then((data)=>{
-					//   console.log(data);
-					// })
-
-					tempArr.push(tempFile);
-
-					let reader = new FileReader();
-					reader.readAsDataURL(tempFile);
-					reader.onload = (e) => {
-						console.log(e.currentTarget.result);
-						let tempId = tempFile.id;
-						idBlobObj[tempId] = e.currentTarget.result;
-					};
-				}
-			};
-		};
-
-		setTimeout(() => {
-			console.log(idBlobObj);
-			const data = {
-				projectName: JSON.parse(localStorage.getItem("details")).projectName,
-				collectionName: JSON.parse(localStorage.getItem("details")).projName,
-				projectDescription: JSON.parse(localStorage.getItem("details"))
-					.projectDescription,
-				width: localStorage.getItem("width"),
-				height: localStorage.getItem("height"),
-				classArr: classArr,
-				indexedData: idBlobObj,
-			};
-
-			e.preventDefault();
-			const a = document.createElement("a");
-			const file = new Blob([JSON.stringify(data)], {type: "text/json"});
-			a.href = URL.createObjectURL(file);
-			a.download =
-				JSON.parse(localStorage.getItem("details")).projectName + ".json";
-			a.click();
-
-			URL.revokeObjectURL(a.href);
-
-			// downloadFile({
-			// 	data: JSON.stringify(data),
-			// 	fileName: projectName + ".json",
-			// 	fileType: "text/json",
-			// });
-		}, 1000);
-	}
-
-	function openProject() {}
 
 	function handleFile(e) {
 		const fileReader = new FileReader();
@@ -397,13 +286,13 @@ function NftCustomization() {
 
 	async function getResizeMany() {
 		let tempArr = [];
-		for (let i = 0; i < classArr.length; i++) {
+		for (let i = 0; i < props.project.length; i++) {
 			let tempArrImg = [];
-			for (let j = 0; j < classArr[i].imgs.length; j++) {
+			for (let j = 0; j < props.project[i].imgs.length; j++) {
 				let res = await getResize(
-					classArr[i].imgs[j],
-					classArr[i].width,
-					classArr[i].height,
+					props.project[i].imgs[j].url,
+					props.project[i].width,
+					props.project[i].height,
 				);
 				tempArrImg.push(res);
 			}
@@ -571,8 +460,8 @@ function NftCustomization() {
 	function random() {
 		let temp = [];
 
-		for (let i = 0; i < classArr.length; i++) {
-			let length = classArr[i].imgs.length;
+		for (let i = 0; i < props.project.length; i++) {
+			let length = props.project[i].imgs.length;
 			temp.push(Math.round(Math.random() * (length - 1 - 0) + 0));
 		}
 
@@ -594,8 +483,8 @@ function NftCustomization() {
 			return;
 		}
 
-		for (let i = 0; i < classArr.length; i++) {
-			imgsLength.push(classArr[i].imgs.length);
+		for (let i = 0; i < props.project.length; i++) {
+			imgsLength.push(props.project[i].imgs.length);
 		}
 		for (let i = 0; i < imgsLength.length; i++) {
 			combinations = combinations * imgsLength[i];
@@ -618,8 +507,8 @@ function NftCustomization() {
 		let nftlength = [];
 		let newnft = [];
 
-		for (let i = 0; i < classArr.length; i++) {
-			nftlength.push(classArr[i].imgs.length);
+		for (let i = 0; i < props.project.length; i++) {
+			nftlength.push(props.project[i].imgs.length);
 			newnft.push(0);
 		}
 
@@ -627,12 +516,12 @@ function NftCustomization() {
 		let uniqFor = [];
 
 		let nftRarityCombinations = [];
-		console.log(classArr);
-		for (let i = 0; i < classArr.length; i++) {
+		// console.log(classArr);
+		for (let i = 0; i < props.project.length; i++) {
 			let temp = [];
-			console.log(classArr[i].rarity);
-			for (let j = 0; j < classArr[i].rarity.length; j++) {
-				for (let k = 0; k < Number(classArr[i].rarity[j]) + 1; k++) {
+			// console.log(props.project[i].rarity);
+			for (let j = 0; j < props.project[i].imgs.length; j++) {
+				for (let k = 0; k < Number(props.project[i].imgs[j].rarity) + 1; k++) {
 					temp.push(j);
 				}
 			}
@@ -642,7 +531,7 @@ function NftCustomization() {
 		console.log(nftRarityCombinations);
 
 		while (uniqC < num) {
-			for (let i = 0; i < classArr.length; i++) {
+			for (let i = 0; i < props.project.length; i++) {
 				newnft[i] =
 					nftRarityCombinations[i][
 						Math.round(
@@ -894,7 +783,7 @@ function NftCustomization() {
 			>
 				<div className="constructors">
 					<div className="container-header">
-						<HeaderEditor classArr={classArr} activeStep={3} />
+						<HeaderEditor classArr={props.project} activeStep={3} />
 
 						<div className="modal-constructor modal-constructor-layers ">
 							<div className="title">
@@ -1014,12 +903,12 @@ function NftCustomization() {
 										height: nftAreaSize.height + "px",
 									}}
 								>
-									{classArr[0].url?.length > 0
-										? classArr.map((item, index) => {
+									{props.project[0].imgs?.length > 0
+										? props.project.map((item, index) => {
 												return (
 													<img
 														key={"uniqueId" + index}
-														src={item.url[curentImg[index]]}
+														src={item.imgs[curentImg[index]].url}
 														style={{
 															width:
 																realSizes[index].width[curentImg[index]] + "px",
@@ -1158,5 +1047,23 @@ function NftCustomization() {
 		</>
 	);
 }
+function mapStateToProps(state) {
+	console.log("mapStateToProps", state.editorReducer);
+	return {
+		//walletAddress: state.reducerWallet.address,
+		project: state.editorReducer.projectState,
+	};
+}
 
-export default NftCustomization;
+function mapDispatchToProps(dispatch) {
+	return {
+		updateLayer: (e) => dispatch(updateOneLayer(e)),
+		updateData: (e) => dispatch(updateAllData(e)),
+		createLayer: (e) => dispatch(createNewLayer(e)),
+		//asyncConnectWallet: () => dispatch(asyncConnectWallet()),
+		//asynDisconnectWallet: () => dispatch(asynDisconnectWallet()),
+		//asyncGetAddressWallet: () => dispatch(asyncGetAddressWallet()),
+	};
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(NftCustomization);

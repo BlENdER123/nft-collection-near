@@ -7,18 +7,26 @@ import * as JSZIP from "jszip";
 // import Header from "../../Pages/Header/Header";
 // import Footer from "../../Pages/Footer/Footer";
 
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch, useSelector, connect} from "react-redux";
 
 import "regenerator-runtime/runtime";
 import * as nearAPI from "near-api-js";
 
 import {NFTStorage} from "nft.storage";
 
+import {
+	createNewLayer,
+	updateAllData,
+	updateOneLayer,
+} from "../../store/actions/editor";
+
 const {
 	contractNft,
 	nearConfig,
 	contractRootNft,
 	marketNft,
+	contractRootNftGenral,
+	likelyNftsEndpoint,
 } = require("../../sdk/config.json");
 const {parseNearAmount} = require("near-api-js/lib/utils/format");
 
@@ -77,7 +85,7 @@ function NftsList(props) {
 	);
 }
 
-function NftCollection() {
+function NftCollection(props) {
 	let classArr = JSON.parse(localStorage.getItem("class"));
 
 	const [nearPrice, setNearPrice] = useState(0);
@@ -115,8 +123,10 @@ function NftCollection() {
 
 		for (let i = 0; i < classArr.length; i++) {
 			for (let j = 0; j < classArr[i].imgs.length; j++) {
-				store.get(classArr[i].imgs[j]).onsuccess = (event) => {
-					classArr[i].url[j] = URL.createObjectURL(event.target.result.value);
+				store.get(classArr[i].imgs[j].src).onsuccess = (event) => {
+					classArr[i].imgs[j].url = URL.createObjectURL(
+						event.target.result.value,
+					);
 				};
 			}
 		}
@@ -209,7 +219,7 @@ function NftCollection() {
 				// );
 				let res = await getResize(
 					// classArr[i].imgs[j],
-					classArr[i].url[j],
+					classArr[i].imgs[j].url,
 					realSizes[i].width[j] * sizeIndex,
 					realSizes[i].height[j] * sizeIndex,
 				);
@@ -271,71 +281,6 @@ function NftCollection() {
 		});
 		a.dispatchEvent(clickEvt);
 		a.remove();
-	};
-
-	const exportToJson = (e) => {
-		if (details.projectName === undefined) {
-			setErrorModal({
-				hidden: true,
-				message: "Project name is empty!",
-			});
-			return;
-		} else {
-			let idBlobObj = {};
-
-			let tempArr = [];
-
-			const openRequest = window.indexedDB.open("imgsStore", 10);
-
-			openRequest.onsuccess = async (event) => {
-				const store = event.target.result
-					.transaction("imgs")
-					.objectStore("imgs");
-				store.getAll().onsuccess = (event) => {
-					console.log(event.target.result);
-					const store_data = event.target.result;
-
-					for (let i = 0; i < store_data.length; i++) {
-						let tempFile = store_data[i];
-
-						console.log(tempFile);
-						// tempFile.arrayBuffer().then((data)=>{
-						// 	console.log(data);
-						// })
-
-						tempArr.push(tempFile);
-
-						let reader = new FileReader();
-						reader.readAsDataURL(tempFile);
-						reader.onload = (e) => {
-							console.log(e.currentTarget.result);
-							let tempId = tempFile.id;
-							idBlobObj[tempId] = e.currentTarget.result;
-						};
-					}
-				};
-			};
-
-			setTimeout(() => {
-				console.log(idBlobObj);
-				const data = {
-					projectName: details.projectName,
-					collectionName: details.collectionName,
-					projectDescription: details.projectDescription,
-					width: localStorage.getItem("width"),
-					height: localStorage.getItem("height"),
-					classArr: arrClass,
-					indexedData: idBlobObj,
-				};
-
-				e.preventDefault();
-				downloadFile({
-					data: JSON.stringify(data),
-					fileName: details.projectName + ".json",
-					fileType: "text/json",
-				});
-			}, 1000);
-		}
 	};
 
 	function saveProject(e) {
@@ -444,6 +389,16 @@ function NftCollection() {
 				console.log(price.near.usd);
 				setNearPrice(price.near.usd);
 			});
+
+		//init near
+		window.near = await nearAPI.connect(
+			Object.assign(
+				{deps: {keyStore: new nearAPI.keyStores.BrowserLocalStorageKeyStore()}},
+				nearConfig,
+			),
+		);
+
+		window.walletAccount = new nearAPI.WalletAccount(window.near);
 	});
 
 	useEffect(async () => {
@@ -455,10 +410,27 @@ function NftCollection() {
 			localStorage.getItem("addrCol") !== ""
 		) {
 			let addr = localStorage.getItem("addrCol");
+			console.log(addr);
 
 			// if (addr == null || addr == undefined) {
 			// 	return;
 			// }
+
+			window.near = await nearAPI.connect({
+				deps: {
+					keyStore: new nearAPI.keyStores.BrowserLocalStorageKeyStore(),
+				},
+				...nearConfig,
+			});
+
+			window.walletConnection = await new nearAPI.WalletConnection(window.near);
+
+			console.log(window.walletConnection.account());
+
+			window.accountId = window.walletConnection.getAccountId();
+
+			console.log(window.walletConnection);
+			console.log(window.near);
 
 			window.tempContract = await new nearAPI.Contract(
 				window.walletConnection.account(),
@@ -570,6 +542,15 @@ function NftCollection() {
 	useEffect(async () => {
 		console.log("UseEffect on sale");
 
+		window.near = await nearAPI.connect({
+			deps: {
+				keyStore: new nearAPI.keyStores.BrowserLocalStorageKeyStore(),
+			},
+			...nearConfig,
+		});
+
+		window.walletConnection = await new nearAPI.WalletConnection(window.near);
+
 		if (
 			localStorage.getItem("addrCol") !== undefined &&
 			localStorage.getItem("addrCol") !== null &&
@@ -577,8 +558,10 @@ function NftCollection() {
 		) {
 			let addr = localStorage.getItem("addrCol");
 
+			console.log(window.walletConnection.getAccountId());
+
 			fetch(
-				"https://helper.testnet.near.org/account/" +
+				likelyNftsEndpoint +
 					window.walletConnection.getAccountId() +
 					"/likelyNFTs",
 				{
@@ -593,7 +576,7 @@ function NftCollection() {
 					return data.json();
 				})
 				.then(async (data) => {
-					console.log(data);
+					console.log(data, "575");
 
 					for (let i = 0; i < data.length; i++) {
 						if (data[i] == addr) {
@@ -621,7 +604,7 @@ function NftCollection() {
 										limit: 100,
 									})
 									.then(async (data) => {
-										// console.log(data, data.length, "Сколько всего во владении");
+										console.log(data, data.length, "Сколько всего во владении");
 										setCollectionNotOnSale(data.length);
 									});
 							} catch {
@@ -629,9 +612,21 @@ function NftCollection() {
 							}
 						}
 					}
+				})
+				.catch((err) => {
+					console.log(err, "err2");
 				});
 
 			let tempCol = [];
+
+			window.near = await nearAPI.connect({
+				deps: {
+					keyStore: new nearAPI.keyStores.BrowserLocalStorageKeyStore(),
+				},
+				...nearConfig,
+			});
+
+			window.walletConnection = await new nearAPI.WalletConnection(window.near);
 
 			window.contractMarket = await new nearAPI.Contract(
 				window.walletConnection.account(),
@@ -649,7 +644,7 @@ function NftCollection() {
 					limit: 200,
 				})
 				.then(async (data) => {
-					console.log(data);
+					console.log(data, "640");
 					for (let i = 0; i < data.length; i++) {
 						if (data[i].nft_contract_id == addr) {
 							window.ContractCollection = await new nearAPI.Contract(
@@ -690,7 +685,7 @@ function NftCollection() {
 			let addr = contractRootNftGenral;
 
 			fetch(
-				"https://helper.testnet.near.org/account/" +
+				likelyNftsEndpoint +
 					window.walletConnection.getAccountId() +
 					"/likelyNFTs",
 				{
@@ -705,7 +700,7 @@ function NftCollection() {
 					return data.json();
 				})
 				.then(async (data) => {
-					console.log(data);
+					console.log(data, "696");
 
 					for (let i = 0; i < data.length; i++) {
 						if (data[i] == addr) {
@@ -733,11 +728,11 @@ function NftCollection() {
 										limit: 100,
 									})
 									.then(async (data) => {
-										// console.log(data, data.length, "Сколько всего во владении");
+										console.log(data, data.length, "Сколько всего во владении");
 										setCollectionNotOnSale(data.length);
 									});
 							} catch {
-								console.log("error");
+								console.log("error2");
 							}
 						}
 					}
@@ -761,7 +756,7 @@ function NftCollection() {
 					limit: 200,
 				})
 				.then(async (data) => {
-					console.log(data);
+					console.log(data, "752");
 					for (let i = 0; i < data.length; i++) {
 						if (data[i].nft_contract_id == addr) {
 							window.ContractCollection = await new nearAPI.Contract(
@@ -800,6 +795,16 @@ function NftCollection() {
 	}, [collectionOnSale]);
 
 	async function isSaleAvailiable() {
+		window.near = await nearAPI.connect({
+			deps: {
+				keyStore: new nearAPI.keyStores.BrowserLocalStorageKeyStore(),
+			},
+			...nearConfig,
+		});
+
+		window.walletConnection = new nearAPI.WalletConnection(window.near);
+		window.accountId = window.walletConnection.getAccountId();
+
 		window.contractMarket = await new nearAPI.Contract(
 			window.walletConnection.account(),
 			marketNft,
@@ -809,6 +814,15 @@ function NftCollection() {
 			},
 		);
 
+		console.log(contractMarket);
+		console.log(window.walletConnection.getAccountId());
+
+		// contractMarket.storage_balance_of({
+		// 				account_id: window.walletConnection.getAccountId(),
+		// }).then((data)=>{
+		// 	console.log(data, "TEST");
+		// })
+
 		contractMarket
 			.get_sales_by_owner_id({
 				account_id: window.walletConnection.getAccountId(),
@@ -816,11 +830,35 @@ function NftCollection() {
 				limit: 100,
 			})
 			.then(async (sales) => {
+				console.log(sales);
+				console.log(window.walletConnection.getAccountId());
+				console.log(contractMarket);
+
+				window.contractMarket = await new nearAPI.Contract(
+					window.walletConnection.account(),
+					marketNft,
+					{
+						viewMethods: ["get_sales_by_owner_id", "storage_balance_of"],
+						sender: window.walletConnection.getAccountId(),
+					},
+				);
+
+				window.walletConnection = new nearAPI.WalletConnection(window.near);
 				contractMarket
 					.storage_balance_of({
 						account_id: window.walletConnection.getAccountId(),
 					})
 					.then((data) => {
+						console.log(data, "TEST2");
+						console.log(
+							sales.length + collectionNotOnSale <=
+								data / 10000000000000000000000,
+							"sales",
+						);
+						console.log(
+							sales.length + collectionNotOnSale,
+							data / 10000000000000000000000,
+						);
 						if (
 							sales.length + collectionNotOnSale <=
 							data / 10000000000000000000000
@@ -849,12 +887,22 @@ function NftCollection() {
 					});
 			})
 			.catch((err) => {
-				console.log("err");
+				console.log(err, "err1");
 			});
 	}
 
 	useEffect(async () => {
 		console.log("useEff1");
+
+		window.near = await nearAPI.connect({
+			deps: {
+				keyStore: new nearAPI.keyStores.BrowserLocalStorageKeyStore(),
+			},
+			...nearConfig,
+		});
+
+		window.walletConnection = await new nearAPI.WalletConnection(window.near);
+
 		const {providers} = require("near-api-js");
 
 		const provider = new providers.JsonRpcProvider(
@@ -882,6 +930,9 @@ function NftCollection() {
 					window.walletConnection.getAccountId(),
 				);
 
+				console.log(result);
+
+				console.log(result.status);
 				if (result.status.Failure == undefined) {
 					let event;
 					let token_id;
@@ -899,6 +950,8 @@ function NftCollection() {
 					} catch {
 						event = result.transaction.actions[0].FunctionCall.method_name;
 					}
+
+					console.log(event);
 
 					if (event == "deploy_contract_code") {
 						setActiveButtons([false, true, false]);
@@ -952,9 +1005,9 @@ function NftCollection() {
 
 					for (let i = 0; i < classArr.length; i++) {
 						for (let j = 0; j < classArr[i].imgs.length; j++) {
-							if (classArr[i].imgs[j] == classArr[i].imgs[tempCur[i]]) {
+							if (classArr[i].imgs[j].src == classArr[i].imgs[tempCur[i]].src) {
 								mergeArr.push({
-									src: classArr[i].url[j],
+									src: classArr[i].imgs[j].url,
 									x: classArr[i].x,
 									y: classArr[i].y,
 								});
@@ -1926,6 +1979,12 @@ function NftCollection() {
 										Put your new NFTs up for sale on the Marketplace
 									</div>
 
+									{console.log(
+										collectionNotOnSale - collectionOnSale.length > 0,
+									)}
+									{console.log(collectionNotOnSale, collectionOnSale.length)}
+									{console.log(depositSale.avail)}
+
 									<div
 										className={
 											collectionNotOnSale - collectionOnSale.length > 0 &&
@@ -1980,6 +2039,7 @@ function NftCollection() {
 										Estimated fee ~ 0.1 NEAR
 									</div>
 
+									{console.log(depositSale.avail)}
 									<button
 										onClick={depositAll}
 										className={depositSale.avail ? "hide" : "button-1-square"}
@@ -2141,4 +2201,25 @@ function NftCollection() {
 	);
 }
 
+// function mapStateToProps(state) {
+// 	console.log("mapStateToProps", state.editorReducer);
+// 	return {
+// 		//walletAddress: state.reducerWallet.address,
+// 		project: state.editorReducer.projectState,
+// 	};
+// }
+
+// function mapDispatchToProps(dispatch) {
+// 	return {
+// 		updateLayer: (e) => dispatch(updateOneLayer(e)),
+// 		updateData: (e) => dispatch(updateAllData(e)),
+// 		createLayer: (e) => dispatch(createNewLayer(e)),
+// 		//asyncConnectWallet: () => dispatch(asyncConnectWallet()),
+// 		//asynDisconnectWallet: () => dispatch(asynDisconnectWallet()),
+// 		//asyncGetAddressWallet: () => dispatch(asyncGetAddressWallet()),
+// 	};
+// }
+
 export default NftCollection;
+
+// export default connect(mapStateToProps, mapDispatchToProps)(NftCollection);

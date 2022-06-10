@@ -5,7 +5,7 @@ import {useNavigate} from "react-router-dom";
 // import Footer from "../../Pages/Footer/Footer";
 import HeaderEditor from "../HeaderEditor/HeaderEditor";
 
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch, useSelector, connect} from "react-redux";
 
 //fabric
 import {FabricJSCanvas, useFabricJSEditor} from "fabricjs-react";
@@ -23,7 +23,13 @@ Object.defineProperty(window, "indexedDB", {
 		window.msIndexedDB,
 });
 
-function NftCustomization() {
+import {
+	createNewLayer,
+	updateAllData,
+	updateOneLayer,
+} from "../../store/actions/editor";
+
+function NftCustomization(props) {
 	let navigate = useNavigate();
 
 	let nftArea = useRef();
@@ -74,14 +80,25 @@ function NftCustomization() {
 	}
 
 	function updateXY(changeXY) {
-		let clas = classArr;
+		// let clas = classArr;
+		// clas.map((e, i) => {
+		// 	if (e.name === changeXY.name) {
+		// 		clas[i].x = changeXY.x;
+		// 		clas[i].y = changeXY.y;
+		// 	}
+		// });
+		// setClassArr(clas);
+		// console.log("changeXY!");
+
+		let clas = props.project;
 		clas.map((e, i) => {
 			if (e.name === changeXY.name) {
 				clas[i].x = changeXY.x;
 				clas[i].y = changeXY.y;
 			}
 		});
-		setClassArr(clas);
+		// setClassArr(clas);
+		props.updateData(clas);
 		console.log("changeXY!");
 	}
 
@@ -91,9 +108,38 @@ function NftCustomization() {
 			objs = [];
 		//changeBackground(canvas, 0);
 
-		classArr.map((e, i) => {
-			classArr[i].url.map((l, j) => {
-				fabric.Image.fromURL(classArr[i].url[j], (img) => {
+		// classArr.map((e, i) => {
+		// 	classArr[i].url.map((l, j) => {
+		// 		fabric.Image.fromURL(classArr[i].url[j], (img) => {
+		// 			img.scaleToWidth(img.width / nftSizeIndex);
+		// 			img.scaleToHeight(img.height / nftSizeIndex);
+		// 			img.set({
+		// 				id: index,
+		// 				idLayer: i,
+		// 				idLayerName: e.name,
+		// 				idImg: j,
+		// 				top: classArr[i].y / nftSizeIndex,
+		// 				left: classArr[i].x / nftSizeIndex,
+		// 				lockScalingX: true,
+		// 				lockScalingY: true,
+		// 				lockRotation: true,
+		// 				visible: j === 0,
+		// 				selectable: false,
+		// 			});
+		// 			canvas.add(img);
+		// 			console.log("mount Z", classArr[i].name, i * 10);
+		// 			canvas.moveTo(img, i * 10);
+		// 			index++;
+		// 			i === classArr.length - 1 &&
+		// 				canvas.setActiveObject(img) &&
+		// 				img.set({opacity: 0.6, selectable: true});
+		// 		});
+		// 	});
+		// });
+
+		props.project.map((e, i) => {
+			props.project[i].imgs.map((l, j) => {
+				fabric.Image.fromURL(props.project[i].imgs[j].url, (img) => {
 					img.scaleToWidth(img.width / nftSizeIndex);
 					img.scaleToHeight(img.height / nftSizeIndex);
 					img.set({
@@ -101,8 +147,8 @@ function NftCustomization() {
 						idLayer: i,
 						idLayerName: e.name,
 						idImg: j,
-						top: classArr[i].y / nftSizeIndex,
-						left: classArr[i].x / nftSizeIndex,
+						top: props.project[i].y / nftSizeIndex,
+						left: props.project[i].x / nftSizeIndex,
 						lockScalingX: true,
 						lockScalingY: true,
 						lockRotation: true,
@@ -110,10 +156,10 @@ function NftCustomization() {
 						selectable: false,
 					});
 					canvas.add(img);
-					console.log("mount Z", classArr[i].name, i * 10);
+					console.log("mount Z", props.project[i].name, i * 10);
 					canvas.moveTo(img, i * 10);
 					index++;
-					i === classArr.length - 1 &&
+					i === props.project.length - 1 &&
 						canvas.setActiveObject(img) &&
 						img.set({opacity: 0.6, selectable: true});
 				});
@@ -174,24 +220,29 @@ function NftCustomization() {
 	// };
 
 	function callbackChangeActive(index) {
-		setActive(classArr[index]);
+		// setActive(classArr[index]);
+
+		setActive(props.project[index]);
 	}
 	function callbackChangePosition(clas) {
-		setClassArr(clas);
+		// setClassArr(clas);
+		props.updateData(clas);
 		updateZ(editor.canvas, clas);
 		console.log("DRAG AND DROP LAYER EVENT");
 
-		dispatch({type: "updateAllData", payload: clas});
+		// dispatch({type: "updateAllData", payload: clas});
 	}
 	function callbackRemoveLayer(index) {
-		setActive(classArr[0]);
-		let tempArr = classArr.slice();
+		// setActive(classArr[0]);
+		setActive(props.project[0]);
+		let tempArr = props.project.slice();
 		tempArr.splice(index, 1);
 		console.log("DELETE LAYER", tempArr);
 		localStorage.setItem("class", JSON.stringify(tempArr));
-		setClassArr(tempArr);
+		// setClassArr(tempArr);
+		props.updateData(tempArr);
 
-		dispatch({type: "updateAllData", payload: tempArr});
+		// dispatch({type: "updateAllData", payload: tempArr});
 	}
 
 	//end fabric
@@ -206,58 +257,6 @@ function NftCustomization() {
 	});
 
 	const [newSizesArr, setNewSizesArr] = useState();
-
-	function newProject() {
-		navigate("/load-nft");
-		localStorage.clear();
-		let deleteRequest = window.indexedDB.deleteDatabase("imgsStore");
-		location.reload();
-	}
-
-	function loadProject(e) {
-		navigate("/load-nft");
-		const fileReader = new FileReader();
-		fileReader.readAsText(e.target.files[0], "UTF-8");
-		fileReader.onload = async (e) => {
-			localStorage;
-			const data = JSON.parse(e.target.result);
-
-			// setProjectName(data.projectName || "");
-			// setCollectionName(data.collectionName || "");
-			// setProjectDescription(data.projectDescription || "");
-			// setWidth(data.width);
-			// setHeight(data.height);
-			// setClassArr1(data.classArr);
-			// localStorage.setItem(
-			// 	"project",
-			// 	JSON.stringify({
-			// 		name: projectName,
-			// 		collectionName: collectionName,
-			// 		description: projectDescription,
-			// 	}),
-			// );
-			localStorage.setItem("class", JSON.stringify(data.classArr));
-			localStorage.setItem("width", data.width);
-			localStorage.setItem("height", data.height);
-
-			//setFiles(e.target.result);
-
-			const imgs = Object.values(data.indexedData);
-			await imgs.reduce((previousPromise, nextID) => {
-				return previousPromise.then(() => {
-					return addFileInDB(nextID, 1);
-				});
-			}, Promise.resolve());
-
-			const openRequest = window.indexedDB.open("imgsStore", 1);
-			const localClass = JSON.parse(localStorage.getItem("class"));
-			await request(openRequest, localClass).then((result) => {
-				localStorage.setItem("class", JSON.stringify(result));
-				//setClassArr1(result);
-			});
-			await navigate("/load-nft");
-		};
-	}
 
 	async function addFileInDB(dataURL, index) {
 		var arr = dataURL.split(",");
@@ -315,71 +314,6 @@ function NftCustomization() {
 		});
 	}
 
-	function saveProject(e) {
-		let idBlobObj = {};
-
-		let tempArr = [];
-
-		const openRequest = window.indexedDB.open("imgsStore", 1);
-
-		openRequest.onsuccess = async (event) => {
-			const store = event.target.result.transaction("imgs").objectStore("imgs");
-			store.getAll().onsuccess = (event) => {
-				console.log(event.target.result);
-				const store_data = event.target.result;
-
-				for (let i = 0; i < store_data.length; i++) {
-					let tempFile = store_data[i];
-
-					console.log(tempFile);
-					// tempFile.arrayBuffer().then((data)=>{
-					//   console.log(data);
-					// })
-
-					tempArr.push(tempFile);
-
-					let reader = new FileReader();
-					reader.readAsDataURL(tempFile);
-					reader.onload = (e) => {
-						console.log(e.currentTarget.result);
-						let tempId = tempFile.id;
-						idBlobObj[tempId] = e.currentTarget.result;
-					};
-				}
-			};
-		};
-
-		setTimeout(() => {
-			console.log(idBlobObj);
-			const data = {
-				projectName: JSON.parse(localStorage.getItem("details")).projectName,
-				collectionName: JSON.parse(localStorage.getItem("details")).projName,
-				projectDescription: JSON.parse(localStorage.getItem("details"))
-					.projectDescription,
-				width: localStorage.getItem("width"),
-				height: localStorage.getItem("height"),
-				classArr: classArr,
-				indexedData: idBlobObj,
-			};
-
-			e.preventDefault();
-			const a = document.createElement("a");
-			const file = new Blob([JSON.stringify(data)], {type: "text/json"});
-			a.href = URL.createObjectURL(file);
-			a.download =
-				JSON.parse(localStorage.getItem("details")).projectName + ".json";
-			a.click();
-
-			URL.revokeObjectURL(a.href);
-
-			// downloadFile({
-			// 	data: JSON.stringify(data),
-			// 	fileName: projectName + ".json",
-			// 	fileType: "text/json",
-			// });
-		}, 1000);
-	}
-
 	// const [errorInput, setErrorInput] = useState();
 
 	useEffect(() => {
@@ -415,8 +349,8 @@ function NftCustomization() {
 						height: [],
 					});
 					for (let j = 0; j < arr[i].imgs.length; j++) {
-						let tempWidth = arr[i].sizes.width[j];
-						let tempHeight = arr[i].sizes.height[j];
+						let tempWidth = arr[i].imgs[j].width;
+						let tempHeight = arr[i].imgs[j].height;
 
 						let realWidth = tempWidth / index;
 						let realHeight = tempHeight / index;
@@ -450,8 +384,8 @@ function NftCustomization() {
 						height: [],
 					});
 					for (let j = 0; j < arr[i].imgs.length; j++) {
-						let tempWidth = arr[i].sizes.width[j];
-						let tempHeight = arr[i].sizes.height[j];
+						let tempWidth = arr[i].imgs[j].width;
+						let tempHeight = arr[i].imgs[j].height;
 
 						// console.log(tempWidth, tempHeight);
 
@@ -481,8 +415,8 @@ function NftCustomization() {
 						height: [],
 					});
 					for (let j = 0; j < arr[i].imgs.length; j++) {
-						let tempWidth = arr[i].sizes.width[j];
-						let tempHeight = arr[i].sizes.height[j];
+						let tempWidth = arr[i].imgs[j].width;
+						let tempHeight = arr[i].imgs[j].height;
 
 						// console.log(tempWidth, tempHeight);
 
@@ -511,8 +445,8 @@ function NftCustomization() {
 					height: [],
 				});
 				for (let j = 0; j < arr[i].imgs.length; j++) {
-					let tempWidth = arr[i].sizes.width[j];
-					let tempHeight = arr[i].sizes.height[j];
+					let tempWidth = arr[i].imgs[j].width;
+					let tempHeight = arr[i].imgs[j].height;
 
 					// console.log(tempWidth, tempHeight);
 
@@ -583,7 +517,8 @@ function NftCustomization() {
 		copySrc();
 		setTimeout(() => {
 			console.log("useEff 3");
-			setClassArr(localClass);
+			// setClassArr(localClass);
+			props.updateData(localClass);
 			console.log(localClass);
 		}, 1000);
 	}, []);
@@ -639,29 +574,45 @@ function NftCustomization() {
 		asyncFunction().then((res) => {
 			let tempArr = [];
 			console.log(res);
-			for (let i = 0; i < classArr.length; i++) {
-				let temp = classArr[i];
+
+			// for (let i = 0; i < classArr.length; i++) {
+			// 	let temp = classArr[i];
+			// 	temp.src = res[i];
+			// 	tempArr.push(temp);
+			// }
+			// console.log(tempArr);
+			// setClassArr(tempArr);
+
+			for (let i = 0; i < props.project.length; i++) {
+				let temp = props.project[i];
 				temp.src = res[i];
 				tempArr.push(temp);
 			}
-			console.log(tempArr);
-			setClassArr(tempArr);
+
+			props.updateData(tempArr);
 		});
-	}
-
-	//console.log(arr);
-
-	function test() {
-		//let array = JSON.parse(localStorage.getItem("class"));
-		//console.log(array);
-		console.log(classArr);
 	}
 
 	function setActive(item) {
 		let tempArr = [];
 		let curLayer = 0; //fabric
-		for (let i = 0; i < classArr.length; i++) {
-			let temp = classArr[i];
+
+		// for (let i = 0; i < classArr.length; i++) {
+		// 	let temp = classArr[i];
+		// 	if (temp == item) {
+		// 		//console.log(1);
+		// 		temp.active = true;
+		// 		tempArr.push(temp);
+		// 		setCurentLayer(i);
+		// 		curLayer = i; //fabric
+		// 	} else {
+		// 		temp.active = false;
+		// 		tempArr.push(temp);
+		// 	}
+		// }
+
+		for (let i = 0; i < props.project.length; i++) {
+			let temp = props.project[i];
 			if (temp == item) {
 				//console.log(1);
 				temp.active = true;
@@ -690,7 +641,8 @@ function NftCustomization() {
 		editor.canvas.renderAll();
 		//end fabric
 
-		setClassArr(tempArr);
+		// setClassArr(tempArr);
+		props.updateData(tempArr);
 		// console.log(curentLayer);
 	}
 
@@ -698,8 +650,19 @@ function NftCustomization() {
 		let tempArr = [];
 		let position = {x: event.target.value, y: layerPosition.y};
 		setLayerPosition(position);
-		for (let i = 0; i < classArr.length; i++) {
-			let temp = classArr[i];
+
+		// for (let i = 0; i < classArr.length; i++) {
+		// 	let temp = classArr[i];
+		// 	if (temp == item) {
+		// 		temp.x = event.target.value;
+		// 		tempArr.push(temp);
+		// 	} else {
+		// 		tempArr.push(temp);
+		// 	}
+		// }
+
+		for (let i = 0; i < props.project.length; i++) {
+			let temp = props.project[i];
 			if (temp == item) {
 				temp.x = event.target.value;
 				tempArr.push(temp);
@@ -707,7 +670,8 @@ function NftCustomization() {
 				tempArr.push(temp);
 			}
 		}
-		setClassArr(tempArr);
+		// setClassArr(tempArr);
+		props.updateData(props.project);
 		// editor.canvas.getActiveObject().setCoords({left: event.target.value});
 		// editor.canvas.calcOffset();
 		// editor.canvas.renderAll();
@@ -717,8 +681,17 @@ function NftCustomization() {
 		let tempArr = [];
 		let position = {x: layerPosition.x, y: event.target.value};
 		setLayerPosition(position);
-		for (let i = 0; i < classArr.length; i++) {
-			let temp = classArr[i];
+		// for (let i = 0; i < classArr.length; i++) {
+		// 	let temp = classArr[i];
+		// 	if (temp == item) {
+		// 		temp.y = event.target.value;
+		// 		tempArr.push(temp);
+		// 	} else {
+		// 		tempArr.push(temp);
+		// 	}
+		// }
+		for (let i = 0; i < props.project.length; i++) {
+			let temp = props.project[i];
 			if (temp == item) {
 				temp.y = event.target.value;
 				tempArr.push(temp);
@@ -726,7 +699,9 @@ function NftCustomization() {
 				tempArr.push(temp);
 			}
 		}
-		setClassArr(tempArr);
+
+		// setClassArr(tempArr);
+		props.updateData(tempArr);
 		// editor.canvas.getActiveObject().setCoords({top: event.target.value});
 		// editor.canvas.calcOffset();
 		// editor.canvas.renderAll();
@@ -738,13 +713,25 @@ function NftCustomization() {
 		let tempCurentImages = [];
 		let curIndex = curentLayer;
 
-		if (event === "+" && curentLayer < classArr.length - 1) {
-			tempArr = reverseArr(classArr, curIndex, curIndex + 1);
+		// if (event === "+" && curentLayer < classArr.length - 1) {
+		// 	tempArr = reverseArr(classArr, curIndex, curIndex + 1);
+		// 	tempSizeArr = reverseArr(newSizesArr, curIndex, curIndex + 1);
+		// 	tempCurentImages = reverseArr(curentImages, curIndex, curIndex + 1);
+		// 	setCurentLayer(curIndex + 1);
+		// } else if (event === "-" && curentLayer > 0) {
+		// 	tempArr = reverseArr(classArr, curIndex, curIndex - 1);
+		// 	tempSizeArr = reverseArr(newSizesArr, curIndex, curIndex - 1);
+		// 	tempCurentImages = reverseArr(curentImages, curIndex, curIndex - 1);
+		// 	setCurentLayer(curIndex - 1);
+		// }
+
+		if (event === "+" && curentLayer < props.project.length - 1) {
+			tempArr = reverseArr(props.project, curIndex, curIndex + 1);
 			tempSizeArr = reverseArr(newSizesArr, curIndex, curIndex + 1);
 			tempCurentImages = reverseArr(curentImages, curIndex, curIndex + 1);
 			setCurentLayer(curIndex + 1);
 		} else if (event === "-" && curentLayer > 0) {
-			tempArr = reverseArr(classArr, curIndex, curIndex - 1);
+			tempArr = reverseArr(props.project, curIndex, curIndex - 1);
 			tempSizeArr = reverseArr(newSizesArr, curIndex, curIndex - 1);
 			tempCurentImages = reverseArr(curentImages, curIndex, curIndex - 1);
 			setCurentLayer(curIndex - 1);
@@ -762,43 +749,10 @@ function NftCustomization() {
 
 		setCurentImages(tempCurentImages);
 		setNewSizesArr(tempSizeArr);
-		setClassArr(tempArr);
+		// setClassArr(tempArr);
+		props.updateData(props.project);
 		//localStorage.setItem("class", JSON.stringify(classArr));
 		updateZ(editor.canvas, tempArr);
-	}
-
-	async function saveSize(curentWidth, curentHeight) {
-		let tempArr = [];
-
-		if (curentWidth <= 1 || curentHeight <= 1) {
-			setErrorModal({
-				hidden: true,
-				message: "Image size is too small",
-			});
-			return;
-		}
-
-		for (let i = 0; i < classArr.length; i++) {
-			let temp = classArr[i];
-			if (i == curentLayer) {
-				let tempBg = [];
-				for (let j = 0; j < classArr[i].imgs.length; j++) {
-					temp.width = curentWidth;
-					temp.height = curentHeight;
-					const src = await getResize(temp.imgs[j], curentWidth, curentHeight);
-					console.log(1111111111, src);
-					tempBg.push(src);
-				}
-				temp.src = tempBg;
-				//console.log(tempBg);
-				//temp.imgs = tempBg;
-				tempArr.push(temp);
-			} else {
-				tempArr.push(temp);
-			}
-		}
-		console.log(tempArr);
-		setClassArr(tempArr);
 	}
 
 	function getSrc(src) {
@@ -808,17 +762,17 @@ function NftCustomization() {
 	function logData() {
 		console.log("-----------");
 
-		let tempArr = [];
-		for (let i = 0; i < classArr.length; i++) {
-			let temp = classArr[i];
-			temp.src = [];
-			tempArr.push(temp);
-		}
+		// let tempArr = [];
+		// for (let i = 0; i < classArr.length; i++) {
+		// 	let temp = classArr[i];
+		// 	temp.src = [];
+		// 	tempArr.push(temp);
+		// }
 
-		setClassArr(tempArr);
+		// setClassArr(tempArr);
 
-		console.log(classArr);
-		localStorage.setItem("class", JSON.stringify(classArr));
+		// console.log(classArr);
+		localStorage.setItem("class", JSON.stringify(props.project));
 		console.log(newSizesArr);
 		localStorage.setItem("realSizes", JSON.stringify(newSizesArr));
 		localStorage.setItem("nftAreaSize", JSON.stringify(nftAreaSize));
@@ -836,25 +790,31 @@ function NftCustomization() {
 		});
 	}
 
-	function testL() {
-		for (let j = 0; j < classArr[0].imgs.length; j++) {
-			let src = classArr[0].imgs[j];
-			console.log(src);
-			let src2 = getSrc(src);
-			console.log(src2);
-		}
-	}
-
 	async function getResizeMany() {
 		let tempArr = [];
-		for (let i = 0; i < classArr.length; i++) {
+
+		// for (let i = 0; i < classArr.length; i++) {
+		// 	let tempArrImg = [];
+		// 	for (let j = 0; j < classArr[i].imgs.length; j++) {
+		// 		console.log(classArr[i].imgs[j]);
+		// 		let res = await getResize(
+		// 			classArr[i].imgs[j],
+		// 			classArr[i].width,
+		// 			classArr[i].height,
+		// 		);
+		// 		tempArrImg.push(res);
+		// 	}
+		// 	tempArr.push(tempArrImg);
+		// }
+
+		for (let i = 0; i < props.project.length; i++) {
 			let tempArrImg = [];
-			for (let j = 0; j < classArr[i].imgs.length; j++) {
-				console.log(classArr[i].imgs[j]);
+			for (let j = 0; j < props.project[i].imgs.length; j++) {
+				console.log(props.project[i].imgs[j]);
 				let res = await getResize(
-					classArr[i].imgs[j],
-					classArr[i].width,
-					classArr[i].height,
+					props.project[i].imgs[j].url,
+					props.projectr[i].width,
+					props.project[i].height,
 				);
 				tempArrImg.push(res);
 			}
@@ -931,22 +891,39 @@ function NftCustomization() {
 
 		//fabric
 
+		// const ob = editor.canvas
+		// 	.getObjects()
+		// 	.filter((e) => e.idLayerName == classArr[curentLayer].name);
+		// ob.map((e) => {
+		// 	if (e.idImg == index) {
+		// 		editor.canvas.setActiveObject(e);
+		// 		e.set({
+		// 			visible: true,
+		// 			left: classArr[curentLayer].x / nftSizeIndex,
+		// 			top: classArr[curentLayer].y / nftSizeIndex,
+		// 		});
+		// 		editor.canvas.moveTo(e, classArr[curentLayer].z_index);
+		// 	} else e.set({visible: false});
+		// });
+
+		// updateZ(editor.canvas, classArr);
+
 		const ob = editor.canvas
 			.getObjects()
-			.filter((e) => e.idLayerName == classArr[curentLayer].name);
+			.filter((e) => e.idLayerName == props.project[curentLayer].name);
 		ob.map((e) => {
 			if (e.idImg == index) {
 				editor.canvas.setActiveObject(e);
 				e.set({
 					visible: true,
-					left: classArr[curentLayer].x / nftSizeIndex,
-					top: classArr[curentLayer].y / nftSizeIndex,
+					left: props.project[curentLayer].x / nftSizeIndex,
+					top: props.project[curentLayer].y / nftSizeIndex,
 				});
-				editor.canvas.moveTo(e, classArr[curentLayer].z_index);
+				editor.canvas.moveTo(e, props.project[curentLayer].z_index);
 			} else e.set({visible: false});
 		});
 
-		updateZ(editor.canvas, classArr);
+		updateZ(editor.canvas, props.project);
 
 		editor.canvas.renderAll();
 
@@ -960,49 +937,78 @@ function NftCustomization() {
 	function changeRarity(rarity) {
 		let tempArr = [];
 
-		for (let i = 0; i < classArr.length; i++) {
-			let temp = classArr[i];
+		// for (let i = 0; i < classArr.length; i++) {
+		// 	let temp = classArr[i];
+		// 	if (curentLayer == i) {
+		// 		for (let j = 0; j < classArr[i].rarity.length; j++) {
+		// 			if (curentImages[curentLayer] == j) {
+		// 				temp.rarity[j] = rarity;
+		// 			}
+		// 		}
+		// 	}
+		// 	tempArr.push(temp);
+		// }
+
+		for (let i = 0; i < props.project.length; i++) {
+			let temp = props.project[i];
 			if (curentLayer == i) {
-				for (let j = 0; j < classArr[i].rarity.length; j++) {
+				for (let j = 0; j < props.project[i].imgs.length; j++) {
 					if (curentImages[curentLayer] == j) {
-						temp.rarity[j] = rarity;
+						temp.imgs[j].rarity = rarity;
 					}
 				}
 			}
 			tempArr.push(temp);
 		}
 
-		setClassArr(tempArr);
+		// setClassArr(tempArr);
+		props.updateData(tempArr);
 		console.log(classArr);
 	}
 
 	function changeRarityL(rarity) {
 		let tempArr = [];
 
-		for (let i = 0; i < classArr.length; i++) {
-			let temp = classArr[i];
+		// for (let i = 0; i < classArr.length; i++) {
+		// 	let temp = classArr[i];
+		// 	if (curentLayer == i) {
+		// 		temp.rarityLayer = rarity;
+		// 	}
+		// 	tempArr.push(temp);
+		// }
+
+		for (let i = 0; i < props.project.length; i++) {
+			let temp = props.project[i];
 			if (curentLayer == i) {
 				temp.rarityLayer = rarity;
 			}
 			tempArr.push(temp);
 		}
 
-		setClassArr(tempArr);
-		console.log(classArr);
+		// setClassArr(tempArr);
+		props.updateData(tempArr);
 	}
 
 	function setNewLayerName(event) {
 		let tempVal = event.target.value;
 
 		let tempArr = [];
-		for (let i = 0; i < classArr.length; i++) {
-			let temp = classArr[i];
+		// for (let i = 0; i < classArr.length; i++) {
+		// 	let temp = classArr[i];
+		// 	if (curentLayer == i) {
+		// 		temp.name = tempVal;
+		// 	}
+		// 	tempArr.push(temp);
+		// }
+		for (let i = 0; i < props.project.length; i++) {
+			let temp = props.project[i];
 			if (curentLayer == i) {
 				temp.name = tempVal;
 			}
 			tempArr.push(temp);
 		}
-		setClassArr(tempArr);
+		// setClassArr(tempArr);
+		props.updateData(tempArr);
 	}
 
 	return (
@@ -1024,7 +1030,8 @@ function NftCustomization() {
 				<div className="constructors">
 					<div className="container-header">
 						<HeaderEditor
-							classArr={classArr}
+							// classArr={classArr}
+							classArr={props.project}
 							projectDataStep2={{
 								newSizesArr,
 								nftAreaSize,
@@ -1055,7 +1062,8 @@ function NftCustomization() {
 							})} */}
 
 							<ListDraggable
-								list={classArr}
+								// list={classArr}
+								list={props.project}
 								callbackChangeActive={callbackChangeActive}
 								callbackChangePosition={callbackChangePosition}
 								callbackRemoveLayer={callbackRemoveLayer}
@@ -1070,7 +1078,7 @@ function NftCustomization() {
 								<input
 									type="text"
 									className="input-settings"
-									placeholder={classArr[curentLayer].name}
+									placeholder={props.project[curentLayer].name}
 									onChange={setNewLayerName}
 								/>
 							</div>
@@ -1080,7 +1088,7 @@ function NftCustomization() {
 									Rarity{" "}
 									<span aria-label="hint" className="info hint--top"></span>
 								</div>
-								{classArr[curentLayer].imgs.map((item, index) => {
+								{/* {classArr[curentLayer].imgs.map((item, index) => {
 									return (
 										<input
 											key={"uniqueId" + index}
@@ -1100,6 +1108,31 @@ function NftCustomization() {
 											max="4"
 											step="1"
 											value={classArr[curentLayer].rarityLayer}
+											onChange={() => changeRarityL(event.target.value)}
+										/>
+									);
+								})} */}
+
+								{props.project[curentLayer].imgs.map((item, index) => {
+									return (
+										<input
+											key={"uniqueId" + index}
+											className={
+												curentImages[curentLayer] == index ? "rarity" : "hide"
+											}
+											style={{
+												background:
+													"linear-gradient(to right, #6333FF 0%, #6333FF " +
+													props.project[curentLayer].rarityLayer * 25 +
+													"%, #444444 " +
+													props.project[curentLayer].rarityLayer * 25 +
+													"%, #444444 100%)",
+											}}
+											type="range"
+											min="0"
+											max="4"
+											step="1"
+											value={props.project[curentLayer].rarityLayer}
 											onChange={() => changeRarityL(event.target.value)}
 										/>
 									);
@@ -1146,7 +1179,9 @@ function NftCustomization() {
 								>
 									{nftAreaSize.width && <FabricJSCanvas onReady={_onReady} />}
 									<div
-										className={classArr[0].url?.length > 0 ? "hide" : "loader"}
+										className={
+											props.project[0].imgs?.length > 0 ? "hide" : "loader"
+										}
 									>
 										<div></div>
 										<div></div>
@@ -1165,7 +1200,7 @@ function NftCustomization() {
 						</div>
 
 						<div className="modal-constructor modal-constructor-settings">
-							{classArr.map((item, index) => {
+							{props.project.map((item, index) => {
 								return (
 									<div
 										key={"uniqueId" + index}
@@ -1214,12 +1249,12 @@ function NftCustomization() {
 											<div className="inputs">
 												<div
 													className={
-														curentLayer == classArr.length - 1
+														curentLayer == props.project.length - 1
 															? "zIndex zIndex-dis"
 															: "zIndex"
 													}
 													onClick={() => {
-														curentLayer == classArr.length - 1
+														curentLayer == props.project.length - 1
 															? null
 															: setZ(item, "+");
 													}}
@@ -1266,16 +1301,16 @@ function NftCustomization() {
 											<div className="inputs">
 												<div className="info">
 													{
-														classArr[curentLayer].sizes.width[
+														props.project[curentLayer].imgs[
 															curentImages[curentLayer]
-														]
+														].width
 													}
 												</div>
 												<div className="info">
 													{
-														classArr[curentLayer].sizes.height[
+														props.project[curentLayer].imgs[
 															curentImages[curentLayer]
-														]
+														].height
 													}
 												</div>
 												{/* <input
@@ -1333,7 +1368,7 @@ function NftCustomization() {
 										<div className="text">Uploaded elements</div>
 										<div className={accordionHidden[2] ? "hidden" : "setting"}>
 											<div className="inputs">
-												{classArr[curentLayer].imgs.map((item, index) => {
+												{props.project[curentLayer].imgs.map((item, index) => {
 													return (
 														<div
 															key={"uniqueId" + index}
@@ -1345,7 +1380,9 @@ function NftCustomization() {
 															}
 															onClick={() => setImgActive(index)}
 														>
-															<img src={classArr[curentLayer].url[index]}></img>
+															<img
+																src={props.project[curentLayer].imgs[index].url}
+															></img>
 														</div>
 													);
 												})}
@@ -1370,7 +1407,7 @@ function NftCustomization() {
 													className="info hint--top"
 												></span>
 											</div>
-											{classArr[curentLayer].imgs.map((item, index) => {
+											{props.project[curentLayer].imgs.map((item, index) => {
 												return (
 													<input
 														key={"uniqueId" + index}
@@ -1382,16 +1419,20 @@ function NftCustomization() {
 														style={{
 															background:
 																"linear-gradient(to right, #6333FF 0%, #6333FF " +
-																classArr[curentLayer].rarity[index] * 25 +
+																props.project[curentLayer].imgs[index].rarity *
+																	25 +
 																"%, #444444 " +
-																classArr[curentLayer].rarity[index] * 25 +
+																props.project[curentLayer].imgs[index].rarity *
+																	25 +
 																"%, #444444 100%)",
 														}}
 														type="range"
 														min="0"
 														max="4"
 														step="1"
-														value={classArr[curentLayer].rarity[index]}
+														value={
+															props.project[curentLayer].imgs[index].rarity
+														}
 														onChange={() => changeRarity(event.target.value)}
 													/>
 												);
@@ -1419,4 +1460,24 @@ function NftCustomization() {
 	);
 }
 
-export default NftCustomization;
+// export default NftCustomization;
+function mapStateToProps(state) {
+	console.log("mapStateToProps", state.editorReducer);
+	return {
+		//walletAddress: state.reducerWallet.address,
+		project: state.editorReducer.projectState,
+	};
+}
+
+function mapDispatchToProps(dispatch) {
+	return {
+		updateLayer: (e) => dispatch(updateOneLayer(e)),
+		updateData: (e) => dispatch(updateAllData(e)),
+		createLayer: (e) => dispatch(createNewLayer(e)),
+		//asyncConnectWallet: () => dispatch(asyncConnectWallet()),
+		//asynDisconnectWallet: () => dispatch(asynDisconnectWallet()),
+		//asyncGetAddressWallet: () => dispatch(asyncGetAddressWallet()),
+	};
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(NftCustomization);

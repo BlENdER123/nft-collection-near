@@ -6,8 +6,8 @@ import {
 	UPDATE_ONE_LAYER,
 } from "../actions/types";
 
-const initialState = JSON.parse(localStorage.getItem("class")) ?? {
-	projectState: [
+const initialState = {
+	projectState: JSON.parse(localStorage.getItem("class")) ?? [
 		{
 			name: "background",
 			active: true,
