@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useMemo} from "react";
 import {Routes, Route, BrowserRouter as Router} from "react-router-dom";
 import WelcomeNftPage from "./components/WelcomeNFT/WelcomeNftPage";
 // import ConnectWalletPage from "./components/ConnectWallet/ConnectWallet";
@@ -23,8 +23,10 @@ import Header from "./Pages/Header/Header";
 import Footer from "./Pages/Footer/Footer";
 import LoadNftPage from "./components/LoadNFT/LoadNftPage";
 
+import {initWebSocket} from "./services/web-socket";
+
 import * as nearAPI from "near-api-js";
-import {Provider, useDispatch} from "react-redux";
+import {Provider, useDispatch, useSelector} from "react-redux";
 import {
 	getAccountDataAction,
 	requestNFtsUrlsFetchAction,
@@ -46,13 +48,22 @@ function App() {
 	const [loader, setLoader] = useState(true);
 	const [sales, setSales] = useState([]);
 
+	const walletInReducer = useSelector((state) => state.appReducer.account);
+
+	const wallet = useMemo(async () => {
+		if ("accountId" in walletInReducer)
+			initWebSocket(dispatch, walletInReducer.accountId);
+	}, [walletInReducer]);
+
 	useEffect(async () => {
 		// dispatch(requestNFtsUrlsFetchAction());
 
-		if (typeof walletAccount !== undefined) {
+		if (typeof walletAccount != undefined) {
 			console.log("getAccountDataAction??");
 			dispatch(getAccountDataAction());
 		}
+
+		//initWebSocket(dispatch);
 
 		setLoader(false);
 	}, []);
